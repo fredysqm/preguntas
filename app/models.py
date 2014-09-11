@@ -32,11 +32,11 @@ class Pregunta(models.Model):
 class Respuesta(models.Model):
     id = models.AutoField( primary_key=True )
     pregunta_id = models.ForeignKey( Pregunta )
-    autor = models.CharField( max_length=20 )
+    autor = models.ForeignKey( User )
     contenido = models.TextField()
     n_votos = models.IntegerField( default=0 )
     mejor = models.BooleanField( default=False )
-    estado = models.CharField( max_length=2 )
+    estado = models.CharField( max_length=2, default='OP' )
     fecha_hora = models.DateField( auto_now_add=True )
 
 class Comentario(models.Model):

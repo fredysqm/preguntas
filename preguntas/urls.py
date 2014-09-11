@@ -22,4 +22,11 @@ urlpatterns = patterns('',
     url(r'^crear/respuesta', 'app.views.crear_respuesta'),
     # crear tag
     url(r'^crear/tag', 'app.views.crear_tag'),
+    
+    # listar preguntas
+    url(r'^listar/preguntas', 'app.views.listar_preguntas'),
+    
+    # responder preguntas
+    url(r'^responder/([0-9]+)', 'app.views.responder_pregunta'),
+    url(r'^exito/respuesta', 'app.views.respuesta_creada'),
 )
