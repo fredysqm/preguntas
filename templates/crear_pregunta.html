@@ -6,8 +6,44 @@
 </head>
 <body>
 	<h2>Crear Pregunta</h2>
+    <p><a href="/listar/preguntas">Lista de preguntas</a></p>
     <form action="/crear/pregunta" method="post">{% csrf_token %}
-        <ul>{{ form.as_ul }}</ul>
+        {{ form.non_field_errors }}
+        <div class="fieldWrapper">
+            {{ form.titulo.errors }}
+            <label class="label-fix" for="id_titulo">Titulo:</label>
+            {{ form.titulo }}            
+        </div>        
+        <div class="fieldWrapper">
+            {{ form.contenido.errors }}
+            <label class="label-fix" for="id_contenido">Contenido:</label>
+            {{ form.contenido }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.autor.errors }}
+            <label class="label-fix" for="id_autor">Autor ID:</label>
+            {{ form.autor }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.contenido.n_respuestas.errors }}
+            {{ form.n_respuestas.as_hidden }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.contenido.n_vistas.errors }}
+            {{ form.n_vistas.as_hidden }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.contenido.n_votos.errors }}
+            {{ form.n_votos.as_hidden }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.contenido.respondido.errors }}
+            {{ form.respondido.as_hidden }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.contenido.estado.errors }}
+            {{ form.estado.as_hidden }}
+        </div>
     <input type="submit" name="submit" value="Crear Pregunta"/>
     </form>    
 </body>

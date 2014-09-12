@@ -41,9 +41,11 @@ def crear_pregunta( request ):
     if request.POST:
         form = PreguntaForm( request.POST )
         validar_formulario( form )
-        return HttpResponseRedirect( '/' )
+        return HttpResponseRedirect( '/listar/preguntas' )
     else:
-        form = PreguntaForm()
+        form = PreguntaForm(initial={ 'n_votos' : 0, 'n_respuestas' : 0, 
+                                      'n_vistas' : 0, 'respondido' : False, 
+                                      'estado' : 'OP' })
      
     args = {}
  
@@ -87,7 +89,9 @@ def responder_pregunta( request, pregunta_id ):
     if request.POST:
         # Validar y enviar datos para guardar
         form = RespuestaForm( request.POST )        
-        if form.is_valid():
+        if form.is_valid():            
+            pregunta = Pregunta.objects.filter( id=pregunta_id ).values('n_respuestas')[0]
+            Pregunta.objects.filter( id=pregunta_id ).update( n_respuestas = ( pregunta['n_respuestas'] + 1 ) )
             form.save()
             # Current path (/responder)
             return HttpResponseRedirect( '../exito/respuesta' )
@@ -95,7 +99,8 @@ def responder_pregunta( request, pregunta_id ):
             print 'El formulario no es valido'
     else:
         # Mostrar formulario vacio para responder
-        print 'Voy a responder...'
+        pregunta = Pregunta.objects.filter( id=pregunta_id ).values('n_vistas')[0]
+        Pregunta.objects.filter( id=pregunta_id ).update( n_vistas = ( pregunta['n_vistas'] + 1 ) )
         form = RespuestaForm( initial = { 'pregunta_id' : pregunta_id, 'autor' : 1,
                                           'n_votos' : 0, 'estado' : 'OP' } )
         pregunta = Pregunta.objects.get( id=pregunta_id )
