@@ -45,16 +45,16 @@
                     <li class="pregunta-detalle">{{ pregunta.n_respuestas }} Respuestas</li>
                     <li class="pregunta-detalle">Votos {{ pregunta.n_votos }}</li>
                     <li class="pregunta-detalle">{{ pregunta.n_vistas }} Vistas</li>
-                    <li class="pregunta-detalle"><a href="/responder/{{ pregunta.id }}">Responder</a></li>
+                    <li class="pregunta-detalle"><a href="{% url 'preguntas_responder_url' pregunta.id %}">Responder</a></li>
                 </ul>
                 </div>
                 {% endfor %}
                 <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
-                    <!-- Formulario -->                
+                    <!-- Formulario -->
                 </div>
             </div>
-        </div>       
-        
+        </div>
+
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="{% static "js/vendor/jquery-1.11.0.min.js" %}"><\/script>')</script>
         <script src="{% static "js/vendor/bootstrap.js" %}"></script>

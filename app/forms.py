@@ -1,19 +1,23 @@
 from django import forms
-from models import Pregunta, Respuesta, Tag
 from django.contrib.auth.models import User
+from .models import pregunta, respuesta, tag
 
-class PreguntaForm(forms.ModelForm): 
+class pregunta_form(forms.ModelForm):
     class Meta:
-        model = Pregunta
+        model = pregunta
+        exclude = ()
 
-class UserForm(forms.ModelForm): 
+class user_form(forms.ModelForm):
     class Meta:
         model = User
-        
-class RespuestaForm(forms.ModelForm): 
+        exclude = ()
+
+class respuesta_form(forms.ModelForm):
     class Meta:
-        model = Respuesta
-        
-class TagForm(forms.ModelForm): 
+        model = respuesta
+        exclude = ()
+
+class tag_form(forms.ModelForm):
     class Meta:
-        model = Tag
+        model = tag
+        exclude = ()

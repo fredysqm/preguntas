@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import tag, pregunta, respuesta, comentario
 
-# Register your models here.
+admin.site.register(tag)
+admin.site.register(pregunta)
+admin.site.register(respuesta)
+admin.site.register(comentario)

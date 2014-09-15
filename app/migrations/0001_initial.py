@@ -14,13 +14,12 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Comentario',
+            name='comentario',
             fields=[
-                ('id', models.AutoField(serialize=False, primary_key=True)),
-                ('autor', models.CharField(max_length=20)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('contenido', models.TextField()),
                 ('n_votos', models.IntegerField(default=0)),
-                ('estado', models.CharField(max_length=2)),
+                ('estado', models.SmallIntegerField(default=0, max_length=1, choices=[(0, b'Por Detecto'), (1, b'Estado1'), (2, b'Estado2')])),
                 ('fecha_hora', models.DateField(auto_now_add=True)),
             ],
             options={
@@ -28,16 +27,16 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Pregunta',
+            name='pregunta',
             fields=[
-                ('id', models.AutoField(serialize=False, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('titulo', models.CharField(max_length=100)),
                 ('contenido', models.TextField()),
                 ('n_vistas', models.PositiveIntegerField(default=0)),
                 ('n_respuestas', models.PositiveIntegerField(default=0)),
                 ('n_votos', models.IntegerField(default=0)),
                 ('respondido', models.BooleanField(default=False)),
-                ('estado', models.CharField(max_length=2)),
+                ('estado', models.SmallIntegerField(default=0, max_length=1, choices=[(0, b'Por Detecto'), (1, b'Estado1'), (2, b'Estado2')])),
                 ('fecha_hora', models.DateField(auto_now_add=True)),
             ],
             options={
@@ -45,13 +44,13 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Respuesta',
+            name='respuesta',
             fields=[
-                ('id', models.AutoField(serialize=False, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('contenido', models.TextField()),
                 ('n_votos', models.IntegerField(default=0)),
                 ('mejor', models.BooleanField(default=False)),
-                ('estado', models.CharField(default=b'OP', max_length=2)),
+                ('estado', models.SmallIntegerField(default=0, max_length=1, choices=[(0, b'Por Detecto'), (1, b'Estado1'), (2, b'Estado2')])),
                 ('fecha_hora', models.DateField(auto_now_add=True)),
             ],
             options={
@@ -59,9 +58,9 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Tag',
+            name='tag',
             fields=[
-                ('id', models.AutoField(serialize=False, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('nombre', models.CharField(max_length=25)),
             ],
             options={
@@ -69,16 +68,21 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='UserDetalles',
+            name='usuario_detalles',
             fields=[
                 ('id', models.OneToOneField(primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
-                ('first_name', models.CharField(max_length=50)),
-                ('last_name', models.CharField(max_length=50)),
-                ('rol', models.CharField(max_length=1)),
-                ('fecha_registro', models.DateField(auto_now_add=True)),
-                ('fecha_movimento', models.DateField(auto_now_add=True)),
-                ('descripcion', models.CharField(max_length=100)),
-                ('puntaje', models.IntegerField(default=0)),
+                ('descripcion', models.CharField(max_length=255, verbose_name=b'Descripci\xc3\xb3n', blank=True)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='usuario_extra',
+            fields=[
+                ('id', models.OneToOneField(primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
+                ('rol', models.CharField(max_length=1, verbose_name=b'Rol')),
+                ('puntaje', models.IntegerField(default=0, verbose_name=b'Puntaje')),
             ],
             options={
             },
@@ -92,8 +96,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='respuesta',
-            name='pregunta_id',
-            field=models.ForeignKey(to='app.Pregunta'),
+            name='pregunta',
+            field=models.ForeignKey(to='app.pregunta'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -104,14 +108,20 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='comentario',
-            name='id_pregunta',
-            field=models.ForeignKey(to='app.Pregunta'),
+            name='autor',
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='comentario',
-            name='id_respuesta',
-            field=models.ForeignKey(to='app.Respuesta'),
+            name='pregunta',
+            field=models.ForeignKey(to='app.pregunta'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='comentario',
+            name='respuesta',
+            field=models.ForeignKey(to='app.respuesta'),
             preserve_default=True,
         ),
     ]

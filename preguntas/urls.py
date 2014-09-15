@@ -1,32 +1,40 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from app import *
+admin.autodiscover()
 
-urlpatterns = patterns('',
-    # home
-    url(r'^$', 'app.views.index'),
-    # preguntas
-    url(r'^preguntas/', 'app.views.preguntas'),
-    # pregunta simple
-    url(r'^preguntas/(?P<id>[-\w]+)/$', 'app.views.pregunta_simple'),
-    # tags
-    url(r'^tags/', 'app.views.tags'),
-    # usuarios
-    url(r'^users/', 'app.views.usuarios'),
-    
-    # crear pregunta
-    url(r'^crear/pregunta', 'app.views.crear_pregunta'),
-    # crear usuario
-    url(r'^crear/usuario', 'app.views.crear_usuario'),
-    # crear respeusta
-    url(r'^crear/respuesta', 'app.views.crear_respuesta'),
-    # crear tag
-    url(r'^crear/tag', 'app.views.crear_tag'),
-    
-    # listar preguntas
-    url(r'^listar/preguntas', 'app.views.listar_preguntas'),
-    
-    # responder preguntas
-    url(r'^responder/([0-9]+)', 'app.views.responder_pregunta'),
-    url(r'^exito/respuesta', 'app.views.respuesta_creada'),
+urlpatterns = patterns('app.views',
+    url(r'^$', 'home_view', name='home_url'),
+
+    url(r'^preguntas/$', 'preguntas_view', name='preguntas_url'),
+    url(r'^preguntas/crear/$', 'preguntas_crear_view', name='preguntas_crear_url'),
+    url(r'^preguntas/(\d+)/responder/$', 'preguntas_responder_view', name='preguntas_responder_url'),
+
+
+
+
+    #url(r'^preguntas/$', 'preguntas_view', name='preguntas_url'),
+
+    #url(r'^preguntas/(?P<id>[-\w]+)/$', 'pregunta_simple'),
+
+    #url(r'^tags/$', 'tags'),
+
+    #url(r'^users/$', 'usuarios'),
+
+
+
+
+    #url(r'^crear/usuario$', 'crear_usuario'),
+
+    #url(r'^crear/respuesta$', 'crear_respuesta'),
+
+    #url(r'^crear/tag$', 'crear_tag'),
+
+
+    #url(r'^listar/preguntas$', 'listar_preguntas'),
+
+
+    #url(r'^responder/([0-9]+)$', 'responder_pregunta'),
+    #url(r'^exito/respuesta$', 'respuesta_creada'),
+
+    url(r'^admin/', include(admin.site.urls)),
 )

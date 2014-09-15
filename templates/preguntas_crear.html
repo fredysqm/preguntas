@@ -1,19 +1,19 @@
 <!DOCTYPE HTML>
-<html lang="en-US">
+<html lang="es">
 <head>
 	<meta charset="UTF-8">
 	<title></title>
 </head>
 <body>
 	<h2>Crear Pregunta</h2>
-    <p><a href="/listar/preguntas">Lista de preguntas</a></p>
-    <form action="/crear/pregunta" method="post">{% csrf_token %}
+    <p><a href="{% url 'preguntas_url' %}">Lista de preguntas</a></p>
+    <form action="{% url 'preguntas_crear_url' %}" method="post">{% csrf_token %}
         {{ form.non_field_errors }}
         <div class="fieldWrapper">
             {{ form.titulo.errors }}
             <label class="label-fix" for="id_titulo">Titulo:</label>
-            {{ form.titulo }}            
-        </div>        
+            {{ form.titulo }}
+        </div>
         <div class="fieldWrapper">
             {{ form.contenido.errors }}
             <label class="label-fix" for="id_contenido">Contenido:</label>
@@ -45,6 +45,6 @@
             {{ form.estado.as_hidden }}
         </div>
     <input type="submit" name="submit" value="Crear Pregunta"/>
-    </form>    
+    </form>
 </body>
 </html>
