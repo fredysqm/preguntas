@@ -2,7 +2,14 @@
 <html lang="es">
 <head>
 	<meta charset="UTF-8">
-	<title></title>
+	<title>Crear una pregunta</title>
+    <style type="text/css">
+    .a_tag {
+        display : inline-block;
+        margin-right: 6px;
+        border-color: #ccc;
+    }
+    </style>
 </head>
 <body>
 	<h2>Crear Pregunta</h2>
@@ -23,6 +30,16 @@
             {{ form.autor.errors }}
             <label class="label-fix" for="id_autor">Autor ID:</label>
             {{ form.autor }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.tags.errors }}
+            <label class="label-fix" for="id_tags">Tags:</label>
+            <select multiple="multiple" id="id_tags" name="tags">
+                {% for tag in all_tags %}
+                <option value="{{ tag.id }}">{{ tag.nombre }}</option>
+                {% endfor %}
+            
+            </select>
         </div>
         <div class="fieldWrapper">
             {{ form.contenido.n_respuestas.errors }}

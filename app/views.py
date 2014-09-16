@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.context_processors import csrf
 
 from .forms import pregunta_form, respuesta_form, tag_form, user_form
-from .models import pregunta
+from .models import pregunta, tag
 
 
 #HOME
@@ -27,9 +27,11 @@ def preguntas_crear_view(request):
             return HttpResponseRedirect(reverse('preguntas_url'))
     else:
         form = pregunta_form()
+        all_tags = tag.objects.all()
 
     args.update(csrf(request))
     args['form'] = form
+    args['all_tags'] = all_tags
     return render(request,'preguntas_crear.html', args)
 
 def preguntas_responder_view(request,pregunta_id):
@@ -49,8 +51,29 @@ def preguntas_responder_view(request,pregunta_id):
     args['pregunta'] = pregunta.objects.get(id=pregunta_id)
     return render(request,'preguntas_responder.html', args)
 
+# TAGS
+def tags_crear_view(request):
+    args = {}
+    if request.POST:
+        form = tag_form(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('home_url'))
+    else:
+        form = tag_form()
 
-
+    args.update(csrf(request))
+    args['form'] = form
+    return render(request,'tag_crear.html', args)
+    
+def preguntas_tagged_view(request, tag_id):
+    args = {}
+    tagged_preguntas = pregunta.objects.filter(tags=tag_id)
+    chosen_tag = tag.objects.get(id=tag_id)
+    args.update(csrf(request))
+    args['tagged'] = tagged_preguntas
+    args['tag'] = chosen_tag
+    return render(request,'preguntas_tagged.html', args)
 
 # def crear_usuario( request ):
 #     args = {}

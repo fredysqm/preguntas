@@ -31,6 +31,7 @@ class pregunta(models.Model):
     respondido = models.BooleanField(default=False)
     estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADOS)
     fecha_hora = models.DateField(auto_now_add=True)
+    tags = models.ManyToManyField(tag)
 
 class respuesta(models.Model):
     pregunta = models.ForeignKey(pregunta)
