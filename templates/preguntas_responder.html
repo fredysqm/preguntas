@@ -15,6 +15,10 @@
         <link rel="stylesheet" href="{% static "css/bootstrap.css" %}" >
         <link rel="stylesheet" href="{% static "css/main.css" %}" >
 
+        <style>
+        .checkered { background-color: #eee; }
+        </style>
+        
         <script src="{% static "js/vendor/modernizr-2.6.2.min.js" %} "></script>
     </head>
     <body>
@@ -52,9 +56,8 @@
                             {{ form.contenido }}
                         </div>
                         <div class="fieldWrapper">
-                            {{ form.pregunta_id.errors }}
-                            <label class="label-fix" for="id_pregunta_id">Pregunta ID:</label>
-                            {{ form.pregunta }}
+                            {{ form.pregunta.errors }}
+                            {{ form.pregunta.as_hidden }}
                         </div>
                         <div class="fieldWrapper">
                             {{ form.autor.errors }}
@@ -69,10 +72,22 @@
                             {{ form.estado.errors }}
                             {{ form.estado.as_hidden }}
                         </div>
-
                         <input type="submit" name="submit" value="Crear Respuesta"/>
-
                     </form>
+                    
+                </div>
+                <div class="row">
+                    <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8"><hr/></div>
+                </div>
+                <div class="row">
+                    <!-- Respuestas -->
+                    {% for respuesta in respuestas %}
+                    <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 {% cycle 'checkered' 'non-checkered' %} ">
+                        <p>{{ respuesta.contenido }}</p>
+                        <p><strong>Autor: {{ respuesta.autor }}</strong> -- {{ respuesta.fecha_hora }}</p>
+                    <hr/>
+                    </div>
+                    {% endfor %}                    
                 </div>
             </div>
         </div>

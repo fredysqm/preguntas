@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.context_processors import csrf
 
 from .forms import pregunta_form, respuesta_form, tag_form, user_form
-from .models import pregunta, tag
+from .models import pregunta, respuesta, tag
 
 
 #HOME
@@ -44,11 +44,17 @@ def preguntas_responder_view(request,pregunta_id):
             form.save()
             return HttpResponseRedirect(reverse('preguntas_url'))
     else:
-        form = respuesta_form(initial={'pregunta':pregunta_id,})
+        form = respuesta_form(initial={'pregunta':pregunta_id})
 
+    pregunta_obj = pregunta.objects.filter(id=pregunta_id).values('n_vistas')[0]
+    pregunta.objects.filter(id=pregunta_id).update(n_vistas=(pregunta_obj['n_vistas']+1))
+    
+    respuestas = respuesta.objects.filter(pregunta=pregunta_id)
+    
     args.update(csrf(request))
     args['form'] = form
     args['pregunta'] = pregunta.objects.get(id=pregunta_id)
+    args['respuestas'] = respuestas
     return render(request,'preguntas_responder.html', args)
 
 # TAGS

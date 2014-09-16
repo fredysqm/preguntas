@@ -38,7 +38,7 @@
                 <!-- Pregunta -->
                 {% for pregunta in tagged %}
                 <div class="pregunta col-xs-8 col-sm-8 col-md-8 col-lg-8">
-                <h2><strong>{{ pregunta.titulo }} ({{ pregunta.estado }})</strong></h1>
+                <h2><strong>{{ pregunta.titulo }} ({{ pregunta.get_estado_display }})</strong></h1>
                 <p>{{ pregunta.contenido }}</p>
                 <ul>
                     <li class="pregunta-detalle">Por {{ pregunta.autor }}</li>
