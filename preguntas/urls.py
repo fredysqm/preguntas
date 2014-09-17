@@ -30,6 +30,8 @@ urlpatterns = patterns('app.views',
 
     #url(r'^crear/respuesta$', 'crear_respuesta'),
 
+    url(r'^respuestas/(\d+)/editar$', 'respuestas_editar_view', name='respuestas_editar_url'),
+    
     url(r'^tags/crear/$', 'tags_crear_view', name='tags_crear_url'),
 
 

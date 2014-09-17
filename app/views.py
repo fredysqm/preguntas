@@ -37,7 +37,6 @@ def preguntas_crear_view(request):
 
 def preguntas_editar_view(request, pregunta_id):
     args = {}
-    #import pdb; pdb.set_trace()
     if request.POST:
         _pregunta = pregunta.objects.get(id=pregunta_id)
         form = pregunta_form(request.POST, instance=_pregunta)
@@ -62,7 +61,11 @@ def preguntas_responder_view(request,pregunta_id):
         form = respuesta_form(request.POST)
         if form.is_valid():
             pregunta_obj = pregunta.objects.filter(id=pregunta_id).values('n_respuestas')[0]
-            pregunta.objects.filter(id=pregunta_id).update(n_respuestas=(pregunta_obj['n_respuestas']+1))
+            if pregunta_obj['n_respuestas'] > -1:
+                pregunta.objects.filter(id=pregunta_id).update(n_respuestas=(pregunta_obj['n_respuestas']+1),
+                                                               respondido=True)
+            else:
+                pregunta.objects.filter(id=pregunta_id).update(n_respuestas=(pregunta_obj['n_respuestas']+1))
             form.save()
             return HttpResponseRedirect(reverse('preguntas_url'))
     else:
@@ -79,6 +82,26 @@ def preguntas_responder_view(request,pregunta_id):
     args['respuestas'] = respuestas
     return render(request,'preguntas_responder.html', args)
 
+# RESPUESTAS
+def respuestas_editar_view(request, respuesta_id):
+    args = {}
+    import pdb; pdb.set_trace()
+    if request.POST:
+        _respuesta = respuesta.objects.get(id=respuesta_id)
+        form = respuesta_form(request.POST, instance=_respuesta)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('preguntas_url'))
+    else:
+        _respuesta = respuesta.objects.get(id=respuesta_id)
+        form = respuesta_form(initial={'pregunta':_respuesta.pregunta, 
+                           'autor':_respuesta.autor, 'contenido':_respuesta.contenido})
+    
+    args.update(csrf(request))
+    args['respuesta'] = _respuesta
+    args['form'] = form
+    return render(request, 'respuestas_editar.html', args)
+    
 # TAGS
 def tags_crear_view(request):
     args = {}

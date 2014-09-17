@@ -30,7 +30,7 @@ class pregunta(models.Model):
     n_votos = models.IntegerField(default=0)
     respondido = models.BooleanField(default=False)
     estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADOS)
-    fecha_hora = models.DateField(auto_now_add=True)
+    fecha_hora = models.DateTimeField(auto_now_add=True)
     tags = models.ManyToManyField(tag)
 
 class respuesta(models.Model):
@@ -40,7 +40,7 @@ class respuesta(models.Model):
     n_votos = models.IntegerField(default=0)
     mejor = models.BooleanField(default=False)
     estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADOS)
-    fecha_hora = models.DateField(auto_now_add=True)
+    fecha_hora = models.DateTimeField(auto_now_add=True)
 
 class comentario(models.Model):
     pregunta = models.ForeignKey(pregunta)
@@ -49,4 +49,4 @@ class comentario(models.Model):
     contenido = models.TextField()
     n_votos = models.IntegerField(default=0)
     estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADOS)
-    fecha_hora = models.DateField(auto_now_add=True)
+    fecha_hora = models.DateTimeField(auto_now_add=True)

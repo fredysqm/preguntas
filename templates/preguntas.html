@@ -45,6 +45,7 @@
                     <li class="pregunta-detalle">{{ pregunta.n_respuestas }} Respuestas</li>
                     <li class="pregunta-detalle">Votos {{ pregunta.n_votos }}</li>
                     <li class="pregunta-detalle">{{ pregunta.n_vistas }} Vistas</li>
+                    <li class="pregunta-detalle">Creada: {% load humanize %} {{ pregunta.fecha_hora|naturaltime|capfirst }}</li>
                     <li class="pregunta-detalle">Tags: 
                     {% for tag in pregunta.tags.all %}
                         {% if forloop.last %} 
