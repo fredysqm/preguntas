@@ -4,7 +4,8 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.context_processors import csrf
 
 from .forms import pregunta_form, respuesta_form, tag_form, user_form
-from .models import pregunta, respuesta, tag
+from .models import pregunta, respuesta, tag, usuario_detalles, usuario_extra
+from django.contrib.auth.models import User
 
 
 #HOME
@@ -34,6 +35,27 @@ def preguntas_crear_view(request):
     args['all_tags'] = all_tags
     return render(request,'preguntas_crear.html', args)
 
+def preguntas_editar_view(request, pregunta_id):
+    args = {}
+    #import pdb; pdb.set_trace()
+    if request.POST:
+        _pregunta = pregunta.objects.get(id=pregunta_id)
+        form = pregunta_form(request.POST, instance=_pregunta)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('preguntas_url'))
+    else:
+        _pregunta = pregunta.objects.get(id=pregunta_id)
+        form = pregunta_form(initial={'titulo':_pregunta.titulo, 'contenido':_pregunta.contenido,
+                                      'tags':_pregunta.tags, 'autor':_pregunta.autor})
+        all_tags = tag.objects.all()
+    
+    args.update(csrf(request))
+    args['pregunta'] = _pregunta
+    args['form'] = form
+    args['all_tags'] = all_tags    
+    return render(request, 'preguntas_editar.html', args)
+    
 def preguntas_responder_view(request,pregunta_id):
     args = {}
     if request.POST:
@@ -81,6 +103,22 @@ def preguntas_tagged_view(request, tag_id):
     args['tag'] = chosen_tag
     return render(request,'preguntas_tagged.html', args)
 
+def preguntas_abiertas_view(request):
+    args = {}
+    preguntas_abiertas = pregunta.objects.filter(n_respuestas=0)
+    args['preguntas'] = preguntas_abiertas
+    return render(request,'preguntas.html',args)
+    
+def usuarios_perfil_view(request, user_id):
+    args = {}
+    requested_user = User.objects.get(id=user_id)
+    requested_user_details = usuario_detalles.objects.get(usuario_detalles=user_id)
+    requested_user_extra = usuario_extra.objects.get(usuario_extra=user_id)
+    args['usuario'] = requested_user
+    args['usuario_detalles'] = requested_user_details
+    args['usuario_extra'] = requested_user_extra
+    return render(request, 'usuarios_perfil.html', args)
+    
 # def crear_usuario( request ):
 #     args = {}
 #     args.update(csrf(request))

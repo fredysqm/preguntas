@@ -7,9 +7,12 @@ urlpatterns = patterns('app.views',
 
     url(r'^preguntas/$', 'preguntas_view', name='preguntas_url'),
     url(r'^preguntas/crear/$', 'preguntas_crear_view', name='preguntas_crear_url'),
+    url(r'^preguntas/(\d+)/editar/$', 'preguntas_editar_view', name='preguntas_editar_url'),
     url(r'^preguntas/(\d+)/responder/$', 'preguntas_responder_view', name='preguntas_responder_url'),
 
     url(r'^preguntas/tagged/(\d+)/$', 'preguntas_tagged_view', name='preguntas_tagged_url'),
+    #Preguntas sin responder
+    url(r'^preguntas/abiertas/$', 'preguntas_abiertas_view', name='preguntas_abiertas_url'),
 
 
     #url(r'^preguntas/$', 'preguntas_view', name='preguntas_url'),
@@ -36,5 +39,7 @@ urlpatterns = patterns('app.views',
     #url(r'^responder/([0-9]+)$', 'responder_pregunta'),
     #url(r'^exito/respuesta$', 'respuesta_creada'),
 
+    url(r'user/(\d+)/$', 'usuarios_perfil_view', name='usuarios_perfil_url'),
+    
     url(r'^admin/', include(admin.site.urls)),
 )
