@@ -7,12 +7,22 @@ class pregunta_form(forms.ModelForm):
         model = pregunta
         exclude = ()
 
+class pregunta_eliminar_form(forms.ModelForm):
+    class Meta:
+        model = pregunta
+        exclude = ()
+        
 class user_form(forms.ModelForm):
     class Meta:
         model = User
         exclude = ()
 
 class respuesta_form(forms.ModelForm):
+    class Meta:
+        model = respuesta
+        exclude = ()
+
+class respuesta_eliminar_form(forms.ModelForm):
     class Meta:
         model = respuesta
         exclude = ()

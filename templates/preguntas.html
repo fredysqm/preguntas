@@ -32,6 +32,9 @@
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <hr/>
+                <a href="{% url 'preguntas_crear_url' %}">Crear pregunta</a> -- 
+                <a href="{% url 'preguntas_abiertas_url' %}">Preguntas abiertas</a>
+                <hr/>
                 </div>
             </div>
             <div class="row">
@@ -56,6 +59,7 @@
                     {% endfor %}
                     </li>
                     <li class="pregunta-detalle"><a href="{% url 'preguntas_responder_url' pregunta.id %}">Responder</a></li>
+                    <li class="pregunta-detalle"><a href="{% url 'preguntas_eliminar_url' pregunta.id %}">Eliminar</a></li>
                 </ul>
                 </div>
                 {% endfor %}

@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.context_processors import csrf
 
-from .forms import pregunta_form, respuesta_form, tag_form, user_form
+from .forms import pregunta_form, respuesta_form, tag_form, user_form, pregunta_eliminar_form, respuesta_eliminar_form
 from .models import pregunta, respuesta, tag, usuario_detalles, usuario_extra
 from django.contrib.auth.models import User
 
@@ -54,6 +54,24 @@ def preguntas_editar_view(request, pregunta_id):
     args['form'] = form
     args['all_tags'] = all_tags    
     return render(request, 'preguntas_editar.html', args)
+
+def preguntas_eliminar_view(request, pregunta_id):
+    args = {}
+    _pregunta = get_object_or_404(pregunta, id=pregunta_id)
+    
+    if request.POST:
+        form = pregunta_eliminar_form(request.POST, instance=_pregunta)
+        
+        if form.is_valid():
+            _pregunta.delete()
+            return HttpResponseRedirect("/")
+    else:
+        form = pregunta_eliminar_form(instance=_pregunta)
+
+    args.update(csrf(request))
+    args['form'] = form
+    args['pregunta'] = _pregunta
+    return render(request, 'preguntas_eliminar.html', args)
     
 def preguntas_responder_view(request,pregunta_id):
     args = {}
@@ -85,7 +103,6 @@ def preguntas_responder_view(request,pregunta_id):
 # RESPUESTAS
 def respuestas_editar_view(request, respuesta_id):
     args = {}
-    import pdb; pdb.set_trace()
     if request.POST:
         _respuesta = respuesta.objects.get(id=respuesta_id)
         form = respuesta_form(request.POST, instance=_respuesta)
@@ -101,6 +118,30 @@ def respuestas_editar_view(request, respuesta_id):
     args['respuesta'] = _respuesta
     args['form'] = form
     return render(request, 'respuestas_editar.html', args)
+    
+def respuestas_eliminar_view(request, respuesta_id):
+    args = {}
+    _respuesta = get_object_or_404(respuesta, id=respuesta_id)
+    
+    if request.POST:
+        form = respuesta_eliminar_form(request.POST, instance=_respuesta)
+        if form.is_valid():
+            _respuesta.delete()
+            pregunta_obj = pregunta.objects.filter(id=_respuesta.pregunta.id).values('n_respuestas')[0]
+            if pregunta_obj['n_respuestas'] == 1:
+                pregunta.objects.filter(id=_respuesta.pregunta.id).update(n_respuestas=(pregunta_obj['n_respuestas']-1),
+                                                               respondido=False)
+            else:
+                pregunta.objects.filter(id=_respuesta.pregunta.id).update(n_respuestas=(pregunta_obj['n_respuestas']-1))
+            form.save()
+            return HttpResponseRedirect("/")
+    else:
+        form = respuesta_eliminar_form(instance=_respuesta)
+
+    args.update(csrf(request))
+    args['form'] = form
+    args['respuesta'] = _respuesta
+    return render(request, 'respuestas_eliminar.html', args)
     
 # TAGS
 def tags_crear_view(request):
