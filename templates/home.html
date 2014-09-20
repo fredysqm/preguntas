@@ -1,11 +1,5 @@
-<!DOCTYPE HTML>
-<html lang="en-US">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
-    <h1>Welcome to the jungle.</h1>
-    <a href="{% url 'preguntas_url' %}">Lista de Preguntas</a>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}Inicio{% endblock %}
+{% block content %}
+Página de inicio
+{% endblock %}

@@ -33,7 +33,7 @@ urlpatterns = patterns('app.views',
 
     url(r'^respuestas/(\d+)/editar$', 'respuestas_editar_view', name='respuestas_editar_url'),
     url(r'^respuestas/(\d+)/eliminar$', 'respuestas_eliminar_view', name='respuestas_eliminar_url'),
-    
+
     url(r'^tags/crear/$', 'tags_crear_view', name='tags_crear_url'),
 
 
@@ -44,6 +44,6 @@ urlpatterns = patterns('app.views',
     #url(r'^exito/respuesta$', 'respuesta_creada'),
 
     url(r'user/(\d+)/$', 'usuarios_perfil_view', name='usuarios_perfil_url'),
-    
+
     url(r'^admin/', include(admin.site.urls)),
 )
