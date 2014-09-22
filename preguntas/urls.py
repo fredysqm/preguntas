@@ -13,36 +13,10 @@ urlpatterns = patterns('app.views',
     url(r'^preguntas/abiertas/$', 'preguntas_abiertas_view', name='preguntas_abiertas_url'),
     url(r'^preguntas/tag/(\d+)/$', 'preguntas_por_tag_view', name='preguntas_por_tag_url'),
 
-
-
-    #url(r'^preguntas/$', 'preguntas_view', name='preguntas_url'),
-
-    #url(r'^preguntas/(?P<id>[-\w]+)/$', 'pregunta_simple'),
-
-    #url(r'^tags/$', 'tags'),
-
-    #url(r'^users/$', 'usuarios'),
-
-
-
-
-    #url(r'^crear/usuario$', 'crear_usuario'),
-
-    #url(r'^crear/respuesta$', 'crear_respuesta'),
-
-    url(r'^respuestas/(\d+)/editar$', 'respuestas_editar_view', name='respuestas_editar_url'),
-    url(r'^respuestas/(\d+)/eliminar$', 'respuestas_eliminar_view', name='respuestas_eliminar_url'),
+    url(r'^respuestas/(\d+)/editar/$', 'respuestas_editar_view', name='respuestas_editar_url'),
+    url(r'^respuestas/(\d+)/eliminar/$', 'respuestas_eliminar_view', name='respuestas_eliminar_url'),
 
     url(r'^tags/crear/$', 'tags_crear_view', name='tags_crear_url'),
-
-
-    #url(r'^listar/preguntas$', 'listar_preguntas'),
-
-
-    #url(r'^responder/([0-9]+)$', 'responder_pregunta'),
-    #url(r'^exito/respuesta$', 'respuesta_creada'),
-
     url(r'user/(\d+)/$', 'usuarios_perfil_view', name='usuarios_perfil_url'),
-
     url(r'^admin/', include(admin.site.urls)),
 )

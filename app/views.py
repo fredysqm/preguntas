@@ -64,7 +64,7 @@ def preguntas_eliminar_view(request, pregunta_id):
 
         if form.is_valid():
             _pregunta.delete()
-            return HttpResponseRedirect("/")
+            return HttpResponseRedirect(reverse('home_url'))
     else:
         form = pregunta_eliminar_form(instance=_pregunta)
 
@@ -104,7 +104,7 @@ def preguntas_abiertas_view(request):
     args = {}
     preguntas_abiertas = pregunta.objects.filter(n_respuestas=0)
     args['preguntas'] = preguntas_abiertas
-    return render(request,'preguntas.html',args)
+    return render(request,'preguntas/home.html',args)
 
 def preguntas_por_tag_view(request, tag_id):
     args = {}
@@ -133,7 +133,7 @@ def respuestas_editar_view(request, respuesta_id):
     args.update(csrf(request))
     args['respuesta'] = _respuesta
     args['form'] = form
-    return render(request, 'respuestas_editar.html', args)
+    return render(request, 'respuestas/editar.html', args)
 
 def respuestas_eliminar_view(request, respuesta_id):
     args = {}
@@ -150,14 +150,15 @@ def respuestas_eliminar_view(request, respuesta_id):
             else:
                 pregunta.objects.filter(id=_respuesta.pregunta.id).update(n_respuestas=(pregunta_obj['n_respuestas']-1))
             form.save()
-            return HttpResponseRedirect("/")
+            return HttpResponseRedirect(reverse('home_url'))
     else:
         form = respuesta_eliminar_form(instance=_respuesta)
 
     args.update(csrf(request))
     args['form'] = form
     args['respuesta'] = _respuesta
-    return render(request, 'respuestas_eliminar.html', args)
+    return render(request, 'respuestas/eliminar.html', args)
+
 
 # TAGS
 def tags_crear_view(request):

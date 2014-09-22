@@ -1,13 +1,7 @@
-<!DOCTYPE HTML>
-<html lang="es">
-<head>
-	<meta charset="UTF-8">
-	<title>Editar una respuesta</title>
-    <style type="text/css">
-    </style>
-</head>
-<body>
-	<h2>Editar Respuesta</h2>
+{% extends 'base.html' %}
+{% block title %}Preguntas{% endblock %}
+{% block content %}
+    <h2>Editar Respuesta</h2>
     <p><a href="{% url 'preguntas_url' %}">Lista de preguntas</a></p>
     <form action="{% url 'respuestas_editar_url' respuesta.id %}" method="post">{% csrf_token %}
         {{ form.non_field_errors }}
@@ -34,5 +28,4 @@
         </div>
     <input type="submit" name="submit" value="Editar Respuesta"/>
     </form>
-</body>
-</html>
+{% endblock %}
