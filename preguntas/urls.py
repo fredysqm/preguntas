@@ -10,10 +10,9 @@ urlpatterns = patterns('app.views',
     url(r'^preguntas/(\d+)/editar/$', 'preguntas_editar_view', name='preguntas_editar_url'),
     url(r'^preguntas/(\d+)/eliminar/$', 'preguntas_eliminar_view', name='preguntas_eliminar_url'),
     url(r'^preguntas/(\d+)/responder/$', 'preguntas_responder_view', name='preguntas_responder_url'),
-
-    url(r'^preguntas/tagged/(\d+)/$', 'preguntas_tagged_view', name='preguntas_tagged_url'),
-    #Preguntas sin responder
     url(r'^preguntas/abiertas/$', 'preguntas_abiertas_view', name='preguntas_abiertas_url'),
+    url(r'^preguntas/tag/(\d+)/$', 'preguntas_por_tag_view', name='preguntas_por_tag_url'),
+
 
 
     #url(r'^preguntas/$', 'preguntas_view', name='preguntas_url'),

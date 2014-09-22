@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Preguntas{% endblock %}
+{% block content %}
+    <div class="row">
+        <!-- Pregunta -->
+        <div class="pregunta col-xs-8 col-sm-8 col-md-8 col-lg-8">
+        <h2><strong>{{ pregunta.titulo }}</strong></h2>
+        <p>{{ pregunta.contenido }}</p>
+        <ul>
+            <li class="pregunta-detalle">Por {{ pregunta.autor }}</li>
+            <li class="pregunta-detalle">{{ pregunta.n_respuestas }} Respuestas</li>
+            <li class="pregunta-detalle">Votos {{ pregunta.n_votos }}</li>
+            <li class="pregunta-detalle">{{ pregunta.n_vistas }} Vistas</li>
+        </ul>
+        </div>
+    </div>
+    <div class="row">
+        <hr/>
+    </div>
+    <div class="row">
+        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+            <!-- Formulario -->
+            <p><a href="{% url 'preguntas_url' %}">Lista de preguntas</a></p>
+            <form action="{% url 'preguntas_responder_url' pregunta.id %}" method="post">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="fieldWrapper">
+                    {{ form.contenido.errors }}
+                    <label class="label-fix" for="id_contenido">Respuesta:</label>
+                    {{ form.contenido }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ form.pregunta.errors }}
+                    {{ form.pregunta.as_hidden }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ form.autor.errors }}
+                    <label class="label-fix" for="id_autor">Autor ID:</label>
+                    {{ form.autor }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ form.n_votos.errors }}
+                    {{ form.n_votos.as_hidden }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ form.estado.errors }}
+                    {{ form.estado.as_hidden }}
+                </div>
+                <input type="submit" name="submit" value="Crear Respuesta"/>
+            </form>
+
+        </div>
+        <div class="row">
+            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8"><hr/></div>
+        </div>
+        <div class="row">
+            <!-- Respuestas -->
+            {% for respuesta in respuestas %}
+            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 {% cycle 'checkered' 'non-checkered' %} ">
+                <p>{{ respuesta.contenido }}</p>
+                <p><strong>Autor: {{ respuesta.autor }}</strong> -- {{ respuesta.fecha_hora }}</p>
+                <p>Respondida {% load humanize %} {{ respuesta.fecha_hora|naturaltime }}</p>
+                <p><a href="{% url 'respuestas_editar_url' respuesta.id %}">Editar</a></p>
+                <p><a href="{% url 'respuestas_eliminar_url' respuesta.id %}">Eliminar</a></p>
+            <hr/>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

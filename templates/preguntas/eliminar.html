@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Preguntas{% endblock %}
+{% block content %}
+    <div class="row">
+        <!-- Pregunta -->
+        <div class="pregunta col-xs-8 col-sm-8 col-md-8 col-lg-8">
+        <h2>¿Está seguro de que quiere eliminar la siguiente pregunta?</h2>
+        <h2><strong>{{ pregunta.titulo }}</strong></h2>
+        <p>{{ pregunta.contenido }}</p>
+        <ul>
+            <li class="pregunta-detalle">Por {{ pregunta.autor }}</li>
+            <li class="pregunta-detalle">{{ pregunta.n_respuestas }} Respuestas</li>
+            <li class="pregunta-detalle">Votos {{ pregunta.n_votos }}</li>
+            <li class="pregunta-detalle">{{ pregunta.n_vistas }} Vistas</li>
+        </ul>
+        </div>
+    </div>
+    <div class="row">
+        <hr/>
+    </div>
+    <div class="row">
+        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+            <form action="{% url 'preguntas_eliminar_url' pregunta.id %}" method="post">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="fieldWrapper">
+                    {{ form.titulo.errors }}
+                    {{ form.titulo.as_hidden }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ form.contenido.errors }}
+                    {{ form.contenido.as_hidden }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ form.pregunta.errors }}
+                    {{ form.pregunta.as_hidden }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ form.autor.errors }}
+                    {{ form.autor.as_hidden }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ form.n_vistas.errors }}
+                    {{ form.n_vistas.as_hidden }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ form.n_votos.errors }}
+                    {{ form.n_votos.as_hidden }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ form.n_respuestas.errors }}
+                    {{ form.n_respuestas.as_hidden }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ form.estado.errors }}
+                    {{ form.estado.as_hidden }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ form.tags.errors }}
+                    {{ form.tags.as_hidden }}
+                </div>
+                <input type="submit" name="submit" value="Eliminar pregunta"/>
+                <input type="button" name="cancel" value="Regresar" onclick="window.location='{% url 'preguntas_url' %}';"/>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}
