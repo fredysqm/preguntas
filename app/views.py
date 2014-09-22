@@ -8,11 +8,6 @@ from .models import pregunta, respuesta, tag, usuario_detalles, usuario_extra
 from django.contrib.auth.models import User
 
 
-#HOME
-def home_view(request):
-    return render(request, 'home.html')
-
-
 #PREGUNTAS
 def preguntas_view(request):
     args = {}
@@ -64,7 +59,7 @@ def preguntas_eliminar_view(request, pregunta_id):
 
         if form.is_valid():
             _pregunta.delete()
-            return HttpResponseRedirect(reverse('home_url'))
+            return HttpResponseRedirect(reverse('preguntas_url'))
     else:
         form = pregunta_eliminar_form(instance=_pregunta)
 
@@ -150,7 +145,7 @@ def respuestas_eliminar_view(request, respuesta_id):
             else:
                 pregunta.objects.filter(id=_respuesta.pregunta.id).update(n_respuestas=(pregunta_obj['n_respuestas']-1))
             form.save()
-            return HttpResponseRedirect(reverse('home_url'))
+            return HttpResponseRedirect(reverse('preguntas_url'))
     else:
         form = respuesta_eliminar_form(instance=_respuesta)
 
@@ -167,7 +162,7 @@ def tags_crear_view(request):
         form = tag_form(request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse('home_url'))
+            return HttpResponseRedirect(reverse('preguntas_url'))
     else:
         form = tag_form()
 
