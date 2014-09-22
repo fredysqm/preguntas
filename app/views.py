@@ -144,7 +144,6 @@ def respuestas_eliminar_view(request, respuesta_id):
                                                                respondido=False)
             else:
                 pregunta.objects.filter(id=_respuesta.pregunta.id).update(n_respuestas=(pregunta_obj['n_respuestas']-1))
-            form.save()
             return HttpResponseRedirect(reverse('preguntas_url'))
     else:
         form = respuesta_eliminar_form(instance=_respuesta)
