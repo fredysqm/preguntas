@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Comentarios{% endblock %}
+{% block content %}
+    <div class="row">
+        <!-- Comentario -->
+        <div class="ol-xs-8 col-sm-8 col-md-8 col-lg-8">
+        <h2>¿Está seguro de que quiere eliminar el siguiente comentario?</h2>
+        <h2><strong>{{ comentario.contenido }}</strong></h2>
+        <p>{{ comentario.autor }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <hr/>
+    </div>
+    <div class="row">
+        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+            <form action="{% url 'comentarios_eliminar_url' comentario.id %}" method="post">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="fieldWrapper">
+                    {{ form.content_type.errors }}
+                    {{ form.content_type.as_hidden }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ form.object_id.errors }}
+                    {{ form.object_id.as_hidden }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ form.autor.errors }}
+                    {{ form.autor.as_hidden }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ form.contenido.errors }}
+                    {{ form.contenido.as_hidden }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ form.n_votos.errors }}
+                    {{ form.n_votos.as_hidden }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ form.estado.errors }}
+                    {{ form.estado.as_hidden }}
+                </div>
+                <input type="submit" name="submit" value="Eliminar Comentario"/>
+                <input type="button" name="cancel" value="Regresar" onclick="window.location='{% url 'preguntas_url' %}';"/>
+            </form>
+
+        </div>
+    </div>
+{% endblock %}

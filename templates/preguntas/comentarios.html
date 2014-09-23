@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Comentarios{% endblock %}
+{% block content %}
+    <div class="row">
+        <!-- Pregunta -->
+        <div class="pregunta col-xs-8 col-sm-8 col-md-8 col-lg-8">
+        <h2><strong>{{ pregunta.titulo }}</strong></h2>
+        <p>{{ pregunta.contenido }}</p>
+        <ul>
+            <li class="pregunta-detalle">Por {{ pregunta.autor }}</li>
+            <li class="pregunta-detalle">{{ pregunta.n_respuestas }} Respuestas</li>
+            <li class="pregunta-detalle">Votos {{ pregunta.n_votos }}</li>
+            <li class="pregunta-detalle">{{ pregunta.n_vistas }} Vistas</li>
+        </ul>
+        <a href="{% url 'comentarios_crear_url' %}">Añadir comentario a la pregunta</a>
+        </div>
+    </div>
+    <div class="row">
+        <hr/>
+    </div>
+    <div class="row">
+        <!-- Comentarios -->
+        <ul>
+        {% if comentarios.count > 0 %}
+            {% for comentario in comentarios %}
+            <li><strong>{{ comentario.contenido }}</strong> -- Por <em>{{ comentario.autor }}</em></li>
+            {% endfor %}
+        {% else %}
+            <strong><p>¡Aún no hay comentarios!</p></strong>
+        {% endif %}
+        </ul>
+    </div>
+{% endblock %}

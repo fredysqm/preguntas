@@ -2,9 +2,11 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
 
 ESTADOS = (
-    (0, 'Por Detecto'),
+    (0, 'Por Defecto'),
     (1, 'Estado1'),
     (2, 'Estado2'),
 )
@@ -21,6 +23,18 @@ class usuario_detalles(models.Model):
 class tag(models.Model):
     nombre = models.CharField(max_length=25)
 
+class comentario(models.Model):
+    #pregunta = models.ForeignKey(pregunta)
+    #respuesta = models.ForeignKey(respuesta)
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+    autor = models.ForeignKey(User)
+    contenido = models.TextField()
+    n_votos = models.IntegerField(default=0)
+    estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADOS)
+    fecha_hora = models.DateTimeField(auto_now_add=True)
+
 class pregunta(models.Model):
     titulo = models.CharField(max_length=100)
     autor = models.ForeignKey(User)
@@ -32,6 +46,7 @@ class pregunta(models.Model):
     estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADOS)
     fecha_hora = models.DateTimeField(auto_now_add=True)
     tags = models.ManyToManyField(tag)
+    comentarios = GenericRelation(comentario)
 
 class respuesta(models.Model):
     pregunta = models.ForeignKey(pregunta)
@@ -41,12 +56,4 @@ class respuesta(models.Model):
     mejor = models.BooleanField(default=False)
     estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADOS)
     fecha_hora = models.DateTimeField(auto_now_add=True)
-
-class comentario(models.Model):
-    pregunta = models.ForeignKey(pregunta)
-    respuesta = models.ForeignKey(respuesta)
-    autor = models.ForeignKey(User)
-    contenido = models.TextField()
-    n_votos = models.IntegerField(default=0)
-    estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADOS)
-    fecha_hora = models.DateTimeField(auto_now_add=True)
+    comentarios = GenericRelation(comentario)

@@ -45,6 +45,7 @@
             </li>
             <li class="pregunta-detalle"><a href="{% url 'preguntas_responder_url' pregunta.id %}">Responder</a></li>
             <li class="pregunta-detalle"><a href="{% url 'preguntas_eliminar_url' pregunta.id %}">Eliminar</a></li>
+            <li class="pregunta-detalle"><a href="{% url 'preguntas_comentarios_url' pregunta.id %}">Comentarios</a></li>
             <hr />
         </article>
         {% endfor %}

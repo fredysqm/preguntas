@@ -1,10 +1,10 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.core.context_processors import csrf
 
-from .forms import pregunta_form, respuesta_form, tag_form, user_form, pregunta_eliminar_form, respuesta_eliminar_form
-from .models import pregunta, respuesta, tag, usuario_detalles, usuario_extra
+from .forms import pregunta_form, respuesta_form, tag_form, user_form, pregunta_eliminar_form, respuesta_eliminar_form, comentario_form, comentario_eliminar_form
+from .models import pregunta, respuesta, tag, usuario_detalles, usuario_extra, comentario
 from django.contrib.auth.models import User
 
 
@@ -27,19 +27,20 @@ def preguntas_crear_view(request):
 
     args.update(csrf(request))
     args['form'] = form
+    all_tags = all_tags or []
     args['all_tags'] = all_tags
     return render(request,'preguntas/crear.html', args)
 
 def preguntas_editar_view(request, pregunta_id):
     args = {}
+    _pregunta = get_object_or_404(pregunta, id=pregunta_id)
+    
     if request.POST:
-        _pregunta = pregunta.objects.get(id=pregunta_id)
         form = pregunta_form(request.POST, instance=_pregunta)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('preguntas_url'))
     else:
-        _pregunta = pregunta.objects.get(id=pregunta_id)
         form = pregunta_form(initial={'titulo':_pregunta.titulo, 'contenido':_pregunta.contenido,
                                       'tags':_pregunta.tags, 'autor':_pregunta.autor})
         all_tags = tag.objects.all()
@@ -84,8 +85,8 @@ def preguntas_responder_view(request,pregunta_id):
     else:
         form = respuesta_form(initial={'pregunta':pregunta_id})
 
-    pregunta_obj = pregunta.objects.filter(id=pregunta_id).values('n_vistas')[0]
-    pregunta.objects.filter(id=pregunta_id).update(n_vistas=(pregunta_obj['n_vistas']+1))
+    pregunta_obj = get_object_or_404(pregunta, id=pregunta_id)
+    pregunta.objects.filter(id=pregunta_id).update(n_vistas=(pregunta_obj.n_vistas + 1))
 
     respuestas = respuesta.objects.filter(pregunta=pregunta_id)
 
@@ -103,13 +104,21 @@ def preguntas_abiertas_view(request):
 
 def preguntas_por_tag_view(request, tag_id):
     args = {}
-    tagged_preguntas = pregunta.objects.filter(tags=tag_id)
+    tagged_preguntas = get_list_or_404(pregunta, tags=tag_id)
     chosen_tag = tag.objects.get(id=tag_id)
     args.update(csrf(request))
     args['tagged'] = tagged_preguntas
     args['tag'] = chosen_tag
     return render(request,'preguntas/tag.html', args)
 
+def preguntas_comentarios_view(request, pregunta_id):
+    args = {}
+    _pregunta = get_object_or_404(pregunta, id=pregunta_id)
+    _comentarios = get_list_or_404(comentario, content_type=11, object_id=pregunta_id)
+    args.update(csrf(request))
+    args['pregunta'] = _pregunta
+    args['comentarios'] = _comentarios
+    return render(request,'preguntas/comentarios.html', args)
 
 # RESPUESTAS
 def respuestas_editar_view(request, respuesta_id):
@@ -170,18 +179,68 @@ def tags_crear_view(request):
     return render(request,'tag_crear.html', args)
 
 
-
-
 def usuarios_perfil_view(request, user_id):
     args = {}
-    requested_user = User.objects.get(id=user_id)
-    requested_user_details = usuario_detalles.objects.get(usuario_detalles=user_id)
-    requested_user_extra = usuario_extra.objects.get(usuario_extra=user_id)
+    requested_user = get_object_or_404(User, id=user_id)
+    requested_user_details = get_object_or_404(usuario_detalles, usuario_detalles=user_id)
+    requested_user_extra = get_object_or_404(usuario_extra, usuario_extra=user_id)
     args['usuario'] = requested_user
     args['usuario_detalles'] = requested_user_details
     args['usuario_extra'] = requested_user_extra
-    return render(request, 'usuarios_perfil.html', args)
+    return render(request, 'usuario/usuarios_perfil.html', args)
 
+# COMENTARIOS
+def comentarios_crear_view(request):
+    args = {}
+    if request.POST:
+        form = comentario_form(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('preguntas_url'))
+    else:
+        form = comentario_form(initial={'n_votos' : 0, 'estado' : 0})
+     
+    args.update(csrf(request))
+    args['form'] = form
+    return render(request, 'comentarios/crear.html', args)
+
+def comentarios_editar_view(request, comentario_id):
+    args = {}
+    _comentario = get_object_or_404(comentario, id=comentario_id)
+    if request.POST:        
+        form = comentario_form(request.POST, instance=_comentario)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('preguntas_url'))
+    else:
+        form = comentario_form(initial={'content_type':_comentario.content_type,
+                           'object_id':_comentario.object_id, 'autor':_comentario.autor, 
+                           'contenido':_comentario.contenido, 'n_votos':_comentario.n_votos,
+                           'estado':_comentario.estado})
+
+    args.update(csrf(request))
+    args['comentario'] = _comentario
+    args['form'] = form
+    return render(request, 'comentarios/editar.html', args)    
+
+def comentarios_eliminar_view(request, comentario_id):
+    # ESTAS AQUI. Tienes que ver que elimine bien el comentario.
+    args = {}
+    _comentario = get_object_or_404(comentario, id=comentario_id)
+
+    if request.POST:
+        form = comentario_eliminar_form(request.POST, instance=_comentario)
+        if form.is_valid():
+            _comentario.delete()
+            return HttpResponseRedirect(reverse('preguntas_url'))
+    else:
+        form = comentario_eliminar_form(instance=_comentario)
+
+    args.update(csrf(request))
+    args['form'] = form
+    args['comentario'] = _comentario
+    return render(request, 'comentarios/eliminar.html', args)    
+    
 # def crear_usuario( request ):
 #     args = {}
 #     args.update(csrf(request))
