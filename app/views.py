@@ -2,10 +2,12 @@ from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.core.context_processors import csrf
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 from .forms import pregunta_form, respuesta_form, tag_form, user_form, pregunta_eliminar_form, respuesta_eliminar_form, comentario_form, comentario_eliminar_form
 from .models import pregunta, respuesta, tag, usuario_detalles, usuario_extra, comentario
-from django.contrib.auth.models import User
+
 
 
 #PREGUNTAS
@@ -14,27 +16,27 @@ def preguntas_view(request):
     args['preguntas'] = pregunta.objects.all()
     return render(request, 'preguntas/home.html', args)
 
+
+@login_required()
 def preguntas_crear_view(request):
     args = {}
     if request.POST:
         form = pregunta_form(request.POST)
+        form['autor'] = request.user;
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('preguntas_url'))
     else:
         form = pregunta_form()
-        all_tags = tag.objects.all()
 
     args.update(csrf(request))
     args['form'] = form
-    all_tags = all_tags or []
-    args['all_tags'] = all_tags
     return render(request,'preguntas/crear.html', args)
 
 def preguntas_editar_view(request, pregunta_id):
     args = {}
     _pregunta = get_object_or_404(pregunta, id=pregunta_id)
-    
+
     if request.POST:
         form = pregunta_form(request.POST, instance=_pregunta)
         if form.is_valid():
@@ -176,7 +178,7 @@ def tags_crear_view(request):
 
     args.update(csrf(request))
     args['form'] = form
-    return render(request,'tag_crear.html', args)
+    return render(request,'tag/tag_crear.html', args)
 
 
 def usuarios_perfil_view(request, user_id):
@@ -199,7 +201,7 @@ def comentarios_crear_view(request):
             return HttpResponseRedirect(reverse('preguntas_url'))
     else:
         form = comentario_form(initial={'n_votos' : 0, 'estado' : 0})
-     
+
     args.update(csrf(request))
     args['form'] = form
     return render(request, 'comentarios/crear.html', args)
@@ -207,21 +209,21 @@ def comentarios_crear_view(request):
 def comentarios_editar_view(request, comentario_id):
     args = {}
     _comentario = get_object_or_404(comentario, id=comentario_id)
-    if request.POST:        
+    if request.POST:
         form = comentario_form(request.POST, instance=_comentario)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('preguntas_url'))
     else:
         form = comentario_form(initial={'content_type':_comentario.content_type,
-                           'object_id':_comentario.object_id, 'autor':_comentario.autor, 
+                           'object_id':_comentario.object_id, 'autor':_comentario.autor,
                            'contenido':_comentario.contenido, 'n_votos':_comentario.n_votos,
                            'estado':_comentario.estado})
 
     args.update(csrf(request))
     args['comentario'] = _comentario
     args['form'] = form
-    return render(request, 'comentarios/editar.html', args)    
+    return render(request, 'comentarios/editar.html', args)
 
 def comentarios_eliminar_view(request, comentario_id):
     # ESTAS AQUI. Tienes que ver que elimine bien el comentario.
@@ -239,8 +241,8 @@ def comentarios_eliminar_view(request, comentario_id):
     args.update(csrf(request))
     args['form'] = form
     args['comentario'] = _comentario
-    return render(request, 'comentarios/eliminar.html', args)    
-    
+    return render(request, 'comentarios/eliminar.html', args)
+
 # def crear_usuario( request ):
 #     args = {}
 #     args.update(csrf(request))

@@ -22,6 +22,7 @@ class usuario_detalles(models.Model):
 
 class tag(models.Model):
     nombre = models.CharField(max_length=25)
+    def __unicode__(self): return "%s" % (self.nombre)
 
 class comentario(models.Model):
     #pregunta = models.ForeignKey(pregunta)
