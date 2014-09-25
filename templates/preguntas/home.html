@@ -2,53 +2,39 @@
 {% block title %}Preguntas{% endblock %}
 {% block content %}
 
-    <ul class="nav nav-tabs">
-        <li class="active"><a href="#" data-toggle="tab">Insteresantes</a></li>
-        <li><a href="#" data-toggle="tab">Hoy</a></li>
-        <li><a href="#" data-toggle="tab">Semana</a></li>
-        <li><a href="#" data-toggle="tab">Mes</a></li>
-    </ul>
+    <p>
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="{% url 'preguntas_url' %}">Preguntas</a></li>
+            <li><a href="{% url 'preguntas_crear_url' %}">Crear</a></li>
+        </ul>
+    </p>
 
-    <div class="row">
+    {% for pregunta in preguntas %}
+        <div class="well bs-component">
+            <article>
+                <div class="row">
+                    <div class="col col-sm-1">
+                        <div class="row text-center">
+                            <div class="col col-xs-12">{{ pregunta.n_votos }}</div>
+                            <div class="col col-xs-12"><small>votos</small></div>
+                        </div>
+                    </div>
+                    <div class="col col-sm-1">
+                        <div class="row text-center">
+                            <div class="col col-xs-12">{{ pregunta.n_respuestas }}</div>
+                            <div class="col col-xs-12"><small>rspts</small></div>
+                        </div>
+                    </div>
+                    <div class="col col-sm-1">
+                        <div class="row text-center">
+                            <div class="col col-xs-12">{{ pregunta.n_vistas }}</div>
+                            <div class="col col-xs-12"><small>vistas</small></div>
+                        </div>
+                    </div>
+                    <div class="col col-sm-9">{{ pregunta.titulo }}</div>
+                </div>
+            </article>
+        </div>
+    {% endfor %}
 
-        {% for pregunta in preguntas %}
-        <article>
-            <div class="row">
-                <div class="col col-sm-1">
-                    <div class="row text-center">
-                        <div class="col col-xs-12">{{ pregunta.n_votos }}</div>
-                        <div class="col col-xs-12"><small>votos</small></div>
-                    </div>
-                </div>
-                <div class="col col-sm-1">
-                    <div class="row text-center">
-                        <div class="col col-xs-12">{{ pregunta.n_respuestas }}</div>
-                        <div class="col col-xs-12"><small>rspts</small></div>
-                    </div>
-                </div>
-                <div class="col col-sm-1">
-                    <div class="row text-center">
-                        <div class="col col-xs-12">{{ pregunta.n_vistas }}</div>
-                        <div class="col col-xs-12"><small>vistas</small></div>
-                    </div>
-                </div>
-                <div class="col col-sm-9">{{ pregunta.titulo }}</div>
-            </div>
-            <li class="pregunta-detalle">Tags:
-            {% for tag in pregunta.tags.all %}
-                {% if forloop.last %}
-                    <a href="{% url 'preguntas_por_tag_url' tag.id %}">{{ tag.nombre }}</a>
-                {% else %}
-                    <a href="{% url 'preguntas_por_tag_url' tag.id %}">{{ tag.nombre }}</a>,
-                {% endif %}
-            {% endfor %}
-            </li>
-            <li class="pregunta-detalle"><a href="{% url 'preguntas_responder_url' pregunta.id %}">Responder</a></li>
-            <li class="pregunta-detalle"><a href="{% url 'preguntas_eliminar_url' pregunta.id %}">Eliminar</a></li>
-            <li class="pregunta-detalle"><a href="{% url 'preguntas_comentarios_url' pregunta.id %}">Comentarios</a></li>
-            <hr />
-        </article>
-        {% endfor %}
-
-    </div>
 {% endblock %}

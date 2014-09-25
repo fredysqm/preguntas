@@ -16,13 +16,12 @@ def preguntas_view(request):
     args['preguntas'] = pregunta.objects.all()
     return render(request, 'preguntas/home.html', args)
 
-
 @login_required()
 def preguntas_crear_view(request):
     args = {}
     if request.POST:
-        form = pregunta_form(request.POST)
-        form['autor'] = request.user;
+        _pregunta = pregunta(autor=request.user)
+        form = pregunta_form(request.POST, instance=_pregunta)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('preguntas_url'))
