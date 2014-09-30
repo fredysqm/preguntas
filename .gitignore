@@ -40,3 +40,6 @@ Thumbs.db
 # project
 preguntas/settings/local.py
 static_public/*
+static/less/*.css
+static/stylus/*.css
+

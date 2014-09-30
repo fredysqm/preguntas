@@ -38,8 +38,8 @@ PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.slimit.SlimItCompressor'
 PIPELINE_CSS = {
     'all': {
         'source_filenames': (
-            'css/bootstrap.css',
-            'css/base.css',
+            'less/bootstrap.less',
+            'stylus/base.styl',
         ),
         'output_filename': 'css/all.css',
     },

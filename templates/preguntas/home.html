@@ -10,31 +10,37 @@
     </p>
 
     {% for pregunta in preguntas %}
-        <div class="well bs-component">
-            <article>
-                <div class="row">
-                    <div class="col col-sm-1">
+        <article>
+            <div class="row">
+                <div class="col col-sm-3">
+                    <div class="col col-xs-4">
                         <div class="row text-center">
                             <div class="col col-xs-12">{{ pregunta.n_votos }}</div>
                             <div class="col col-xs-12"><small>votos</small></div>
                         </div>
                     </div>
-                    <div class="col col-sm-1">
+                    <div class="col col-xs-4">
                         <div class="row text-center">
                             <div class="col col-xs-12">{{ pregunta.n_respuestas }}</div>
                             <div class="col col-xs-12"><small>rspts</small></div>
                         </div>
                     </div>
-                    <div class="col col-sm-1">
+                    <div class="col col-xs-4">
                         <div class="row text-center">
                             <div class="col col-xs-12">{{ pregunta.n_vistas }}</div>
                             <div class="col col-xs-12"><small>vistas</small></div>
                         </div>
                     </div>
-                    <div class="col col-sm-9">{{ pregunta.titulo }}</div>
                 </div>
-            </article>
-        </div>
+                <div class="col col-sm-9">
+                    <h4 class="titulo"><a href="{% url 'preguntas_crear_url' %}">{{ pregunta.titulo }}</a></h4>
+                    <div>Tags</div>
+                    <div>Tiempo</div>
+                    <div>Usuario</div>
+                </div>
+            </div>
+            <hr />
+        </article>
     {% endfor %}
 
 {% endblock %}
