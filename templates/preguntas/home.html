@@ -34,9 +34,14 @@
                 </div>
                 <div class="col col-sm-9">
                     <h4 class="titulo"><a href="{% url 'preguntas_crear_url' %}">{{ pregunta.titulo }}</a></h4>
-                    <div>Tags</div>
-                    <div>Tiempo</div>
-                    <div>Usuario</div>
+                    <div class="row">
+                        <div class="col col-sm-8">
+                            {% for tag in pregunta.tags.all %}
+                                <a class="btn btn-info btn-xs" href="{% url 'preguntas_por_tag_url' tag.id %}">{{ tag.nombre }}</a>
+                            {% endfor %}
+                        </div>
+                        <div class="col col-sm-4">Tiempo</div>
+                    </div>
                 </div>
             </div>
             <hr />
