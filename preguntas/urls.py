@@ -5,7 +5,7 @@ admin.autodiscover()
 urlpatterns = patterns('app.views',
     url(r'^$', 'preguntas_view', name='preguntas_url'),
     url(r'^crear/$', 'preguntas_crear_view', name='preguntas_crear_url'),
-    url(r'^editar/(\d+)/$', 'preguntas_editar_view', name='preguntas_editar_url'),
+    url(r'^editar/(\d+)/(\w\-+)/$', 'preguntas_editar_view', name='preguntas_editar_url'),
     url(r'^eliminar/(\d+)/$', 'preguntas_eliminar_view', name='preguntas_eliminar_url'),
     url(r'^responder/(\d+)/$', 'preguntas_responder_view', name='preguntas_responder_url'),
     url(r'^abiertas/$', 'preguntas_abiertas_view', name='preguntas_abiertas_url'),
@@ -17,7 +17,7 @@ urlpatterns = patterns('app.views',
 
     url(r'^tags/crear/$', 'tags_crear_view', name='tags_crear_url'),
     url(r'user/(\d+)/$', 'usuarios_perfil_view', name='usuarios_perfil_url'),
-    
+
     url(r'^comentarios/crear/$', 'comentarios_crear_view', name='comentarios_crear_url'),
     url(r'^comentarios/(\d+)/editar/$', 'comentarios_editar_view', name='comentarios_editar_url'),
     url(r'^comentarios/(\d+)/eliminar/$', 'comentarios_eliminar_view', name='comentarios_eliminar_url'),

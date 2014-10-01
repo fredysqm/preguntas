@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from django.template.defaultfilters import slugify
 
 ESTADOS = (
     (0, 'Por Defecto'),
@@ -38,6 +39,7 @@ class comentario(models.Model):
 
 class pregunta(models.Model):
     titulo = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100)
     autor = models.ForeignKey(User)
     contenido = models.TextField()
     n_vistas = models.PositiveIntegerField(default=0)
@@ -48,6 +50,11 @@ class pregunta(models.Model):
     fecha_hora = models.DateTimeField(auto_now_add=True)
     tags = models.ManyToManyField(tag)
     comentarios = GenericRelation(comentario)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.titulo)
+        super(pregunta, self).save(*args, **kwargs)
 
 class respuesta(models.Model):
     pregunta = models.ForeignKey(pregunta)

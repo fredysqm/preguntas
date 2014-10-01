@@ -32,7 +32,7 @@ def preguntas_crear_view(request):
     args['form'] = form
     return render(request,'preguntas/crear.html', args)
 
-def preguntas_editar_view(request, pregunta_id):
+def preguntas_editar_view(request, pregunta_id, slug):
     args = {}
     _pregunta = get_object_or_404(pregunta, id=pregunta_id)
 
