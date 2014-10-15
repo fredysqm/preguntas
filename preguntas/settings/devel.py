@@ -16,6 +16,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'pipeline',
     'mockups',
+    'registration',
     #'debug_toolbar.apps.DebugToolbarConfig',
 )
 

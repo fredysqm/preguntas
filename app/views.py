@@ -32,25 +32,29 @@ def preguntas_crear_view(request):
     args['form'] = form
     return render(request,'preguntas/crear.html', args)
 
+@login_required()
 def preguntas_editar_view(request, pregunta_id):
     args = {}
     _pregunta = get_object_or_404(pregunta, id=pregunta_id)
 
-    if request.POST:
-        form = pregunta_form(request.POST, instance=_pregunta)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('preguntas_url'))
-    else:
-        form = pregunta_form(initial={'titulo':_pregunta.titulo, 'contenido':_pregunta.contenido,
-                                      'tags':_pregunta.tags, 'autor':_pregunta.autor})
-        all_tags = tag.objects.all()
+    if _pregunta.id_autor == user.id:
+        if request.POST:
+            form = pregunta_form(request.POST, instance=_pregunta)
+            if form.is_valid():
+                form.save()
+                return HttpResponseRedirect(reverse('preguntas_url'))
+        else:
+            form = pregunta_form(initial={'titulo':_pregunta.titulo, 'contenido':_pregunta.contenido,
+                                        'tags':_pregunta.tags, 'autor':_pregunta.autor})
+            all_tags = tag.objects.all()
 
-    args.update(csrf(request))
-    args['pregunta'] = _pregunta
-    args['form'] = form
-    args['all_tags'] = all_tags
-    return render(request, 'preguntas/editar.html', args)
+        args.update(csrf(request))
+        args['pregunta'] = _pregunta
+        args['form'] = form
+        args['all_tags'] = all_tags
+        return render(request, 'preguntas/editar.html', args)
+    else:
+        return render(request, 'errores/no_autorizado.html', args)
 
 def preguntas_ver_view(request, pregunta_id):
     args = {}
@@ -199,7 +203,7 @@ def usuarios_perfil_view(request, user_id):
     args['usuario'] = requested_user
     args['usuario_detalles'] = requested_user_details
     args['usuario_extra'] = requested_user_extra
-    return render(request, 'usuario/usuarios_perfil.html', args)
+    return render(request, 'usuarios/usuarios_perfil.html', args)
 
 # COMENTARIOS
 def comentarios_crear_view(request):
@@ -236,7 +240,6 @@ def comentarios_editar_view(request, comentario_id):
     return render(request, 'comentarios/editar.html', args)
 
 def comentarios_eliminar_view(request, comentario_id):
-    # ESTAS AQUI. Tienes que ver que elimine bien el comentario.
     args = {}
     _comentario = get_object_or_404(comentario, id=comentario_id)
 
@@ -253,18 +256,18 @@ def comentarios_eliminar_view(request, comentario_id):
     args['comentario'] = _comentario
     return render(request, 'comentarios/eliminar.html', args)
 
-# def crear_usuario( request ):
-#     args = {}
-#     args.update(csrf(request))
-#     if request.POST:
-#         form = user_form( request.POST )
-#         validar_formulario( form )
-#         return HttpResponseRedirect( '/' )
-#     else:
-#         form = user_form()
+def usuario_crear_view( request ):
+    args = {}
+    args.update(csrf(request))
+    if request.POST:
+        form = user_form( request.POST )
+        if form.is_valid():
+            return HttpResponseRedirect( '/' )
+    else:
+        form = user_form()
 
-#     args[ 'form' ] = form
-#     return render(request, 'crear_usuario.html', args)
+    args[ 'form' ] = form
+    return render(request, 'usuarios/crear_usuario.html', args)
 
 # def crear_respuesta( request ):
 #     if request.POST:

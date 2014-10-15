@@ -8,7 +8,7 @@
     <title>{% block title %}{% endblock %} - StackPreguntas</title>
 
     <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
-    {% compressed_css 'all' %}
+    
     {% block css %}{% endblock %}
 
 </head>
@@ -30,8 +30,13 @@
                     <li><a href="#">Usuarios</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
+                    {% if user.is_authenticated %}
+                    <li>¡Bienvenido!</li>
+                    <li><a href="#">{{ user.username }}</a></li>
+                    {% else %}
                     <li><a href="#">Registrarse</a></li>
                     <li><a href="#">Iniciar Sesión</a></li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

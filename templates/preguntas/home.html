@@ -5,7 +5,9 @@
     <p>
         <ul class="nav nav-tabs">
             <li class="active"><a href="{% url 'preguntas_url' %}">Preguntas</a></li>
+            {%  if user.is_authenticated %}
             <li><a href="{% url 'preguntas_crear_url' %}">Crear</a></li>
+            {% endif %}
         </ul>
     </p>
 
@@ -35,7 +37,13 @@
                     </div>
                 </div>
                 <div class="col col-sm-9">
-                    <h4 class="titulo"><a href="{% url 'preguntas_editar_url' pregunta.id %}">{{ pregunta.titulo }}</a></h4>
+                    <h4 class="titulo">
+                        {% if user.id == pregunta.autor_id %}
+                            <a href="{% url 'preguntas_editar_url' pregunta.id pregunta.slug %}">{{ pregunta.titulo }}</a>
+                        {% else %}
+                            {{ pregunta.titulo }}
+                        {% endif %}
+                    </h4>
                     <div class="row">
                         <div class="col col-sm-8">
                             {% for tag in pregunta.tags.all %}
