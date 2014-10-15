@@ -52,6 +52,17 @@ def preguntas_editar_view(request, pregunta_id):
     args['all_tags'] = all_tags
     return render(request, 'preguntas/editar.html', args)
 
+def preguntas_ver_view(request, pregunta_id):
+    args = {}
+    _pregunta = get_object_or_404(pregunta, id=pregunta_id)
+    _respuestas = respuesta.objects.filter(pregunta_id=pregunta_id)
+    _comentarios = respuesta.objects.filter(pregunta_id=pregunta_id)
+    args.update(csrf(request))
+    args['pregunta'] = _pregunta
+    args['respuestas'] = _respuestas
+    args['comentarios'] = _comentarios
+    return render(request,'preguntas/ver.html', args)
+    
 def preguntas_eliminar_view(request, pregunta_id):
     args = {}
     _pregunta = get_object_or_404(pregunta, id=pregunta_id)

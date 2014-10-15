@@ -4,7 +4,8 @@ admin.autodiscover()
 
 urlpatterns = patterns('app.views',
     url(r'^$', 'preguntas_view', name='preguntas_url'),
-    url(r'^crear/$', 'preguntas_crear_view', name='preguntas_crear_url'),
+    url(r'^crear/$', 'preguntas_crear_view', name='preguntas_crear_url'),    
+    url(r'^ver/(\d+)/$', 'app.views.preguntas_ver_view', name='preguntas_ver_url'),
     url(r'^editar/(\d+)/', 'preguntas_editar_view', name='preguntas_editar_url'),
     url(r'^eliminar/(\d+)/$', 'preguntas_eliminar_view', name='preguntas_eliminar_url'),
     url(r'^responder/(\d+)/$', 'preguntas_responder_view', name='preguntas_responder_url'),
