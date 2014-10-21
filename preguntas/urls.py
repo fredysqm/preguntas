@@ -23,6 +23,7 @@ urlpatterns = patterns('',
 
     url(r'^tags/crear/$', 'app.views.tags_crear_view', name='tags_crear_url'),
     url(r'user/(\d+)/$', 'app.views.usuarios_perfil_view', name='usuarios_perfil_url'),
+    url(r'user/(\d+)/editar/$', 'app.views.usuarios_perfil_editar_view', name='usuarios_perfil_editar_url'),
 
     url(r'^comentarios/crear/$', 'app.views.comentarios_crear_view', name='comentarios_crear_url'),
     url(r'^comentarios/(\d+)/editar/$', 'app.views.comentarios_editar_view', name='comentarios_editar_url'),

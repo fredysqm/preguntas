@@ -5,7 +5,7 @@ from django.core.context_processors import csrf
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
-from .forms import pregunta_form, respuesta_form, tag_form, user_form, pregunta_eliminar_form, respuesta_eliminar_form, comentario_form, comentario_eliminar_form
+from .forms import pregunta_form, respuesta_form, tag_form, user_form, user_editar_form, user_detalles_form, pregunta_eliminar_form, respuesta_eliminar_form, comentario_form, comentario_eliminar_form
 from .models import pregunta, respuesta, tag, usuario_detalles, usuario_extra, comentario
 
 
@@ -197,14 +197,51 @@ def tags_crear_view(request):
 
 def usuarios_perfil_view(request, user_id):
     args = {}
+    
     requested_user = get_object_or_404(User, id=user_id)
-    requested_user_details = get_object_or_404(usuario_detalles, usuario_detalles=user_id)
-    requested_user_extra = get_object_or_404(usuario_extra, usuario_extra=user_id)
+    requested_user_details = usuario_detalles.objects.get(usuario_detalles=user_id)
+    requested_user_extra = usuario_extra.objects.get(usuario_extra=user_id)
+    
+    #requested_user = get_object_or_404(User, id=user_id)
+    #requested_user_details = usuario_detalles.objects.filter(usuario_detalles=user_id)
+    #requested_user_extra = usuario_extra.objects.filter(usuario_extra=user_id)
+    #args['usuario'] = requested_user
+    #args['usuario_detalles'] = requested_user_details
+    #args['usuario_extra'] = requested_user_extra
+    # return render(request, 'usuario/usuarios_perfil.html', args)
+    
+    args.update(csrf(request))
+    # args['form'] = form
+    
     args['usuario'] = requested_user
     args['usuario_detalles'] = requested_user_details
     args['usuario_extra'] = requested_user_extra
     return render(request, 'usuarios/usuarios_perfil.html', args)
 
+def usuarios_perfil_editar_view(request, user_id):
+    args = {}
+    requested_user = get_object_or_404(User, id=user_id)
+    requested_user_details = usuario_detalles.objects.get(usuario_detalles=user_id)
+    requested_user_extra = usuario_extra.objects.get(usuario_extra=user_id)
+    
+    if request.POST:
+        form_maestro = user_editar_form(request.POST, instance=requested_user)
+        form_detalle = user_detalles_form(request.POST, instance=requested_user_details)
+        if form_maestro.is_valid() and form_detalle.is_valid():
+            form_maestro.save()
+            form_detalle.save()
+            return HttpResponseRedirect(reverse('usuarios_perfil_url', args=[user_id]))
+    else:
+        form_maestro = user_editar_form(initial={'first_name' : requested_user.first_name,
+                                      'last_name'  : requested_user.last_name,
+                                      'email'      : requested_user.email,})        
+        form_detalle = user_detalles_form(initial={'descripcion' : requested_user_details.descripcion})
+            
+    args.update(csrf(request))
+    args['form_maestro'] = form_maestro
+    args['form_detalle'] = form_detalle
+    return render(request, 'usuarios/editar_perfil.html', args)
+    
 # COMENTARIOS
 def comentarios_crear_view(request):
     args = {}

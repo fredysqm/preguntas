@@ -7,7 +7,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Field, Fieldset, Button
 from crispy_forms.bootstrap import PrependedText, PrependedAppendedText, FormActions
 
-from .models import pregunta, respuesta, tag, comentario
+from .models import pregunta, respuesta, tag, comentario, usuario_detalles
 
 class pregunta_form(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -44,8 +44,18 @@ class pregunta_eliminar_form(forms.ModelForm):
 class user_form(forms.ModelForm):
     class Meta:
         model = User
-        exclude = ()
+        fields = ('username','password','first_name','last_name','email',)
 
+class user_editar_form(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name','last_name','email',)
+        
+class user_detalles_form(forms.ModelForm):
+    class Meta:
+        model = usuario_detalles
+        fields = ('descripcion',)
+        
 class respuesta_form(forms.ModelForm):
     class Meta:
         model = respuesta
