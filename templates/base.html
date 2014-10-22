@@ -32,10 +32,11 @@
                 <ul class="nav navbar-nav navbar-right">
                     {% if user.is_authenticated %}
                     <li>¡Bienvenido!</li>
-                    <li><a href="#">{{ user.username }}</a></li>
+                    <li><a href="{% url 'usuarios_perfil_url' user.id %}">{{ user.username }}</a></li>
+                    <li><a href="/accounts/logout/">Salir</a></li>
                     {% else %}
-                    <li><a href="#">Registrarse</a></li>
-                    <li><a href="#">Iniciar Sesión</a></li>
+                    <li><a href="/accounts/register">Registrarse</a></li>
+                    <li><a href="/accounts/login/">Iniciar Sesión</a></li>
                     {% endif %}
                 </ul>
             </div>
