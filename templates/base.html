@@ -26,8 +26,8 @@
             </div>
             <div class="navbar-collapse collapse" id="navbar-main">
                 <ul class="nav navbar-nav">
-                    <li><a href="#">Tags</a></li>
-                    <li><a href="#">Usuarios</a></li>
+                    <li><a href="{% url 'tags_ver_url' %}">Tags</a></li>
+                    <li><a href="{% url 'usuarios_ver_url' %}">Usuarios</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if user.is_authenticated %}

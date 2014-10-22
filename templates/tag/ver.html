@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Pregunta{% endblock %}
+{% block content %}
+<div class="row">
+    <ul>
+        {% for tag in tags %}
+        <li><a href="{% url 'preguntas_por_tag_url' tag.id %}">{{ tag.nombre }}</a></li>
+        {% empty %}
+        <li>¡No hay etiquetas que mostrar!</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

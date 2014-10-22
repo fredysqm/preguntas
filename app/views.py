@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.core.context_processors import csrf
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-
+import random
 from .forms import pregunta_form, respuesta_form, tag_form, user_form, user_editar_form, user_detalles_form, pregunta_eliminar_form, respuesta_eliminar_form, comentario_form, comentario_eliminar_form
 from .models import pregunta, respuesta, tag, usuario_detalles, usuario_extra, comentario
 
@@ -180,6 +180,13 @@ def respuestas_eliminar_view(request, respuesta_id):
 
 
 # TAGS
+def tags_ver_view(request):
+    args = {}
+    tags = tag.objects.all()
+    args.update(csrf(request))
+    args['tags'] = tags
+    return render(request, 'tag/ver.html', args)
+
 def tags_crear_view(request):
     args = {}
     if request.POST:
@@ -194,25 +201,29 @@ def tags_crear_view(request):
     args['form'] = form
     return render(request,'tag/tag_crear.html', args)
 
-
+# USUARIOS
+def usuarios_ver_view(request):
+    args = {}
+    
+    limit = User.objects.count() - 1
+    if limit < 10:
+        index = random.sample(xrange(1, limit + 1), limit)
+    else:
+        index = random.sample(xrange(1, limit), 10)
+    users = list(User.objects.all()[i] for i in index)
+    args.update(csrf(request))        
+    args['usuarios'] = users
+    return render(request, 'usuarios/ver.html', args)
+    
+    
 def usuarios_perfil_view(request, user_id):
     args = {}
     
     requested_user = get_object_or_404(User, id=user_id)
     requested_user_details = usuario_detalles.objects.get(usuario_detalles=user_id)
     requested_user_extra = usuario_extra.objects.get(usuario_extra=user_id)
-    
-    #requested_user = get_object_or_404(User, id=user_id)
-    #requested_user_details = usuario_detalles.objects.filter(usuario_detalles=user_id)
-    #requested_user_extra = usuario_extra.objects.filter(usuario_extra=user_id)
-    #args['usuario'] = requested_user
-    #args['usuario_detalles'] = requested_user_details
-    #args['usuario_extra'] = requested_user_extra
-    # return render(request, 'usuario/usuarios_perfil.html', args)
-    
+        
     args.update(csrf(request))
-    # args['form'] = form
-    
     args['usuario'] = requested_user
     args['usuario_detalles'] = requested_user_details
     args['usuario_extra'] = requested_user_extra

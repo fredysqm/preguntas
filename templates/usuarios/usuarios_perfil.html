@@ -6,7 +6,9 @@
     </div>
     <div class="row">
         <p>Nombre de usuario: {{ usuario.username }}</p>
-        <p>Descripción: {{ usuario_detalles.descripcion }}</p>
+        <p>Descripción: {% if usuario_detalles.descripcion|length = 0 %} (Sin descripción) 
+                        {% else %}{{ usuario_detalles.descripcion }}
+                        {% endif %}</p>
         <p>Puntaje: {{ usuario_extra.puntaje }} puntos</p>
     </div>
 {% endblock %}
