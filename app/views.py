@@ -4,7 +4,9 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.core.context_processors import csrf
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from haystack.query import SearchQuerySet
 import random
+
 from .forms import pregunta_form, respuesta_form, tag_form, user_form, user_editar_form, user_detalles_form, pregunta_eliminar_form, respuesta_eliminar_form, comentario_form, comentario_eliminar_form
 from .models import pregunta, respuesta, tag, usuario_detalles, usuario_extra, comentario
 
@@ -316,6 +318,13 @@ def usuario_crear_view( request ):
 
     args[ 'form' ] = form
     return render(request, 'usuarios/crear_usuario.html', args)
+
+# Búsqueda
+def search_titulo(request):
+    args = {}
+    _preguntas = SearchQuerySet().autocomplete(content_auto=request.POST.get('search_text', ''))
+    args['preguntas'] = _preguntas
+    return render(request, 'ajax_search.html', args)
 
 # def crear_respuesta( request ):
 #     if request.POST:
