@@ -2,9 +2,9 @@ import datetime
 from haystack import indexes
 from models import pregunta
 
-class preguntaIndex(indexes.SearchIndex, indexes.Indexable):
-    titulo = indexes.CharField(document=True, use_template=True)
-    fecha = indexes.DateTimeField(model_attr='titulo')
+class pregunta_index(indexes.SearchIndex, indexes.Indexable):
+    text = indexes.CharField(document=True, use_template=True)
+    fecha = indexes.DateTimeField(model_attr='fecha_hora')
     
     content_auto = indexes.EdgeNgramField(model_attr='titulo')
     
