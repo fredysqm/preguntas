@@ -10,7 +10,7 @@ import random
 from .forms import pregunta_form, respuesta_form, tag_form, user_form, user_editar_form, user_detalles_form, pregunta_eliminar_form, respuesta_eliminar_form, comentario_form, comentario_eliminar_form
 from .models import pregunta, respuesta, tag, usuario_detalles, usuario_extra, comentario
 
-
+from django.template.defaultfilters import slugify
 
 #PREGUNTAS
 def preguntas_view(request):
@@ -22,10 +22,12 @@ def preguntas_view(request):
 def preguntas_crear_view(request):
     args = {}
     if request.POST:
-        _pregunta = pregunta(autor=request.user)
-        form = pregunta_form(request.POST, instance=_pregunta)
+        form = pregunta_form(request.POST)
         if form.is_valid():
-            form.save()
+            _pregunta = form.save(commit=False)
+            _pregunta.slug = slugify(_pregunta.titulo)
+            _pregunta.autor_id = request.user.id
+            _pregunta.save()
             return HttpResponseRedirect(reverse('preguntas_url'))
     else:
         form = pregunta_form()
@@ -93,11 +95,7 @@ def preguntas_responder_view(request,pregunta_id):
         form = respuesta_form(request.POST)
         if form.is_valid():
             pregunta_obj = pregunta.objects.filter(id=pregunta_id).values('n_respuestas')[0]
-            if pregunta_obj['n_respuestas'] > -1:
-                pregunta.objects.filter(id=pregunta_id).update(n_respuestas=(pregunta_obj['n_respuestas']+1),
-                                                               respondido=True)
-            else:
-                pregunta.objects.filter(id=pregunta_id).update(n_respuestas=(pregunta_obj['n_respuestas']+1))
+            pregunta.objects.filter(id=pregunta_id).update(n_respuestas=(pregunta_obj['n_respuestas']+1))
             form.save()
             return HttpResponseRedirect(reverse('preguntas_url'))
     else:
@@ -319,7 +317,7 @@ def usuario_crear_view( request ):
     args[ 'form' ] = form
     return render(request, 'usuarios/crear_usuario.html', args)
 
-# Búsqueda
+# Busqueda
 def search_titulo(request):
     args = {}
     _preguntas = SearchQuerySet().autocomplete(content_auto=request.POST.get('search_text', ''))

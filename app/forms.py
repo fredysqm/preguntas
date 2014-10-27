@@ -33,7 +33,7 @@ class pregunta_form(forms.ModelForm):
 
     class Meta:
         model = pregunta
-        exclude = ('n_vistas', 'n_respuestas', 'n_votos', 'respondido', 'estado', 'autor')
+        exclude = ('n_vistas', 'n_respuestas', 'n_votos', 'respondido', 'estado', 'autor', 'slug')
 
 
 class pregunta_eliminar_form(forms.ModelForm):
