@@ -35,8 +35,7 @@
                 </div>
                 <div class="fieldWrapper">
                     {{ form.autor.errors }}
-                    <label class="label-fix" for="id_autor">Autor ID:</label>
-                    {{ form.autor }}
+                    {{ form.autor.as_hidden }}
                 </div>
                 <div class="fieldWrapper">
                     {{ form.n_votos.errors }}
@@ -60,7 +59,7 @@
                 <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 {% cycle 'checkered' 'non-checkered' %} ">
                     <p>{{ respuesta.contenido }}</p>
                     <p><strong>Autor: {{ respuesta.autor }}</strong> -- {{ respuesta.fecha_hora }}</p>
-                    <p>Respondida {% load humanize %} {{ respuesta.fecha_hora|naturaltime }}</p>
+                    <p>Respondida hace ...</p>
                     <p><a href="{% url 'respuestas_editar_url' respuesta.id %}">Editar</a></p>
                     <p><a href="{% url 'respuestas_eliminar_url' respuesta.id %}">Eliminar</a></p>
                 <hr/>

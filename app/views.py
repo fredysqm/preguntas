@@ -28,8 +28,9 @@ def preguntas_crear_view(request):
             _pregunta.slug = slugify(_pregunta.titulo)
             _pregunta.autor_id = request.user.id
             _pregunta.save()
+            
             return HttpResponseRedirect(reverse('preguntas_url'))
-    else:
+    else:   
         form = pregunta_form()
 
     args.update(csrf(request))
@@ -37,11 +38,11 @@ def preguntas_crear_view(request):
     return render(request,'preguntas/crear.html', args)
 
 @login_required()
-def preguntas_editar_view(request, pregunta_id):
+def preguntas_editar_view(request, pregunta_id, pregunta_slug):
     args = {}
     _pregunta = get_object_or_404(pregunta, id=pregunta_id)
 
-    if _pregunta.id_autor == user.id:
+    if _pregunta.autor_id == request.user.id:
         if request.POST:
             form = pregunta_form(request.POST, instance=_pregunta)
             if form.is_valid():
@@ -64,7 +65,7 @@ def preguntas_ver_view(request, pregunta_id):
     args = {}
     _pregunta = get_object_or_404(pregunta, id=pregunta_id)
     _respuestas = respuesta.objects.filter(pregunta_id=pregunta_id)
-    _comentarios = respuesta.objects.filter(pregunta_id=pregunta_id)
+    _comentarios = comentario.objects.filter(content_type=11, object_id=pregunta_id)
     args.update(csrf(request))
     args['pregunta'] = _pregunta
     args['respuestas'] = _respuestas
@@ -99,7 +100,7 @@ def preguntas_responder_view(request,pregunta_id):
             form.save()
             return HttpResponseRedirect(reverse('preguntas_url'))
     else:
-        form = respuesta_form(initial={'pregunta':pregunta_id})
+        form = respuesta_form(initial={'pregunta':pregunta_id, 'autor':request.user.id})
 
     pregunta_obj = get_object_or_404(pregunta, id=pregunta_id)
     pregunta.objects.filter(id=pregunta_id).update(n_vistas=(pregunta_obj.n_vistas + 1))
@@ -187,6 +188,13 @@ def tags_ver_view(request):
     args['tags'] = tags
     return render(request, 'tag/ver.html', args)
 
+def tags_populares_ver_view(request):
+    args = {}
+    tags = tag.objects.all().order_by()[:20]
+    args.update(csrf(request))
+    args['tags'] = tags
+    return render(request, 'tag/ver.html', args)
+    
 def tags_crear_view(request):
     args = {}
     if request.POST:

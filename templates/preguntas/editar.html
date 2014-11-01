@@ -3,7 +3,7 @@
 {% block content %}
     <h2>Editar Pregunta</h2>
     <p><a href="{% url 'preguntas_url' %}">Lista de preguntas</a></p>
-    <form action="{% url 'preguntas_editar_url' pregunta.id %}" method="post">{% csrf_token %}
+    <form action="{% url 'preguntas_editar_url' pregunta.id pregunta.slug %}" method="post">{% csrf_token %}
         {{ form.non_field_errors }}
         <div class="fieldWrapper">
             {{ form.titulo.errors }}

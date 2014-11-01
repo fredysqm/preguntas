@@ -2,8 +2,9 @@ from django.conf.urls.defaults import *
 from search_forms import PreguntasSearchForm
 from haystack.query import SearchQuerySet
 from haystack.views import SearchView, search_view_factory
+from app.models import pregunta
 
-sqs = SearchQuerySet().all()
+sqs = SearchQuerySet().models(pregunta).all()
 
 
 urlpatterns = patterns('',

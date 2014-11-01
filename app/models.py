@@ -23,6 +23,8 @@ class usuario_detalles(models.Model):
 
 class tag(models.Model):
     nombre = models.CharField(max_length=25)
+    descripcion = models.CharField(max_length=50, default='')
+    n_preguntas = models.IntegerField(default=0, verbose_name="Preguntas con este tag")
     def __unicode__(self): return "%s" % (self.nombre)
 
 class comentario(models.Model):

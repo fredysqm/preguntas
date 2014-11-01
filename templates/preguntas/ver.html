@@ -23,7 +23,7 @@
         <ul>
         {% if respuestas.count > 0 %}
             {% for respuesta in respuestas %}
-            <li><strong>{{ comentario.contenido }}</strong> -- Por <em>{{ comentario.autor }}</em></li>
+            <li><strong>{{ respuesta.contenido }}</strong> -- Por <em>{{ respuesta.autor }}</em></li>
             {% endfor %}
         {% else %}
             <strong><p>¡Aún no hay respuestas!</p></strong>
@@ -38,7 +38,7 @@
         <ul>
         {% if comentarios.count > 0 %}
             {% for comentario in comentarios %}
-            <li><strong>{{ comentario.contenido }}</strong> -- Por <em>{{ comentario.autor }}</em></li>
+            <li><strong>hOLA{{ comentario.contenido }}</strong> -- Por <em>{{ comentario.autor }}</em></li>
             {% endfor %}
         {% else %}
             <strong><p>¡Aún no hay comentarios!</p></strong>
