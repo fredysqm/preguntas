@@ -74,7 +74,7 @@ class tag_form(forms.ModelForm):
 class comentario_form(forms.ModelForm):
     class Meta:
         model = comentario
-        exclude = ()
+        exclude = ('n_votos','estado','fecha_hora')
 
 class comentario_eliminar_form(forms.ModelForm):
     class Meta:

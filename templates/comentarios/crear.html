@@ -20,18 +20,15 @@
                 {{ form.non_field_errors }}
                 <div class="fieldWrapper">
                     {{ form.content_type.errors }}
-                    <label class="label-fix" for="id_content_type">Tipo de objeto:</label>
-                    {{ form.content_type }}
+                    {{ form.content_type.as_hidden }}
                 </div>
                 <div class="fieldWrapper">
                     {{ form.object_id.errors }}
-                    <label class="label-fix" for="id_object_id">ID de objeto:</label>
-                    {{ form.object_id }}
+                    {{ form.object_id.as_hidden }}
                 </div>
                 <div class="fieldWrapper">
                     {{ form.autor.errors }}
-                    <label class="label-fix" for="id_autor">Autor ID:</label>
-                    {{ form.autor }}
+                    {{ form.autor.as_hidden }}
                 </div>
                 <div class="fieldWrapper">
                     {{ form.contenido.errors }}

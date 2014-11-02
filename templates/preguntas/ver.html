@@ -12,7 +12,7 @@
             <li class="pregunta-detalle">Votos {{ pregunta.n_votos }}</li>
             <li class="pregunta-detalle">{{ pregunta.n_vistas }} Vistas</li>
         </ul>
-        <a href="{% url 'comentarios_crear_url' %}">Añadir comentario a la pregunta</a>
+        <a href="/comentarios/crear?return_url={{ path }}&object_id={{ object_id }}">Añadir comentario a la pregunta</a>
         </div>
     </div>
     <div class="row">
@@ -38,7 +38,7 @@
         <ul>
         {% if comentarios.count > 0 %}
             {% for comentario in comentarios %}
-            <li><strong>hOLA{{ comentario.contenido }}</strong> -- Por <em>{{ comentario.autor }}</em></li>
+            <li><strong>{{ comentario.contenido }}</strong> -- Por <em>{{ comentario.autor }}</em></li>
             {% endfor %}
         {% else %}
             <strong><p>¡Aún no hay comentarios!</p></strong>

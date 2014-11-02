@@ -70,6 +70,8 @@ def preguntas_ver_view(request, pregunta_id):
     args['pregunta'] = _pregunta
     args['respuestas'] = _respuestas
     args['comentarios'] = _comentarios
+    args['path'] = request.path
+    args['object_id'] = pregunta_id
     return render(request,'preguntas/ver.html', args)
     
 def preguntas_eliminar_view(request, pregunta_id):
@@ -262,15 +264,20 @@ def usuarios_perfil_editar_view(request, user_id):
     return render(request, 'usuarios/editar_perfil.html', args)
     
 # COMENTARIOS
-def comentarios_crear_view(request):
+def comentarios_crear_view(request):    
     args = {}
+    import pdb; pdb.set_trace()
     if request.POST:
         form = comentario_form(request.POST)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('preguntas_url'))
     else:
-        form = comentario_form(initial={'n_votos' : 0, 'estado' : 0})
+        if 'pregunta' in request.GET['return_url']:
+            form = comentario_form(initial={'n_votos' : 0, 'estado' : 0, 'autor' : request.user.id})
+        else:
+            import pdb; pdb.set_trace()
+            form = comentario_form(initial={'n_votos' : 0, 'estado' : 0, 'autor' : request.user.id, 'content_type' : 11, 'object_id' : request.GET['object_id']})
 
     args.update(csrf(request))
     args['form'] = form
