@@ -65,13 +65,17 @@ def preguntas_ver_view(request, pregunta_id):
     args = {}
     _pregunta = get_object_or_404(pregunta, id=pregunta_id)
     _respuestas = respuesta.objects.filter(pregunta_id=pregunta_id)
+    comentarios_respuestas = []
+    for _respuesta in _respuestas.values():
+        comentarios_respuestas.append(comentario.objects.filter(content_type=12, object_id=_respuesta['id']))
     _comentarios = comentario.objects.filter(content_type=11, object_id=pregunta_id)
     args.update(csrf(request))
     args['pregunta'] = _pregunta
-    args['respuestas'] = _respuestas
+    args['respuestas'] = zip(_respuestas, comentarios_respuestas)
     args['comentarios'] = _comentarios
     args['path'] = request.path
     args['object_id'] = pregunta_id
+    pregunta.objects.filter(id=pregunta_id).update(n_vistas=(_pregunta.n_vistas + 1))
     return render(request,'preguntas/ver.html', args)
     
 def preguntas_eliminar_view(request, pregunta_id):
@@ -266,17 +270,15 @@ def usuarios_perfil_editar_view(request, user_id):
 # COMENTARIOS
 def comentarios_crear_view(request):    
     args = {}
-    import pdb; pdb.set_trace()
     if request.POST:
         form = comentario_form(request.POST)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('preguntas_url'))
     else:
-        if 'pregunta' in request.GET['return_url']:
-            form = comentario_form(initial={'n_votos' : 0, 'estado' : 0, 'autor' : request.user.id})
+        if 'respuesta' in request.GET['return_url']:
+            form = comentario_form(initial={'n_votos' : 0, 'estado' : 0, 'autor' : request.user.id, 'content_type' : 12, 'object_id' : request.GET['object_id']})
         else:
-            import pdb; pdb.set_trace()
             form = comentario_form(initial={'n_votos' : 0, 'estado' : 0, 'autor' : request.user.id, 'content_type' : 11, 'object_id' : request.GET['object_id']})
 
     args.update(csrf(request))

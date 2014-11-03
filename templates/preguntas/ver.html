@@ -7,10 +7,10 @@
         <h2><strong>{{ pregunta.titulo }}</strong></h2>
         <p>{{ pregunta.contenido }}</p>
         <ul>
-            <li class="pregunta-detalle">Por {{ pregunta.autor }}</li>
-            <li class="pregunta-detalle">{{ pregunta.n_respuestas }} Respuestas</li>
-            <li class="pregunta-detalle">Votos {{ pregunta.n_votos }}</li>
-            <li class="pregunta-detalle">{{ pregunta.n_vistas }} Vistas</li>
+            <li>Por {{ pregunta.autor }}</li>
+            <li>{{ pregunta.n_respuestas }} Respuestas</li>
+            <li>Votos {{ pregunta.n_votos }}</li>
+            <li>{{ pregunta.n_vistas }} Vistas</li>
         </ul>
         <a href="/comentarios/crear?return_url={{ path }}&object_id={{ object_id }}">Añadir comentario a la pregunta</a>
         </div>
@@ -20,10 +20,26 @@
     </div>
     <div class="row">
         <!-- Respuesetas -->
+        <h4>Respuestas</h4>
         <ul>
-        {% if respuestas.count > 0 %}
-            {% for respuesta in respuestas %}
+        {% if respuestas.count > 0 %}            
+            {% for respuesta, comentarios in respuestas %}
             <li><strong>{{ respuesta.contenido }}</strong> -- Por <em>{{ respuesta.autor }}</em></li>
+            <hr/>
+            <h5>Comentarios de respuesta</h5>
+            {% if comentarios.count > 0 %}
+                {% for comentario in comentarios %}
+                    <p>
+                        {{ comentario.contenido }} -- Por <em>{{ comentario.autor }} </em>
+                        {% if comentario.autor.id == user.id %}
+                            <a href="{% url 'comentarios_editar_url' comentario.id %}">(Editar)</a> 
+                        {% endif %}
+                    </p>
+                {% endfor %}
+            {% else %}
+            <strong><p>¡Esta respuesta aún no tiene comentarios!</p></strong>
+            {% endif %}
+            <small><a href="/comentarios/crear?return_url=/respuesta/{{ respuesta.id }}&object_id={{ respuesta.id }}">Comentar respuesta</a></small>
             {% endfor %}
         {% else %}
             <strong><p>¡Aún no hay respuestas!</p></strong>
@@ -35,10 +51,13 @@
     </div>
     <div class="row">
         <!-- Comentarios -->
-        <ul>
+        <h4>Comentarios</h4>
+        <ul>        
         {% if comentarios.count > 0 %}
             {% for comentario in comentarios %}
-            <li><strong>{{ comentario.contenido }}</strong> -- Por <em>{{ comentario.autor }}</em></li>
+            <li><strong>{{ comentario.contenido }}</strong> -- Por <em>{{ comentario.autor }} </em>
+            {% if user.id == comentario.autor.id %} <a href="{% url 'comentarios_editar_url' comentario.id %}">(Editar)</a> {% endif %}
+            </li>
             {% endfor %}
         {% else %}
             <strong><p>¡Aún no hay comentarios!</p></strong>
