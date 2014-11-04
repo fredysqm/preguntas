@@ -50,7 +50,7 @@ class pregunta(models.Model):
     respondido = models.BooleanField(default=False)
     estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADOS)
     fecha_hora = models.DateTimeField(auto_now_add=True)
-    tags = models.ManyToManyField(tag)
+    tags = models.ManyToManyField(tag, blank=False)
     comentarios = GenericRelation(comentario)
 
     def save(self, *args, **kwargs):

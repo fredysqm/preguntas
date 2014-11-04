@@ -23,11 +23,20 @@ def preguntas_crear_view(request):
     args = {}
     if request.POST:
         form = pregunta_form(request.POST)
+        import pdb; pdb.set_trace()
         if form.is_valid():
             _pregunta = form.save(commit=False)
             _pregunta.slug = slugify(_pregunta.titulo)
             _pregunta.autor_id = request.user.id
             _pregunta.save()
+            
+            _tags = form.cleaned_data['tags']
+            for _tag in _tags:
+                _pregunta.tags.add(_tag)
+                _n_preguntas = _tag.n_preguntas
+                tag.objects.filter(id=_tag.id).update(n_preguntas=(_n_preguntas+1))
+            
+            
             
             return HttpResponseRedirect(reverse('preguntas_url'))
     else:   
@@ -196,7 +205,7 @@ def tags_ver_view(request):
 
 def tags_populares_ver_view(request):
     args = {}
-    tags = tag.objects.all().order_by()[:20]
+    tags = tag.objects.all().order_by('-n_preguntas')[:20]
     args.update(csrf(request))
     args['tags'] = tags
     return render(request, 'tag/ver.html', args)

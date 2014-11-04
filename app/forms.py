@@ -69,7 +69,7 @@ class respuesta_eliminar_form(forms.ModelForm):
 class tag_form(forms.ModelForm):
     class Meta:
         model = tag
-        exclude = ()
+        exclude = ('n_preguntas',)
 
 class comentario_form(forms.ModelForm):
     class Meta:

@@ -23,6 +23,7 @@ urlpatterns = patterns('',
 
     url(r'^tags/ver/$', 'app.views.tags_ver_view', name='tags_ver_url'),
     url(r'^tags/crear/$', 'app.views.tags_crear_view', name='tags_crear_url'),
+    url(r'^tags/populares/$', 'app.views.tags_populares_ver_view', name='tags_populares_ver_url'),
     url(r'users/$', 'app.views.usuarios_ver_view', name='usuarios_ver_url'),
     url(r'user/(\d+)/$', 'app.views.usuarios_perfil_view', name='usuarios_perfil_url'),
     url(r'user/(\d+)/editar/$', 'app.views.usuarios_perfil_editar_view', name='usuarios_perfil_editar_url'),

@@ -10,6 +10,11 @@
             <label class="label-fix" for="id_nombre">Nombre:</label>
             {{ form.nombre }}
         </div>
+        <div class="fieldWrapper">
+            {{ form.descripcion.errors }}
+            <label class="label-fix" for="id_descripcion">Descripcion:</label>
+            {{ form.descripcion }}
+        </div>
     <input type="submit" name="submit" value="Crear Tag"/>
     </form>
 {% endblock %}
