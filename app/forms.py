@@ -39,7 +39,7 @@ class pregunta_form(forms.ModelForm):
 class pregunta_eliminar_form(forms.ModelForm):
     class Meta:
         model = pregunta
-        exclude = ()
+        exclude = ('slug',)
 
 class user_form(forms.ModelForm):
     class Meta:

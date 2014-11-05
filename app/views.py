@@ -34,10 +34,8 @@ def preguntas_crear_view(request):
             for _tag in _tags:
                 _pregunta.tags.add(_tag)
                 _n_preguntas = _tag.n_preguntas
-                tag.objects.filter(id=_tag.id).update(n_preguntas=(_n_preguntas+1))
-            
-            
-            
+                tag.objects.filter(id=_tag.id).update(n_preguntas=(_n_preguntas+1))         
+                        
             return HttpResponseRedirect(reverse('preguntas_url'))
     else:   
         form = pregunta_form()
@@ -55,6 +53,16 @@ def preguntas_editar_view(request, pregunta_id, pregunta_slug):
         if request.POST:
             form = pregunta_form(request.POST, instance=_pregunta)
             if form.is_valid():
+                old_tags = _pregunta.tags.all()
+                new_tags = form.cleaned_data['tags']
+                to_add = old_tags.exclude(id__in = new_tags)
+                to_rest = new_tags.exclude(id__in = old_tags)
+                for _tag in to_add:
+                    _n_preguntas = _tag.n_preguntas
+                    tag.objects.filter(id=_tag.id).update(n_preguntas=(_n_preguntas-1))
+                for _tag in to_rest:
+                    _n_preguntas = _tag.n_preguntas
+                    tag.objects.filter(id=_tag.id).update(n_preguntas=(_n_preguntas+1))
                 form.save()
                 return HttpResponseRedirect(reverse('preguntas_url'))
         else:
@@ -93,9 +101,15 @@ def preguntas_eliminar_view(request, pregunta_id):
 
     if request.POST:
         form = pregunta_eliminar_form(request.POST, instance=_pregunta)
-
+        import pdb; pdb.set_trace()
         if form.is_valid():
-            _pregunta.delete()
+            _tags = _pregunta.tags.all()
+            for _tag in _tags:
+                _n_preguntas = _tag.n_preguntas
+                tag.objects.filter(id=_tag.id).update(n_preguntas=(_n_preguntas-1))
+
+            _pregunta.delete()          
+                        
             return HttpResponseRedirect(reverse('preguntas_url'))
     else:
         form = pregunta_eliminar_form(instance=_pregunta)
