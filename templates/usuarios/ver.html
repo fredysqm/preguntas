@@ -4,9 +4,10 @@
     <div class="row">
         <h1><strong>Usuarios</strong></h1>                    
     </div>
-    {% for usuario in usuarios %}
+    {% for usuario,detalles,extra in usuarios %}
     <div class="row">
-        <p>Nombre de usuario: <a href="{% url 'usuarios_perfil_url' usuario.id %}">{{ usuario.username }}</a></p>
+        <p>Nombre de usuario: <a href="{% url 'usuarios_perfil_url' usuario.id %}">{{ usuario.username }}</a> 
+        <em>"{{ detalles.descripcion }}"</em> ~ {{ extra.puntaje }} pts.</p>
     </div>
     {% endfor %}
 {% endblock %}

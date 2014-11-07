@@ -4,7 +4,7 @@ from django import forms
 from django.contrib.auth.models import User
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Field, Fieldset, Button
+from crispy_forms.layout import Submit, Layout, Field, Fieldset, Button, HTML
 from crispy_forms.bootstrap import PrependedText, PrependedAppendedText, FormActions
 
 from .models import pregunta, respuesta, tag, comentario, usuario_detalles
@@ -18,15 +18,17 @@ class pregunta_form(forms.ModelForm):
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-md-3'
         self.helper.field_class = 'col-md-9'
-
+        
         self.helper.layout = Layout(
             Fieldset('<span class="glyphicon glyphicon-pencil"></span> Crear Pregunta',
                 'titulo',
                 'contenido',
-                'tags',
+                #'tags',
+                HTML("<select multiple=\"multiple\" id=\"id_tags\" name=\"tags\">{% for tag in all_tags %}<option value=\"{{ tag.id }}\" {% if tag in pregunta.tags.all %}selected{% endif %}>{{ tag.nombre }}</option>{% endfor %}</select>"),
+                #Field('tags'),
             ),
-            FormActions(
-                Submit('submit', u'Crear'),
+            FormActions(                
+                Submit('submit', u'Guardar'),
                 css_class='text-right'
             ),
         )
@@ -37,9 +39,28 @@ class pregunta_form(forms.ModelForm):
 
 
 class pregunta_eliminar_form(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(pregunta_form, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.form_method = 'POST'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-md-3'
+        self.helper.field_class = 'col-md-9'
+        
+        self.helper.layout = Layout(
+            Fieldset('<span class="glyphicon glyphicon-pencil"></span> ¿Está seguro de que quiere eliminar la siguiente pregunta?',
+                HTML("<select multiple=\"multiple\" id=\"id_tags\" name=\"tags\">{% for tag in all_tags %}<option value=\"{{ tag.id }}\" {% if tag in pregunta.tags.all %}selected{% endif %}>{{ tag.nombre }}</option>{% endfor %}</select>"),
+            ),
+            FormActions(                
+                Submit('submit', u'Guardar'),
+                css_class='text-right'
+            ),
+        )
+    
     class Meta:
         model = pregunta
-        exclude = ('slug',)
+        exclude = ('slug', 'titulo', 'contenido', 'pregunta', 'autor', 'n_visitas', 'n_votos', 'n_respuestas', 'estado')
 
 class user_form(forms.ModelForm):
     class Meta:
@@ -67,6 +88,26 @@ class respuesta_eliminar_form(forms.ModelForm):
         exclude = ()
 
 class tag_form(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(tag_form, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.form_method = 'POST'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-md-3'
+        self.helper.field_class = 'col-md-9'
+
+        self.helper.layout = Layout(
+            Fieldset('<span class="glyphicon glyphicon-pencil"></span> Crear Tag',
+                'nombre',
+                'descripcion',
+            ),
+            FormActions(
+                Submit('submit', u'Crear'),
+                css_class='text-right'
+            ),
+        )
+    
     class Meta:
         model = tag
         exclude = ('n_preguntas',)

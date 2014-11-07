@@ -248,8 +248,10 @@ def usuarios_ver_view(request):
     else:
         index = random.sample(xrange(1, limit), 10)
     users = list(User.objects.all()[i] for i in index)
+    detalle = usuario_detalles.objects.filter(usuario_detalles__in = users)
+    extra = usuario_extra.objects.filter(usuario_extra__in = users)
     args.update(csrf(request))        
-    args['usuarios'] = users
+    args['usuarios'] = zip(users, detalle, extra)
     return render(request, 'usuarios/ver.html', args)
     
     
