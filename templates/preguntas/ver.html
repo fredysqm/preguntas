@@ -19,12 +19,14 @@
         <hr/>
     </div>
     <div class="row">
-        <!-- Respuesetas -->
+        <!-- Respuestas -->
         <h4>Respuestas</h4>
+        <a href="{% url 'preguntas_responder_url' pregunta.id %}">Responder pregunta</a>
         <ul>
         {% if respuestas.count > 0 %}            
             {% for respuesta, comentarios in respuestas %}
-            <li><strong>{{ respuesta.contenido }}</strong> -- Por <em>{{ respuesta.autor }}</em></li>
+            <li><strong>{{ respuesta.contenido }}</strong> -- Por <em>{{ respuesta.autor }}</em>
+                {% if user.id == pregunta.autor_id %}<a href="{% url 'respuestas_editar_url' respuesta.id %}">(Editar)</a>{% endif %}</li>
             <hr/>
             <h5>Comentarios de respuesta</h5>
             {% if comentarios.count > 0 %}

@@ -40,7 +40,7 @@ class pregunta_form(forms.ModelForm):
 
 class pregunta_eliminar_form(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(pregunta_form, self).__init__(*args, **kwargs)
+        super(pregunta_eliminar_form, self).__init__(*args, **kwargs)
 
         self.helper = FormHelper(self)
         self.helper.form_method = 'POST'
@@ -49,18 +49,26 @@ class pregunta_eliminar_form(forms.ModelForm):
         self.helper.field_class = 'col-md-9'
         
         self.helper.layout = Layout(
-            Fieldset('<span class="glyphicon glyphicon-pencil"></span> ¿Está seguro de que quiere eliminar la siguiente pregunta?',
-                HTML("<select multiple=\"multiple\" id=\"id_tags\" name=\"tags\">{% for tag in all_tags %}<option value=\"{{ tag.id }}\" {% if tag in pregunta.tags.all %}selected{% endif %}>{{ tag.nombre }}</option>{% endfor %}</select>"),
+            Fieldset("""<span class="glyphicon glyphicon-pencil"></span> Quiere eliminar la siguiente 
+                        pregunta?<hr/>
+                        <h2><strong>{{ pregunta.titulo }}</strong></h2>
+                        <p>{{ pregunta.contenido }}</p>
+                        <ul>
+                            <li>Por {{ pregunta.autor }}</li>
+                            <li>{{ pregunta.n_respuestas }} Respuestas</li>
+                            <li>Votos {{ pregunta.n_votos }}</li>
+                            <li>{{ pregunta.n_vistas }} Vistas</li>
+                        </ul>""",
             ),
             FormActions(                
-                Submit('submit', u'Guardar'),
+                Submit('submit', u'Eliminar'),
                 css_class='text-right'
             ),
         )
     
     class Meta:
         model = pregunta
-        exclude = ('slug', 'titulo', 'contenido', 'pregunta', 'autor', 'n_visitas', 'n_votos', 'n_respuestas', 'estado')
+        exclude = ('slug', 'titulo', 'contenido', 'pregunta', 'autor', 'n_vistas', 'n_votos', 'n_respuestas', 'estado', 'tags')
 
 class user_form(forms.ModelForm):
     class Meta:
@@ -80,12 +88,34 @@ class user_detalles_form(forms.ModelForm):
 class respuesta_form(forms.ModelForm):
     class Meta:
         model = respuesta
-        exclude = ()
+        exclude = ('n_votos', 'estado',)
 
 class respuesta_eliminar_form(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(respuesta_eliminar_form, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.form_method = 'POST'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-md-3'
+        self.helper.field_class = 'col-md-9'
+        
+        self.helper.layout = Layout(
+            Fieldset("""<span class="glyphicon glyphicon-pencil"></span> Quiere eliminar la siguiente 
+                        respuesta?<hr/>
+                        <p>{{ respuesta.contenido }}</p>
+                        <p><strong>Autor: {{ respuesta.autor }}</strong> -- {{ respuesta.fecha_hora }}</p>
+                        <p>Respondida hace...</p>""",
+            ),
+            FormActions(                
+                Submit('submit', u'Eliminar'),
+                css_class='text-right'
+            ),
+        )
+    
     class Meta:
         model = respuesta
-        exclude = ()
+        exclude = ('pregunta', 'autor', 'contenido', 'n_votos', 'estado')
 
 class tag_form(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -115,9 +145,29 @@ class tag_form(forms.ModelForm):
 class comentario_form(forms.ModelForm):
     class Meta:
         model = comentario
-        exclude = ('n_votos','estado','fecha_hora')
+        exclude = ('n_votos','estado','fecha_hora',)
 
 class comentario_eliminar_form(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(comentario_eliminar_form, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.form_method = 'POST'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-md-3'
+        self.helper.field_class = 'col-md-9'
+        
+        self.helper.layout = Layout(
+            Fieldset("""<span class="glyphicon glyphicon-pencil"></span> Quiere eliminar el siguiente 
+                        comentario?<hr/>
+                        <h2><strong>{{ comentario.contenido }}</strong></h2>
+                        <p>{{ comentario.autor }}</p>""",
+            ),
+            FormActions(                
+                Submit('submit', u'Eliminar'),
+                css_class='text-right'
+            ),
+        )
     class Meta:
         model = comentario
-        exclude = ()
+        exclude = ('content_type', 'object_id', 'autor', 'contenido', 'n_votos', 'estado',)

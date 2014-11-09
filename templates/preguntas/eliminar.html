@@ -1,32 +1,10 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 {% block title %}Preguntas{% endblock %}
 {% block content %}
     <div class="row">
-        <!-- Pregunta -->
-        <div class="pregunta col-xs-8 col-sm-8 col-md-8 col-lg-8">
-        <h2>¿Está seguro de que quiere eliminar la siguiente pregunta?</h2>
-        <h2><strong>{{ pregunta.titulo }}</strong></h2>
-        <p>{{ pregunta.contenido }}</p>
-        <ul>
-            <li>Por {{ pregunta.autor }}</li>
-            <li>{{ pregunta.n_respuestas }} Respuestas</li>
-            <li>Votos {{ pregunta.n_votos }}</li>
-            <li>{{ pregunta.n_vistas }} Vistas</li>
-        </ul>
+        <div class="well bs-component">
+            {% crispy form %}
         </div>
-    </div>
-    <div class="row">
-        <hr/>
-    </div>
-    <div class="row">
-        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
-            <form action="{% url 'preguntas_eliminar_url' pregunta.id %}" method="post">
-                {% csrf_token %}
-                {{ form.non_field_errors }}
-                <input type="submit" name="submit" value="Eliminar pregunta"/>
-                <input type="button" name="cancel" value="Regresar" onclick="window.location='{% url 'preguntas_url' %}';"/>
-            </form>
-
-        </div>
-    </div>
+    </div>    
 {% endblock %}

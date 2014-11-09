@@ -1,48 +1,8 @@
 {% extends 'base.html' %}
-{% block title %}Preguntas{% endblock %}
+{% load crispy_forms_tags %}
+{% block title %}Eliminar{% endblock %}
 {% block content %}
-    <div class="row">
-        <!-- Pregunta -->
-        <div class="pregunta col-xs-8 col-sm-8 col-md-8 col-lg-8">
-        <h2>¿Está seguro de que quiere eliminar la siguiente respuesta?</h2>
-        <p>{{ respuesta.contenido }}</p>
-        <p><strong>Autor: {{ respuesta.autor }}</strong> -- {{ respuesta.fecha_hora }}</p>
-        <p>Respondida hace...</p>
-        </div>
-    </div>
-    <div class="row">
-        <hr/>
-    </div>
-    <div class="row">
-        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
-            <!-- Formulario -->
-            <form action="{% url 'respuestas_eliminar_url' respuesta.id %}" method="post">
-                {% csrf_token %}
-                {{ form.non_field_errors }}
-                <div class="fieldWrapper">
-                    {{ form.pregunta.errors }}
-                    {{ form.pregunta.as_hidden }}
-                </div>
-                <div class="fieldWrapper">
-                    {{ form.autor.errors }}
-                    {{ form.autor.as_hidden }}
-                </div>
-                <div class="fieldWrapper">
-                    {{ form.contenido.errors }}
-                    {{ form.contenido.as_hidden }}
-                </div>
-                <div class="fieldWrapper">
-                    {{ form.contenido.n_votos.errors }}
-                    {{ form.n_votos.as_hidden }}
-                </div>
-                <div class="fieldWrapper">
-                    {{ form.contenido.estado.errors }}
-                    {{ form.estado.as_hidden }}
-                </div>
-                <input type="submit" name="submit" value="Eliminar respuesta"/>
-                <input type="button" name="cancel" value="Regresar" onclick="window.location='{% url 'preguntas_url' %}';"/>
-            </form>
-
-        </div>
+    <div class="well bs-component">
+        {% crispy form %}
     </div>
 {% endblock %}

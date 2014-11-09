@@ -18,14 +18,6 @@
             <label class="label-fix" for="id_contenido">Contenido:</label>
             {{ form.contenido }}
         </div>
-        <div class="fieldWrapper">
-            {{ form.contenido.n_votos.errors }}
-            {{ form.n_votos.as_hidden }}
-        </div>
-        <div class="fieldWrapper">
-            {{ form.contenido.estado.errors }}
-            {{ form.estado.as_hidden }}
-        </div>
     <input type="submit" name="submit" value="Editar Respuesta"/>
     </form>
 {% endblock %}

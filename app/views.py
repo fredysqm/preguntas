@@ -23,7 +23,6 @@ def preguntas_crear_view(request):
     args = {}
     if request.POST:
         form = pregunta_form(request.POST)
-        import pdb; pdb.set_trace()
         if form.is_valid():
             _pregunta = form.save(commit=False)
             _pregunta.slug = slugify(_pregunta.titulo)
@@ -42,6 +41,7 @@ def preguntas_crear_view(request):
 
     args.update(csrf(request))
     args['form'] = form
+    args['all_tags'] = tag.objects.all()
     return render(request,'preguntas/crear.html', args)
 
 @login_required()
@@ -94,14 +94,14 @@ def preguntas_ver_view(request, pregunta_id):
     args['object_id'] = pregunta_id
     pregunta.objects.filter(id=pregunta_id).update(n_vistas=(_pregunta.n_vistas + 1))
     return render(request,'preguntas/ver.html', args)
-    
+
+@login_required()
 def preguntas_eliminar_view(request, pregunta_id):
     args = {}
     _pregunta = get_object_or_404(pregunta, id=pregunta_id)
 
     if request.POST:
         form = pregunta_eliminar_form(request.POST, instance=_pregunta)
-        import pdb; pdb.set_trace()
         if form.is_valid():
             _tags = _pregunta.tags.all()
             for _tag in _tags:
@@ -119,6 +119,7 @@ def preguntas_eliminar_view(request, pregunta_id):
     args['pregunta'] = _pregunta
     return render(request, 'preguntas/eliminar.html', args)
 
+@login_required()
 def preguntas_responder_view(request,pregunta_id):
     args = {}
     if request.POST:
@@ -167,6 +168,7 @@ def preguntas_comentarios_view(request, pregunta_id):
     return render(request,'preguntas/comentarios.html', args)
 
 # RESPUESTAS
+@login_required()
 def respuestas_editar_view(request, respuesta_id):
     args = {}
     if request.POST:
@@ -185,6 +187,7 @@ def respuestas_editar_view(request, respuesta_id):
     args['form'] = form
     return render(request, 'respuestas/editar.html', args)
 
+@login_required()
 def respuestas_eliminar_view(request, respuesta_id):
     args = {}
     _respuesta = get_object_or_404(respuesta, id=respuesta_id)
@@ -223,7 +226,8 @@ def tags_populares_ver_view(request):
     args.update(csrf(request))
     args['tags'] = tags
     return render(request, 'tag/ver.html', args)
-    
+
+@login_required()    
 def tags_crear_view(request):
     args = {}
     if request.POST:
@@ -254,7 +258,6 @@ def usuarios_ver_view(request):
     args['usuarios'] = zip(users, detalle, extra)
     return render(request, 'usuarios/ver.html', args)
     
-    
 def usuarios_perfil_view(request, user_id):
     args = {}
     
@@ -268,6 +271,7 @@ def usuarios_perfil_view(request, user_id):
     args['usuario_extra'] = requested_user_extra
     return render(request, 'usuarios/usuarios_perfil.html', args)
 
+@login_required()
 def usuarios_perfil_editar_view(request, user_id):
     args = {}
     requested_user = get_object_or_404(User, id=user_id)
@@ -293,6 +297,7 @@ def usuarios_perfil_editar_view(request, user_id):
     return render(request, 'usuarios/editar_perfil.html', args)
     
 # COMENTARIOS
+@login_required()
 def comentarios_crear_view(request):    
     args = {}
     if request.POST:
@@ -310,6 +315,7 @@ def comentarios_crear_view(request):
     args['form'] = form
     return render(request, 'comentarios/crear.html', args)
 
+@login_required()
 def comentarios_editar_view(request, comentario_id):
     args = {}
     _comentario = get_object_or_404(comentario, id=comentario_id)
@@ -329,6 +335,7 @@ def comentarios_editar_view(request, comentario_id):
     args['form'] = form
     return render(request, 'comentarios/editar.html', args)
 
+@login_required()
 def comentarios_eliminar_view(request, comentario_id):
     args = {}
     _comentario = get_object_or_404(comentario, id=comentario_id)
@@ -346,6 +353,7 @@ def comentarios_eliminar_view(request, comentario_id):
     args['comentario'] = _comentario
     return render(request, 'comentarios/eliminar.html', args)
 
+@login_required()
 def usuario_crear_view( request ):
     args = {}
     args.update(csrf(request))
