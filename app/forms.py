@@ -24,7 +24,13 @@ class pregunta_form(forms.ModelForm):
                 'titulo',
                 'contenido',
                 #'tags',
-                HTML("<select multiple=\"multiple\" id=\"id_tags\" name=\"tags\">{% for tag in all_tags %}<option value=\"{{ tag.id }}\" {% if tag in pregunta.tags.all %}selected{% endif %}>{{ tag.nombre }}</option>{% endfor %}</select>"),
+                HTML("""<label for="id_tags" class="control-label col-md-3 requiredField">
+                        Tags<span class="asteriskField">*</span></label>
+                        <select multiple="multiple" class="select form-control" id="id_tags" name="tags">
+                        {% for tag in all_tags %}
+                            <option value="{{ tag.id }}" {% if tag in pregunta.tags.all %}selected{% endif %}>{{ tag.nombre }}</option>
+                        {% endfor %}
+                        </select>"""),
                 #Field('tags'),
             ),
             FormActions(                

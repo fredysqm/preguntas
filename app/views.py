@@ -4,7 +4,6 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.core.context_processors import csrf
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from haystack.query import SearchQuerySet
 import random
 
 from .forms import pregunta_form, respuesta_form, tag_form, user_form, user_editar_form, user_detalles_form, pregunta_eliminar_form, respuesta_eliminar_form, comentario_form, comentario_eliminar_form
@@ -264,11 +263,16 @@ def usuarios_perfil_view(request, user_id):
     requested_user = get_object_or_404(User, id=user_id)
     requested_user_details = usuario_detalles.objects.get(usuario_detalles=user_id)
     requested_user_extra = usuario_extra.objects.get(usuario_extra=user_id)
-        
+    
+    _preguntas = pregunta.objects.filter(autor=user_id).order_by("-fecha_hora")[:5]
+    _respuestas = respuesta.objects.filter(autor=user_id).order_by("-fecha_hora")[:5]
+    
     args.update(csrf(request))
     args['usuario'] = requested_user
     args['usuario_detalles'] = requested_user_details
     args['usuario_extra'] = requested_user_extra
+    args['preguntas'] = _preguntas
+    args['respuestas'] = _respuestas
     return render(request, 'usuarios/usuarios_perfil.html', args)
 
 @login_required()
@@ -368,38 +372,10 @@ def usuario_crear_view( request ):
     return render(request, 'usuarios/crear_usuario.html', args)
 
 # Busqueda
-def search_titulo(request):
+def buscar_view(request):
     args = {}
-    _preguntas = SearchQuerySet().autocomplete(content_auto=request.POST.get('search_text', ''))
+    busqueda = request.POST['txt_search']
+    _preguntas = pregunta.objects.filter(titulo__search=busqueda)
     args['preguntas'] = _preguntas
-    return render(request, 'ajax_search.html', args)
-
-# def crear_respuesta( request ):
-#     if request.POST:
-#         form = RespuestaForm( request.POST )
-#         validar_formulario( form )
-#         return HttpResponseRedirect( '/' )
-#     else:
-#         form = RespuestaForm()
-
-#     args = {}
-
-#     return render_to_response( 'crear_respuesta.html',
-#                                preparar_args( args, request, form ) )
-
-# def crear_tag( request ):
-#     if request.POST:
-#         form = TagForm( request.POST )
-#         validar_formulario( form )
-#         return HttpResponseRedirect( '/' )
-#     else:
-#         form = TagForm()
-
-#     args = {}
-
-#     return render_to_response( 'crear_tag.html', preparar_args( args, request ) )
-
-
-# def respuesta_creada( request ):
-#     return render_to_response( 'respuesta_creada.html',
-#                                context_instance=RequestContext(request) )
+    #return render(request, 'busqueda/busqueda_preguntas.html', args)
+    return render(request, 'preguntas/home.html', args)

@@ -11,4 +11,14 @@
                         {% endif %}</p>
         <p>Puntaje: {{ usuario_extra.puntaje }} puntos</p>
     </div>
+    <div class="row">
+        <h4>Mis preguntas</h4>
+        <ul>
+        {% for pregunta in preguntas %}
+            <li>{{ pregunta.titulo }} - {{ pregunta.n_votos }}</li>
+        {% empty %}        
+        <small><strong>¡Aún no hay preguntas!</strong></small>
+        {% endfor %}
+        </ul>
+    </div>
 {% endblock %}

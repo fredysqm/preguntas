@@ -35,7 +35,7 @@ urlpatterns = patterns('',
     url(r'^usuarios/crear/$', 'app.views.usuario_crear_view', name='usuarios_crear_url'),    
     url(r'^usuarios/(\d+)/perfil/$', 'app.views.usuarios_perfil_view', name='usuarios_perfil_url'),
     
-    url(r'^search/', include('preguntas.search_url')),
+    url(r'^buscar/$', 'app.views.buscar_view', name='buscar_url'),
     
     url(r'^admin/', include(admin.site.urls)),
 )

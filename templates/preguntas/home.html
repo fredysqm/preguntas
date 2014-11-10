@@ -10,6 +10,16 @@
             {% endif %}
         </ul>
     </p>
+    
+    <div class="row">
+        <div class="col col-sm-3 no-padding-right">
+            <form action="{% url 'buscar_url' %}" method="post">{% csrf_token %}
+                <label for="id_txt_search">Buscar:</label><input type="text" id="id_txt_search" name="txt_search"/>
+                <input type="submit" value="¡Buscar!"/>
+            </form>
+        </div>
+    </div>
+    <hr/>
 
     {% for pregunta in preguntas %}
         <article>
@@ -56,6 +66,13 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <hr class="no-margin" />
+        </article>
+    {% empty %}
+        <article>
+            <div class="row">
+                <small><strong>¡No se encontraron resultados!</strong></small>
             </div>
             <hr class="no-margin" />
         </article>
