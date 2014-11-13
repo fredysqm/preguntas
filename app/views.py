@@ -11,10 +11,14 @@ from .models import pregunta, respuesta, tag, usuario_detalles, usuario_extra, c
 
 from django.template.defaultfilters import slugify
 
+from notification.models import notification
+
 #PREGUNTAS
 def preguntas_view(request):
     args = {}
+    n = notification.objects.filter(user=request.user, viewed=False)
     args['preguntas'] = pregunta.objects.all()
+    args['notifications'] = n
     return render(request, 'preguntas/home.html', args)
 
 @login_required()
@@ -166,6 +170,13 @@ def preguntas_comentarios_view(request, pregunta_id):
     args['comentarios'] = _comentarios
     return render(request,'preguntas/comentarios.html', args)
 
+#def preguntas_similares_view(request, pregunta_id):
+#    args = {}
+#    _pregunta = get_object_or_404(pregunta, id=pregunta_id)
+#    palabras = _pregunta.slug.split(str='-')
+#    palabras = palabras - ['de', 'para', 'el', 'la', 'y']
+#    return None
+    
 # RESPUESTAS
 @login_required()
 def respuestas_editar_view(request, respuesta_id):

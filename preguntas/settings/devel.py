@@ -17,6 +17,7 @@ INSTALLED_APPS = (
     'pipeline',
     'mockups',
     'registration',
+    'notification',
     #'debug_toolbar.apps.DebugToolbarConfig',
 )
 

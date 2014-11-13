@@ -20,6 +20,16 @@
         </div>
     </div>
     <hr/>
+    
+    <div class="row">
+    {% if notifications.count > 0 %}
+        <h3>Notifications</h3>
+        {% for n in notifications %}
+            <p><a href="/notifications/show/{{n.id}}">{{n.title}}</a></p>
+        {% endfor %}
+    
+    {% endif %}
+    </div>
 
     {% for pregunta in preguntas %}
         <article>

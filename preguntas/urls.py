@@ -8,6 +8,8 @@ urlpatterns = patterns('',
     url(r'^accounts/', include('registration.backends.default.urls')),
     url(r'^accounts/password/reset', 'django.contrib.auth.views.password_reset',
    name='password_reset'),
+   
+    url(r'^notification/', include('notification.urls')),
     
     url(r'^crear/$', 'app.views.preguntas_crear_view', name='preguntas_crear_url'),
     url(r'^ver/(\d+)/$', 'app.views.preguntas_ver_view', name='preguntas_ver_url'),
