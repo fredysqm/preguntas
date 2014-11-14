@@ -16,9 +16,7 @@ from notification.models import notification
 #PREGUNTAS
 def preguntas_view(request):
     args = {}
-    n = notification.objects.filter(user=request.user, viewed=False)
     args['preguntas'] = pregunta.objects.all()
-    args['notifications'] = n
     return render(request, 'preguntas/home.html', args)
 
 @login_required()
@@ -36,7 +34,7 @@ def preguntas_crear_view(request):
             for _tag in _tags:
                 _pregunta.tags.add(_tag)
                 _n_preguntas = _tag.n_preguntas
-                tag.objects.filter(id=_tag.id).update(n_preguntas=(_n_preguntas+1))         
+                tag.objects.filter(id=_tag.id).update(n_preguntas=(_n_preguntas+1))
                         
             return HttpResponseRedirect(reverse('preguntas_url'))
     else:   
@@ -221,6 +219,20 @@ def respuestas_eliminar_view(request, respuesta_id):
     args['respuesta'] = _respuesta
     return render(request, 'respuestas/eliminar.html', args)
 
+def respuestas_elegir_mejor_view(request, respuesta_id):
+    _respuesta = get_object_or_404(respuesta, id=respuesta_id)
+    _pregunta = pregunta.objects.get(id=_respuesta.pregunta_id)
+    _respuestas = respuesta.objects.filter(pregunta=_pregunta.id)
+    for res in _respuestas:
+        if str(res.id) == str(_respuesta.id):
+            import pdb; pdb.set_trace()            
+            respuesta.objects.filter(id=respuesta_id).update(mejor=True)
+            #_respuesta.update(mejor=True)
+            #_respuesta.save()
+            #respuesta.update(mejor=True)
+        elif res.mejor:
+            respuesta.objects.filter(id=respuesta_id).update(mejor=False)
+    return HttpResponseRedirect(reverse('preguntas_ver_url', args=[_respuesta.pregunta_id]))
 
 # TAGS
 def tags_ver_view(request):
@@ -390,3 +402,10 @@ def buscar_view(request):
     args['preguntas'] = _preguntas
     #return render(request, 'busqueda/busqueda_preguntas.html', args)
     return render(request, 'preguntas/home.html', args)
+
+# NOTIFICACIONES
+def notificaciones_por_usuario_view(request):
+    args = {}
+    n = notification.objects.filter(user=request.user, viewed=False)
+    args['notifications'] = n
+    return render(request, 'notificaciones/home.html', args)

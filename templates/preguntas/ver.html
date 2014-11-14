@@ -26,7 +26,10 @@
         {% if respuestas.count > 0 %}            
             {% for respuesta, comentarios in respuestas %}
             <li><strong>{{ respuesta.contenido }}</strong> -- Por <em>{{ respuesta.autor }}</em>
-                {% if user.id == pregunta.autor_id %}<a href="{% url 'respuestas_editar_url' respuesta.id %}">(Editar)</a>{% endif %}</li>
+                {% if user.id == pregunta.autor_id %}<a href="{% url 'respuestas_editar_url' respuesta.id %}">(Editar)</a>{% endif %}
+                {% if respuesta.mejor %}☻☻☻{% else %}
+                    {% if user.id == pregunta.autor_id %}<a href="{% url 'respuestas_elegir_mejor_url' respuesta.id %}">(Mejor)</a>{% endif %}
+                {% endif %}</li>
             <hr/>
             <h5>Comentarios de respuesta</h5>
             {% if comentarios.count > 0 %}

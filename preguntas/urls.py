@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     url(r'^accounts/password/reset', 'django.contrib.auth.views.password_reset',
    name='password_reset'),
    
+    url(r'^notificationes/', 'app.views.notificaciones_por_usuario_view', name='notificaciones_por_usuario_url'),
     url(r'^notification/', include('notification.urls')),
     
     url(r'^crear/$', 'app.views.preguntas_crear_view', name='preguntas_crear_url'),
@@ -22,6 +23,7 @@ urlpatterns = patterns('',
 
     url(r'^respuestas/(\d+)/editar/$', 'app.views.respuestas_editar_view', name='respuestas_editar_url'),
     url(r'^respuestas/(\d+)/eliminar/$', 'app.views.respuestas_eliminar_view', name='respuestas_eliminar_url'),
+    url(r'^respuestas/(\d+)/mejor/$', 'app.views.respuestas_elegir_mejor_view', name='respuestas_elegir_mejor_url'),
 
     url(r'^tags/ver/$', 'app.views.tags_ver_view', name='tags_ver_url'),
     url(r'^tags/crear/$', 'app.views.tags_crear_view', name='tags_crear_url'),
