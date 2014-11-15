@@ -20,6 +20,8 @@ urlpatterns = patterns('',
     url(r'^abiertas/$', 'app.views.preguntas_abiertas_view', name='preguntas_abiertas_url'),
     url(r'^tag/(\d+)/$', 'app.views.preguntas_por_tag_view', name='preguntas_por_tag_url'),
     url(r'^comentarios/(\d+)/$', 'app.views.preguntas_comentarios_view', name='preguntas_comentarios_url'),
+    url(r'^votar_arriba/(\d+)/$', 'app.views.preguntas_votar_arriba_view', name='preguntas_votar_arriba_url'),
+    url(r'^votar_abajo/(\d+)/$', 'app.views.preguntas_votar_abajo_view', name='preguntas_votar_abajo_url'),
 
     url(r'^respuestas/(\d+)/editar/$', 'app.views.respuestas_editar_view', name='respuestas_editar_url'),
     url(r'^respuestas/(\d+)/eliminar/$', 'app.views.respuestas_eliminar_view', name='respuestas_eliminar_url'),

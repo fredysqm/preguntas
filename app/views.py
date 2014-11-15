@@ -168,7 +168,19 @@ def preguntas_comentarios_view(request, pregunta_id):
     args['comentarios'] = _comentarios
     return render(request,'preguntas/comentarios.html', args)
 
-#def preguntas_similares_view(request, pregunta_id):
+def preguntas_votar_arriba_view(request, pregunta_id):
+    args = {}
+    _pregunta = get_object_or_404(pregunta, id=pregunta_id)
+    pregunta.objects.filter(id=_pregunta.id).update(n_votos=(_pregunta.n_votos+1))
+    return HttpResponseRedirect(reverse('preguntas_ver_url', args=[pregunta_id]))
+
+def preguntas_votar_abajo_view(request, pregunta_id):
+    args = {}
+    _pregunta = get_object_or_404(pregunta, id=pregunta_id)
+    pregunta.objects.filter(id=_pregunta.id).update(n_votos=(_pregunta.n_votos-1))
+    return HttpResponseRedirect(reverse('preguntas_ver_url', args=[pregunta_id]))
+    
+    #def preguntas_similares_view(request, pregunta_id):
 #    args = {}
 #    _pregunta = get_object_or_404(pregunta, id=pregunta_id)
 #    palabras = _pregunta.slug.split(str='-')

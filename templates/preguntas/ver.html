@@ -12,7 +12,12 @@
             <li>Votos {{ pregunta.n_votos }}</li>
             <li>{{ pregunta.n_vistas }} Vistas</li>
         </ul>
-        <a href="/comentarios/crear?return_url={{ path }}&object_id={{ object_id }}">Añadir comentario a la pregunta</a>
+        <p><a href="/comentarios/crear?return_url={{ path }}&object_id={{ object_id }}">Añadir comentario a la pregunta</a></p>
+        <hr/>
+        <p>
+            <a href="{% url 'preguntas_votar_arriba_url' pregunta.id %}">Votar arriba</a> --
+            <a href="{% url 'preguntas_votar_abajo_url' pregunta.id %}">Votar abajo</a>
+        </p>
         </div>
     </div>
     <div class="row">
