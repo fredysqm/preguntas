@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 import random
 
 from .forms import pregunta_form, respuesta_form, tag_form, user_form, user_editar_form, user_detalles_form, pregunta_eliminar_form, respuesta_eliminar_form, comentario_form, comentario_eliminar_form
-from .models import pregunta, respuesta, tag, usuario_detalles, usuario_extra, comentario
+from .models import pregunta, respuesta, tag, usuario_detalles, usuario_extra, comentario, voto, favorito
 
 from django.template.defaultfilters import slugify
 
@@ -87,12 +87,15 @@ def preguntas_ver_view(request, pregunta_id):
     for _respuesta in _respuestas.values():
         comentarios_respuestas.append(comentario.objects.filter(content_type=12, object_id=_respuesta['id']))
     _comentarios = comentario.objects.filter(content_type=11, object_id=pregunta_id)
+    import pdb; pdb.set_trace()
+    _voto = voto.objects.filter(pregunta=_pregunta.id,user=request.user.id).order_by('-fecha_hora')[:1]
     args.update(csrf(request))
     args['pregunta'] = _pregunta
     args['respuestas'] = zip(_respuestas, comentarios_respuestas)
     args['comentarios'] = _comentarios
     args['path'] = request.path
     args['object_id'] = pregunta_id
+    args['voto'] = _voto[0]
     pregunta.objects.filter(id=pregunta_id).update(n_vistas=(_pregunta.n_vistas + 1))
     return render(request,'preguntas/ver.html', args)
 
@@ -168,15 +171,26 @@ def preguntas_comentarios_view(request, pregunta_id):
     args['comentarios'] = _comentarios
     return render(request,'preguntas/comentarios.html', args)
 
-def preguntas_votar_arriba_view(request, pregunta_id):
+def preguntas_favorito_view(request, pregunta_id):
     args = {}
     _pregunta = get_object_or_404(pregunta, id=pregunta_id)
-    pregunta.objects.filter(id=_pregunta.id).update(n_votos=(_pregunta.n_votos+1))
+    _favorito = favorito.objects.get(pregunta=_pregunta.id, user=request.user.id)
+    if _favorito:
+        favorito.objects.filter(id=_favorito.id).update(estado=1)
+    else:
+        favorito.objects.create(pregunta=_pregunta.id, user=request.user.id)
+    
+def preguntas_votar_arriba_view(request, pregunta_id):
+    args = {}
+    _pregunta = get_object_or_404(pregunta, id=pregunta_id)    
+    voto.objects.create(user=request.user, pregunta=_pregunta, arriba=True)
+    pregunta.objects.filter(id=_pregunta.id).update(n_votos=(_pregunta.n_votos+1))    
     return HttpResponseRedirect(reverse('preguntas_ver_url', args=[pregunta_id]))
 
 def preguntas_votar_abajo_view(request, pregunta_id):
     args = {}
     _pregunta = get_object_or_404(pregunta, id=pregunta_id)
+    voto.objects.create(user=request.user, pregunta=_pregunta)
     pregunta.objects.filter(id=_pregunta.id).update(n_votos=(_pregunta.n_votos-1))
     return HttpResponseRedirect(reverse('preguntas_ver_url', args=[pregunta_id]))
     

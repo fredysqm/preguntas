@@ -14,10 +14,34 @@
         </ul>
         <p><a href="/comentarios/crear?return_url={{ path }}&object_id={{ object_id }}">Añadir comentario a la pregunta</a></p>
         <hr/>
+        
+        {% if not user.is_authenticated %}
+        <p>
+            Votar arriba --
+            Votar abajo
+        </p>
+        {% elif not voto %}
         <p>
             <a href="{% url 'preguntas_votar_arriba_url' pregunta.id %}">Votar arriba</a> --
             <a href="{% url 'preguntas_votar_abajo_url' pregunta.id %}">Votar abajo</a>
         </p>
+        {% elif voto.arriba %}
+        <p>
+            Votar arriba --
+            <a href="{% url 'preguntas_votar_abajo_url' pregunta.id %}">Votar abajo</a>
+        </p>
+        {% elif not voto.arriba %}
+        <p>
+            <a href="{% url 'preguntas_votar_arriba_url' pregunta.id %}">Votar arriba</a> --
+            Votar abajo
+        </p>
+        {% endif %}
+        <hr/>
+        {% if not user.is_authenticated %}
+        <p>Marcar como favorito</p>
+        {% else %}
+        <p><a href="{% url 'preguntas_favorito_url' pregunta.id %}">Marcar como favorito</a></p>
+        {% endif %}        
         </div>
     </div>
     <div class="row">

@@ -8,7 +8,7 @@ from django.template.defaultfilters import slugify
 
 ESTADOS = (
     (0, 'Por Defecto'),
-    (1, 'Estado1'),
+    (1, 'Inactivo'),
     (2, 'Estado2'),
 )
 
@@ -67,3 +67,16 @@ class respuesta(models.Model):
     estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADOS)
     fecha_hora = models.DateTimeField(auto_now_add=True)
     comentarios = GenericRelation(comentario)
+
+class voto(models.Model):
+    user = models.ForeignKey(User)
+    pregunta = models.ForeignKey(pregunta)
+    arriba = models.BooleanField(default=False)
+    fecha_hora = models.DateTimeField(auto_now_add=True)
+    estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADOS)
+    
+class favorito(models.Model):
+    user = models.ForeignKey(User)
+    pregunta = models.ForeignKey(pregunta)
+    fecha_hora = models.DateTimeField(auto_now_add=True)
+    estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADOS)
