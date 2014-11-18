@@ -18,6 +18,7 @@ INSTALLED_APPS = (
     'mockups',
     'registration',
     'notification',
+    'temptags',
     #'debug_toolbar.apps.DebugToolbarConfig',
 )
 

@@ -87,7 +87,6 @@ def preguntas_ver_view(request, pregunta_id):
     for _respuesta in _respuestas.values():
         comentarios_respuestas.append(comentario.objects.filter(content_type=12, object_id=_respuesta['id']))
     _comentarios = comentario.objects.filter(content_type=11, object_id=pregunta_id)
-    import pdb; pdb.set_trace()
     _voto = voto.objects.filter(pregunta=_pregunta.id,user=request.user.id).order_by('-fecha_hora')[:1]
     args.update(csrf(request))
     args['pregunta'] = _pregunta
@@ -95,7 +94,7 @@ def preguntas_ver_view(request, pregunta_id):
     args['comentarios'] = _comentarios
     args['path'] = request.path
     args['object_id'] = pregunta_id
-    args['voto'] = _voto[0]
+    args['voto'] = _voto.first()
     pregunta.objects.filter(id=pregunta_id).update(n_vistas=(_pregunta.n_vistas + 1))
     return render(request,'preguntas/ver.html', args)
 
@@ -251,11 +250,7 @@ def respuestas_elegir_mejor_view(request, respuesta_id):
     _respuestas = respuesta.objects.filter(pregunta=_pregunta.id)
     for res in _respuestas:
         if str(res.id) == str(_respuesta.id):
-            import pdb; pdb.set_trace()            
             respuesta.objects.filter(id=respuesta_id).update(mejor=True)
-            #_respuesta.update(mejor=True)
-            #_respuesta.save()
-            #respuesta.update(mejor=True)
         elif res.mejor:
             respuesta.objects.filter(id=respuesta_id).update(mejor=False)
     return HttpResponseRedirect(reverse('preguntas_ver_url', args=[_respuesta.pregunta_id]))

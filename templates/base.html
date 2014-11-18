@@ -34,7 +34,7 @@
                     {% if user.is_authenticated %}
                     <li>¡Bienvenido!</li>
                     <li><a href="{% url 'usuarios_perfil_url' user.id %}">{{ user.username }}</a></li>
-                    <li><a href="{% url 'notificaciones_por_usuario_url' %}">Notas</a></li>
+                    <li><a href="{% url 'notificaciones_por_usuario_url' %}">Notas ({% load notificaciones %}{% notificaciones %})</a></li>
                     <li><a href="/accounts/logout/">Salir</a></li>
                     {% else %}
                     <li><a href="/accounts/register">Registrarse</a></li>

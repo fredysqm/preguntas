@@ -5,7 +5,7 @@
     <div class="row">
     <h3>Notificaciones</h3>        
     {% for n in notifications %}
-        <p><a href="/notifications/show/{{n.id}}">{{n.title}}</a></p>
+        <p><a href="/notification/show/{{n.id}}">{{n.title}}</a></p>
     {% empty %}
         <p>¡No hay notificaciones nuevas!</p>
     {% endfor %}
