@@ -21,4 +21,22 @@
         {% endfor %}
         </ul>
     </div>
+    <div class="row">
+        <h4>Mis respuestas</h4>
+        <ul>
+        {% for respuesta in respuestas %}
+            <li>{{ respuesta.contenido|truncatechars:50 }} - {{ respuesta.n_votos }}</li>
+        {% empty %}        
+        <small><strong>¡Aún no hay respuestas!</strong></small>
+        {% endfor %}
+        </ul>
+    </div>
+    <div class="row">
+        <h4>Votos</h4>
+        <ul>
+        	<li>Votos arriba: {{ votos_arriba }}</li>
+            <li>Votos abajo: {{ votos_abajo }}</li>
+        	<li>Total de votos: {{ votos_total }}</li>
+        </ul>
+    </div>
 {% endblock %}

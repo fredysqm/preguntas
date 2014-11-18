@@ -171,7 +171,7 @@ def preguntas_comentarios_view(request, pregunta_id):
     return render(request,'preguntas/comentarios.html', args)
 
 def preguntas_favorito_view(request, pregunta_id):
-    args = {}
+    args = {}    
     _pregunta = get_object_or_404(pregunta, id=pregunta_id)
     _favorito = favorito.objects.get(pregunta=_pregunta.id, user=request.user.id)
     if _favorito:
@@ -252,7 +252,7 @@ def respuestas_elegir_mejor_view(request, respuesta_id):
         if str(res.id) == str(_respuesta.id):
             respuesta.objects.filter(id=respuesta_id).update(mejor=True)
         elif res.mejor:
-            respuesta.objects.filter(id=respuesta_id).update(mejor=False)
+            respuesta.objects.filter(id=res.id).update(mejor=False)
     return HttpResponseRedirect(reverse('preguntas_ver_url', args=[_respuesta.pregunta_id]))
 
 # TAGS
@@ -311,12 +311,17 @@ def usuarios_perfil_view(request, user_id):
     _preguntas = pregunta.objects.filter(autor=user_id).order_by("-fecha_hora")[:5]
     _respuestas = respuesta.objects.filter(autor=user_id).order_by("-fecha_hora")[:5]
     
+    _votos = voto.objects.filter(user=user_id)
+    
     args.update(csrf(request))
     args['usuario'] = requested_user
     args['usuario_detalles'] = requested_user_details
     args['usuario_extra'] = requested_user_extra
     args['preguntas'] = _preguntas
     args['respuestas'] = _respuestas
+    args['votos_total'] = _votos.count()
+    args['votos_arriba'] = _votos.filter(arriba=True).count()
+    args['votos_abajo'] = _votos.filter(arriba=False).count()
     return render(request, 'usuarios/usuarios_perfil.html', args)
 
 @login_required()
