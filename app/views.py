@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 import random
 
-from .forms import pregunta_form, respuesta_form, tag_form, user_form, user_editar_form, user_detalles_form, pregunta_eliminar_form, respuesta_eliminar_form, comentario_form, comentario_eliminar_form
+from .forms import pregunta_form, respuesta_form, tag_form, user_form, user_editar_form, user_detalles_form, pregunta_eliminar_form, respuesta_eliminar_form, comentario_form, comentario_eliminar_form, reporte_usuario_form
 from .models import pregunta, respuesta, tag, usuario_detalles, usuario_extra, comentario, voto, favorito
 
 from django.template.defaultfilters import slugify
@@ -348,6 +348,25 @@ def usuarios_perfil_editar_view(request, user_id):
     args['form_maestro'] = form_maestro
     args['form_detalle'] = form_detalle
     return render(request, 'usuarios/editar_perfil.html', args)
+    
+def usuarios_reportar_view(request, reportado_id):
+    args = {}
+    _reportado = get_object_or_404(User, id=reportado_id)
+    if request.POST:        
+        form = reporte_usuario_form(request.POST)
+        import pdb; pdb.set_trace()
+        if form.is_valid():            
+            _reporte = form.save(commit=False)
+            _reporte.user = request.user
+            _reporte.reportado = _reportado
+            _reporte.save()
+            return HttpResponseRedirect(reverse('preguntas_url'))
+    else:
+        form = reporte_usuario_form(initial={'user':request.user,'reportado':_reportado,})
+
+    args.update(csrf(request))
+    args['form'] = form
+    return render(request,'usuarios/reportar.html', args)
     
 # COMENTARIOS
 @login_required()

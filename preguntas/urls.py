@@ -23,7 +23,7 @@ urlpatterns = patterns('',
     url(r'^favorito/(\d+)/$', 'app.views.preguntas_favorito_view', name='preguntas_favorito_url'),
     url(r'^votar_arriba/(\d+)/$', 'app.views.preguntas_votar_arriba_view', name='preguntas_votar_arriba_url'),
     url(r'^votar_abajo/(\d+)/$', 'app.views.preguntas_votar_abajo_view', name='preguntas_votar_abajo_url'),
-
+    
     url(r'^respuestas/(\d+)/editar/$', 'app.views.respuestas_editar_view', name='respuestas_editar_url'),
     url(r'^respuestas/(\d+)/eliminar/$', 'app.views.respuestas_eliminar_view', name='respuestas_eliminar_url'),
     url(r'^respuestas/(\d+)/mejor/$', 'app.views.respuestas_elegir_mejor_view', name='respuestas_elegir_mejor_url'),
@@ -41,6 +41,7 @@ urlpatterns = patterns('',
     
     url(r'^usuarios/crear/$', 'app.views.usuario_crear_view', name='usuarios_crear_url'),    
     url(r'^usuarios/(\d+)/perfil/$', 'app.views.usuarios_perfil_view', name='usuarios_perfil_url'),
+    url(r'^usuarios/reportar/(\d+)/$', 'app.views.usuarios_reportar_view', name='usuarios_reportar_url'),
     
     url(r'^buscar/$', 'app.views.buscar_view', name='buscar_url'),
     

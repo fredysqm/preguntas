@@ -6,6 +6,7 @@
         <div class="pregunta col-xs-8 col-sm-8 col-md-8 col-lg-8">
         <h2><strong>{{ pregunta.titulo }}</strong></h2>
         <p>{{ pregunta.contenido }}</p>
+        <p><a href="{% url 'usuarios_reportar_url' pregunta.autor.id %}">Reportar usuario</a></p>
         <ul>
             <li>Por {{ pregunta.autor }}</li>
             <li>{{ pregunta.n_respuestas }} Respuestas</li>
