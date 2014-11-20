@@ -354,7 +354,6 @@ def usuarios_reportar_view(request, reportado_id):
     _reportado = get_object_or_404(User, id=reportado_id)
     if request.POST:        
         form = reporte_usuario_form(request.POST)
-        import pdb; pdb.set_trace()
         if form.is_valid():            
             _reporte = form.save(commit=False)
             _reporte.user = request.user
