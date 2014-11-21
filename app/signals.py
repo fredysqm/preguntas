@@ -34,7 +34,6 @@ def bloquear_usuario(sender=reporte_usuario, **kwargs):
         _reportado = User.objects.get(id=_reporte.reportado.id)
         _reportes = reporte_usuario.objects.filter(reportado=_reporte.reportado.id)[:MAXIMO_REPORTES]
         if _reportes.count() > 9:
-            import pdb; pdb.set_trace()
             fecha_1 = _reportes[0].fecha_hora
             fecha_2 = _reportes[9].fecha_hora
             if (fecha_2 - fecha_1).days <= RANGO_REPORTES:
@@ -42,4 +41,3 @@ def bloquear_usuario(sender=reporte_usuario, **kwargs):
                 grupo = User.groups.through.objects.get(user=_reportado)
                 grupo.group = bloqueados
                 grupo.save()
-                

@@ -3,6 +3,8 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
+    url(r'^admin/', include(admin.site.urls)),
+    
     url(r'^$', 'app.views.preguntas_view', name='preguntas_url'),
     
     url(r'^accounts/', include('registration.backends.default.urls')),
@@ -43,7 +45,6 @@ urlpatterns = patterns('',
     url(r'^usuarios/(\d+)/perfil/$', 'app.views.usuarios_perfil_view', name='usuarios_perfil_url'),
     url(r'^usuarios/reportar/(\d+)/$', 'app.views.usuarios_reportar_view', name='usuarios_reportar_url'),
     
-    url(r'^buscar/$', 'app.views.buscar_view', name='buscar_url'),
+    url(r'^buscar/$', 'app.views.buscar_view', name='buscar_url'),    
     
-    url(r'^admin/', include(admin.site.urls)),
 )
