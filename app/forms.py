@@ -7,7 +7,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Field, Fieldset, Button, HTML
 from crispy_forms.bootstrap import PrependedText, PrependedAppendedText, FormActions
 
-from .models import pregunta, respuesta, tag, comentario, usuario_detalles, reporte_usuario
+from .models import pregunta, respuesta, tag, comentario, usuario_detalles, reporte_usuario, reporte_pregunta
 
 class pregunta_form(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -80,6 +80,31 @@ class pregunta_eliminar_form(forms.ModelForm):
         model = pregunta
         exclude = ('slug', 'titulo', 'contenido', 'pregunta', 'autor', 'n_vistas', 'n_votos', 'n_respuestas', 'estado', 'tags')
 
+class reporte_pregunta_form(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(reporte_pregunta_form, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.form_method = 'POST'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-md-3'
+        self.helper.field_class = 'col-md-9'
+
+        self.helper.layout = Layout(
+            Fieldset('<span class="glyphicon glyphicon-pencil"></span> Reportar pregunta',
+                Field('tipo'),
+                'mensaje',
+            ),
+            FormActions(
+                Submit('submit', u'Reportar'),
+                css_class='text-right'
+            ),
+        )
+    
+    class Meta:
+        model = reporte_pregunta
+        exclude = ('estado','fecha_hora', 'user', 'pregunta',)
+        
 class user_form(forms.ModelForm):
     class Meta:
         model = User

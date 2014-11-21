@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 import random
 
-from .forms import pregunta_form, respuesta_form, tag_form, user_form, user_editar_form, user_detalles_form, pregunta_eliminar_form, respuesta_eliminar_form, comentario_form, comentario_eliminar_form, reporte_usuario_form
+from .forms import pregunta_form, respuesta_form, tag_form, user_form, user_editar_form, user_detalles_form, pregunta_eliminar_form, respuesta_eliminar_form, comentario_form, comentario_eliminar_form, reporte_usuario_form, reporte_pregunta_form
 from .models import pregunta, respuesta, tag, usuario_detalles, usuario_extra, comentario, voto, favorito
 
 from django.template.defaultfilters import slugify
@@ -192,6 +192,24 @@ def preguntas_votar_abajo_view(request, pregunta_id):
     voto.objects.create(user=request.user, pregunta=_pregunta)
     pregunta.objects.filter(id=_pregunta.id).update(n_votos=(_pregunta.n_votos-1))
     return HttpResponseRedirect(reverse('preguntas_ver_url', args=[pregunta_id]))
+
+def preguntas_reportar_view(request, reportada_id):
+    args = {}
+    _pregunta = get_object_or_404(pregunta, id=reportada_id)
+    if request.POST:        
+        form = reporte_pregunta_form(request.POST)
+        if form.is_valid():            
+            _reporte = form.save(commit=False)
+            _reporte.user = request.user
+            _reporte.pregunta = _pregunta
+            _reporte.save()
+            return HttpResponseRedirect(reverse('preguntas_url'))
+    else:
+        form = reporte_usuario_form(initial={'user':request.user,'pregunta':_pregunta,})
+
+    args.update(csrf(request))
+    args['form'] = form
+    return render(request,'preguntas/reportar.html', args)
     
     #def preguntas_similares_view(request, pregunta_id):
 #    args = {}

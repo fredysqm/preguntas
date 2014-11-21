@@ -100,6 +100,14 @@ class reporte_usuario(models.Model):
     fecha_hora = models.DateTimeField(auto_now_add=True)
     estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADOS)
     
+class reporte_pregunta(models.Model):
+    user = models.ForeignKey(User)
+    pregunta = models.ForeignKey(pregunta)
+    tipo = models.SmallIntegerField(max_length=1, default=0, choices=TIPOS_REPORTE)
+    mensaje = models.CharField(max_length=200)
+    fecha_hora = models.DateTimeField(auto_now_add=True)
+    estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADOS)
+    
 class medalla(models.Model):
     nombre = models.CharField(max_length=50)
     descripcion = models.TextField()
