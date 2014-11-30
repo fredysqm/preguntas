@@ -9,16 +9,16 @@ ESTADO = (
     (2, 'eliminado'),
 )
 
-TIPOS_REPORTE = (
-    (0, 'Ofensivo'),
-    (1, 'Ilegal'),
-    (2, 'Otros'),
+REPORTE = (
+    (0, 'ofensivo'),
+    (1, 'ilegal'),
+    (2, 'otros'),
 )
 
-NIVELES_MEDALLA = (
-    (0, 'Bronce'),
-    (1, 'Plata'),
-    (2, 'Oro'),
+MEDALLA = (
+    (0, 'bronce'),
+    (1, 'plata'),
+    (2, 'oro'),
 )
 
 class usuario_extra(models.Model):
@@ -70,40 +70,36 @@ class comentario(models.Model):
 class voto(models.Model):
     user = models.ForeignKey(User)
     pregunta = models.ForeignKey(pregunta)
-    arriba = models.BooleanField(default=False)
-    fecha_hora = models.DateTimeField(auto_now_add=True)
-    estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADO)
+    valor = models.SmallIntegerField(default=1)
 
 class favorito(models.Model):
     user = models.ForeignKey(User)
     pregunta = models.ForeignKey(pregunta)
-    fecha_hora = models.DateTimeField(auto_now_add=True)
-    estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADOS)
 
-class reporte_usuario(models.Model):
+class usuario_reporte(models.Model):
     user = models.ForeignKey(User, related_name='autor')
     reportado = models.ForeignKey(User, related_name='reportado')
-    tipo = models.SmallIntegerField(max_length=1, default=0, choices=TIPOS_REPORTE)
-    mensaje = models.CharField(max_length=200)
+    tipo = models.SmallIntegerField(max_length=1, default=0, choices=REPORTE)
+    mensaje = models.CharField(max_length=255)
     fecha_hora = models.DateTimeField(auto_now_add=True)
-    estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADOS)
+    estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADO)
 
-class reporte_pregunta(models.Model):
+class contenido_reporte(models.Model):
     user = models.ForeignKey(User)
-    pregunta = models.ForeignKey(pregunta)
-    tipo = models.SmallIntegerField(max_length=1, default=0, choices=TIPOS_REPORTE)
-    mensaje = models.CharField(max_length=200)
+    contenido = models.ForeignKey(contenido)
+    tipo = models.SmallIntegerField(max_length=1, default=0, choices=REPORTE)
+    mensaje = models.CharField(max_length=255)
     fecha_hora = models.DateTimeField(auto_now_add=True)
-    estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADOS)
+    estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADO)
 
 class medalla(models.Model):
     nombre = models.CharField(max_length=50)
     descripcion = models.TextField()
-    nivel = models.SmallIntegerField(max_length=1, default=0, choices=NIVELES_MEDALLA)
-    estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADOS)
+    nivel = models.SmallIntegerField(max_length=1, default=0, choices=MEDALLA)
+    estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADO)
 
-class medalla_usuario(models.Model):
+class usuario_medalla(models.Model):
     user = models.ForeignKey(User)
     medalla = models.ForeignKey(medalla)
     fecha_hora = models.DateTimeField(auto_now_add=True)
-    estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADOS)
+    estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADO)
