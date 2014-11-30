@@ -8,8 +8,7 @@
     <title>{% block title %}{% endblock %} - StackPreguntas</title>
 
     <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}"/>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
+    {% compressed_css 'all' %}
     {% block css %}{% endblock %}
 
 </head>

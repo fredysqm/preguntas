@@ -15,6 +15,7 @@ INSTALLED_APPS = (
     'app',
     'crispy_forms',
     'pipeline',
+    'pipeline',
 )
 
 MIDDLEWARE_CLASSES = (
