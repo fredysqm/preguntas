@@ -5,25 +5,36 @@ from django.contrib.auth.models import User
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Field, Fieldset, Button, HTML
-from crispy_forms.bootstrap import PrependedText, PrependedAppendedText, FormActions
+from crispy_forms.bootstrap import PrependedText, PrependedAppendedText, AppendedText, FormActions
 
-from .models import pregunta, respuesta, tag, comentario, usuario_detalles, reporte_usuario, reporte_pregunta
+from .models import pregunta, contenido, tag, comentario, usuario_extra, usuario_reporte, contenido_reporte
 
 class pregunta_form(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):     
+        
         super(pregunta_form, self).__init__(*args, **kwargs)
-
+        self.fields['contenido'] = kwargs['initial']['contenido']
+        self.fields['contenido'].widget = TextInput()
+        
         self.helper = FormHelper(self)
         self.helper.form_method = 'POST'
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-md-3'
-        self.helper.field_class = 'col-md-9'
+        self.helper.field_class = 'col-md-9'        
+        
         
         self.helper.layout = Layout(
             Fieldset('<span class="glyphicon glyphicon-pencil"></span> Crear Pregunta',
                 'titulo',
-                'contenido',
-                #'tags',
+                HTML("""<div id="div_id_contenido" class="form-group">
+                            <label for="id_contenido" class="control-label col-md-3 requiredField">
+                            Contenido<span class="asteriskField">*</span></label>
+                            <div class="controls col-md-9">
+                                <textarea class="textarea form-control" cols="40" id="id_contenido" name="contenido" rows="10">
+                                    {{ form.contenido }}
+                                </textarea>
+                            </div>
+                        </div>"""),
                 HTML("""<div id="div_id_tags" class="form-group">
                             <label for="id_tags" class="control-label col-md-3 requiredField">
                             Tags<span class="asteriskField">*</span></label>
@@ -35,7 +46,6 @@ class pregunta_form(forms.ModelForm):
                                 </select>
                             </div>
                         </div>"""),
-                #Field('tags'),
             ),
             FormActions(                
                 Submit('submit', u'Guardar'),
@@ -102,7 +112,7 @@ class reporte_pregunta_form(forms.ModelForm):
         )
     
     class Meta:
-        model = reporte_pregunta
+        model = contenido_reporte
         exclude = ('estado','fecha_hora', 'user', 'pregunta',)
         
 class user_form(forms.ModelForm):
@@ -115,14 +125,14 @@ class user_editar_form(forms.ModelForm):
         model = User
         fields = ('first_name','last_name','email',)
         
-class user_detalles_form(forms.ModelForm):
+class user_extra_form(forms.ModelForm):
     class Meta:
-        model = usuario_detalles
+        model = usuario_extra
         fields = ('descripcion',)
         
 class respuesta_form(forms.ModelForm):
     class Meta:
-        model = respuesta
+        model = contenido
         exclude = ('n_votos', 'estado',)
 
 class respuesta_eliminar_form(forms.ModelForm):
@@ -149,7 +159,7 @@ class respuesta_eliminar_form(forms.ModelForm):
         )
     
     class Meta:
-        model = respuesta
+        model = contenido
         exclude = ('pregunta', 'autor', 'contenido', 'n_votos', 'estado')
 
 class tag_form(forms.ModelForm):
@@ -175,7 +185,7 @@ class tag_form(forms.ModelForm):
     
     class Meta:
         model = tag
-        exclude = ('n_preguntas',)
+        exclude = ('n_preguntas', 'slug')
 
 class comentario_form(forms.ModelForm):
     class Meta:
@@ -207,9 +217,9 @@ class comentario_eliminar_form(forms.ModelForm):
         model = comentario
         exclude = ('content_type', 'object_id', 'autor', 'contenido', 'n_votos', 'estado',)
         
-class reporte_usuario_form(forms.ModelForm):
+class usuario_reporte_form(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(reporte_usuario_form, self).__init__(*args, **kwargs)
+        super(usuario_reporte_form, self).__init__(*args, **kwargs)
 
         self.helper = FormHelper(self)
         self.helper.form_method = 'POST'
@@ -229,5 +239,5 @@ class reporte_usuario_form(forms.ModelForm):
         )
     
     class Meta:
-        model = reporte_usuario
+        model = usuario_reporte
         exclude = ('estado','fecha_hora', 'user', 'reportado',)

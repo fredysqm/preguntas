@@ -6,8 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 import random
 
-from .forms import pregunta_form, respuesta_form, tag_form, user_form, user_editar_form, user_detalles_form, pregunta_eliminar_form, respuesta_eliminar_form, comentario_form, comentario_eliminar_form, reporte_usuario_form, reporte_pregunta_form
-from .models import pregunta, respuesta, tag, usuario_detalles, usuario_extra, comentario, voto, favorito
+from .forms import pregunta_form, respuesta_form, tag_form, user_form, user_editar_form, user_extra_form, pregunta_eliminar_form, respuesta_eliminar_form, comentario_form, comentario_eliminar_form, usuario_reporte_form, reporte_pregunta_form
+from .models import pregunta, contenido, tag, usuario_extra, comentario, voto, favorito
 
 from django.template.defaultfilters import slugify
 
@@ -15,8 +15,16 @@ from notification.models import notification
 
 #PREGUNTAS
 def preguntas_view(request):
-    args = {}
-    args['preguntas'] = pregunta.objects.all()
+    args = {}    
+    _preguntas = pregunta.objects.all().order_by('-fecha_hora')[:10]
+    _propio = []    
+    for _pregunta in _preguntas:
+        if str(_pregunta.contenido_set.first().autor.id) == str(request.user.id):
+            _propio.append(True)
+        else:
+            _propio.append(False)
+    args['preguntas'] = zip(_preguntas, _propio)
+    
     return render(request, 'preguntas/home.html', args)
 
 @login_required()
@@ -27,14 +35,15 @@ def preguntas_crear_view(request):
         if form.is_valid():
             _pregunta = form.save(commit=False)
             _pregunta.slug = slugify(_pregunta.titulo)
-            _pregunta.autor_id = request.user.id
+            _pregunta.autor_id = request.user.id            
             _pregunta.save()
+            _contenido = contenido.objects.create(pregunta=_pregunta, autor=request.user,texto=form.data['contenido'])
             
             _tags = form.cleaned_data['tags']
             for _tag in _tags:
                 _pregunta.tags.add(_tag)
-                _n_preguntas = _tag.n_preguntas
-                tag.objects.filter(id=_tag.id).update(n_preguntas=(_n_preguntas+1))
+                #_n_preguntas = _tag.n_preguntas
+                #tag.objects.filter(id=_tag.id).update(n_preguntas=(_n_preguntas+1))
                         
             return HttpResponseRedirect(reverse('preguntas_url'))
     else:   
@@ -49,8 +58,9 @@ def preguntas_crear_view(request):
 def preguntas_editar_view(request, pregunta_id, pregunta_slug):
     args = {}
     _pregunta = get_object_or_404(pregunta, id=pregunta_id)
+    _contenido = _pregunta.contenido_set.first()
 
-    if _pregunta.autor_id == request.user.id:
+    if _contenido.autor.id == request.user.id:
         if request.POST:
             form = pregunta_form(request.POST, instance=_pregunta)
             if form.is_valid():
@@ -67,8 +77,8 @@ def preguntas_editar_view(request, pregunta_id, pregunta_slug):
                 form.save()
                 return HttpResponseRedirect(reverse('preguntas_url'))
         else:
-            form = pregunta_form(initial={'titulo':_pregunta.titulo, 'contenido':_pregunta.contenido,
-                                        'tags':_pregunta.tags, 'autor':_pregunta.autor})
+            form = pregunta_form(initial={'titulo':_pregunta.titulo, 'contenido':_contenido.texto,
+                                        'tags':_pregunta.tags, 'autor':_contenido.autor})
             all_tags = tag.objects.all()
 
         args.update(csrf(request))
@@ -82,12 +92,13 @@ def preguntas_editar_view(request, pregunta_id, pregunta_slug):
 def preguntas_ver_view(request, pregunta_id):
     args = {}
     _pregunta = get_object_or_404(pregunta, id=pregunta_id)
-    _respuestas = respuesta.objects.filter(pregunta_id=pregunta_id)
+    _respuestas = contenido.objects.filter(pregunta_id=pregunta_id)[1:]
     comentarios_respuestas = []
     for _respuesta in _respuestas.values():
-        comentarios_respuestas.append(comentario.objects.filter(content_type=12, object_id=_respuesta['id']))
-    _comentarios = comentario.objects.filter(content_type=11, object_id=pregunta_id)
-    _voto = voto.objects.filter(pregunta=_pregunta.id,user=request.user.id).order_by('-fecha_hora')[:1]
+        comentarios_respuestas.append(comentario.objects.filter(contenido=_respuesta['id']))
+    _comentarios = comentario.objects.filter(contenido=pregunta_id)
+    #_voto = voto.objects.filter(pregunta=_pregunta.id,user=request.user.id).order_by('-fecha_hora')[:1]
+    _voto = voto.objects.filter(pregunta=_pregunta.id,user=request.user.id).order_by('-id')[:1]
     args.update(csrf(request))
     args['pregunta'] = _pregunta
     args['respuestas'] = zip(_respuestas, comentarios_respuestas)
