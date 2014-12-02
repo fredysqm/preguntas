@@ -1,11 +1,15 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+
+from app.views import preguntas_lista_view
+
 admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     
-    url(r'^$', 'app.views.preguntas_view', name='preguntas_url'),
+    #url(r'^$', 'app.views.preguntas_view', name='preguntas_url'),
+    url(r'^$', preguntas_lista_view.as_view(), name='preguntas_url'),
     
     url(r'^accounts/', include('registration.backends.default.urls')),
     url(r'^accounts/password/reset', 'django.contrib.auth.views.password_reset',

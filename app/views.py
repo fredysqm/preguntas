@@ -1,3 +1,5 @@
+from django.views.generic import ListView, CreateView, UpdateView
+
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse, Http404
@@ -27,6 +29,28 @@ def preguntas_view(request):
     
     return render(request, 'preguntas/home.html', args)
 
+class preguntas_lista_view(ListView):          
+    _preguntas = pregunta.objects.all().select_related(None)
+    template_name = 'preguntas/home.html'    
+    
+    def get_queryset(self):        
+        usuario = self.request.user
+        return queryset
+    
+    def get(self, **kwargs):
+        _propio = []
+        usuario = None
+        for _pregunta in _preguntas:
+            if str(_pregunta.contenido_set.first().autor.id) == str(usuario.id):
+                _propio.append(True)
+            else:
+                _propio.append(False)
+        object_list = zip(_preguntas, _propio)
+        
+        
+    
+    
+    
 @login_required()
 def preguntas_crear_view(request):
     args = {}

@@ -21,6 +21,15 @@
     </div>
     <hr/>
 
+    <ul>
+    {% for pregunta, propio in object_list %}
+    <li>
+        {{ pregunta.titulo }} -- {{ propio }}
+    </li>
+    {% endfor %}
+    </ul>
+    
+    
     {% for pregunta, propio in preguntas %}
         <article>
             <div class="row">
