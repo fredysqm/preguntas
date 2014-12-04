@@ -1,4 +1,4 @@
-from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView
 
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.core.urlresolvers import reverse
@@ -16,40 +16,19 @@ from django.template.defaultfilters import slugify
 from notification.models import notification
 
 #PREGUNTAS
-def preguntas_view(request):
-    args = {}    
-    _preguntas = pregunta.objects.all().order_by('-fecha_hora')[:10]
-    _propio = []    
-    for _pregunta in _preguntas:
-        if str(_pregunta.contenido_set.first().autor.id) == str(request.user.id):
-            _propio.append(True)
-        else:
-            _propio.append(False)
-    args['preguntas'] = zip(_preguntas, _propio)
-    
-    return render(request, 'preguntas/home.html', args)
-
 class preguntas_lista_view(ListView):          
-    _preguntas = pregunta.objects.all().select_related(None)
-    template_name = 'preguntas/home.html'    
+    queryset = pregunta.objects.all()
+    template_name = 'preguntas/home.html'
+    object_list = queryset
     
-    def get_queryset(self):        
-        usuario = self.request.user
-        return queryset
-    
-    def get(self, **kwargs):
-        _propio = []
-        usuario = None
-        for _pregunta in _preguntas:
-            if str(_pregunta.contenido_set.first().autor.id) == str(usuario.id):
-                _propio.append(True)
-            else:
-                _propio.append(False)
-        object_list = zip(_preguntas, _propio)
-        
-        
-    
-    
+    def get_context_data(self, **kwargs):
+        context = super(preguntas_lista_view, self).get_context_data(**kwargs)
+        pregunta_autor = set()
+        for pregunta in object_list:
+            pregunta_autor.append(User.objects.get(id=pregunta.contenido_set.first().id))
+        context['user'] = self.request.user
+        context['preguntas'] = zip(object_list, pregunta_autor)
+        return context
     
 @login_required()
 def preguntas_crear_view(request):
@@ -113,25 +92,33 @@ def preguntas_editar_view(request, pregunta_id, pregunta_slug):
     else:
         return render(request, 'errores/no_autorizado.html', args)
 
-def preguntas_ver_view(request, pregunta_id):
-    args = {}
-    _pregunta = get_object_or_404(pregunta, id=pregunta_id)
-    _respuestas = contenido.objects.filter(pregunta_id=pregunta_id)[1:]
-    comentarios_respuestas = []
-    for _respuesta in _respuestas.values():
-        comentarios_respuestas.append(comentario.objects.filter(contenido=_respuesta['id']))
-    _comentarios = comentario.objects.filter(contenido=pregunta_id)
-    #_voto = voto.objects.filter(pregunta=_pregunta.id,user=request.user.id).order_by('-fecha_hora')[:1]
-    _voto = voto.objects.filter(pregunta=_pregunta.id,user=request.user.id).order_by('-id')[:1]
-    args.update(csrf(request))
-    args['pregunta'] = _pregunta
-    args['respuestas'] = zip(_respuestas, comentarios_respuestas)
-    args['comentarios'] = _comentarios
-    args['path'] = request.path
-    args['object_id'] = pregunta_id
-    args['voto'] = _voto.first()
-    pregunta.objects.filter(id=pregunta_id).update(n_vistas=(_pregunta.n_vistas + 1))
-    return render(request,'preguntas/ver.html', args)
+class preguntas_ver_view(DetailView):
+    model = pregunta
+    template_name = 'preguntas/ver.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super(preguntas_ver_view, self).get_context_data(**kwargs)
+        _pregunta = self.object
+        pregunta_id = self.object.id
+        user = self.request.user
+        _respuestas = contenido.objects.filter(pregunta_id=pregunta_id)[1:]
+        comentarios_respuestas = []
+        for _respuesta in _respuestas.values():
+            comentarios_respuestas.append(comentario.objects.filter(contenido=_respuesta['id']))
+        _comentarios = comentario.objects.filter(contenido=pregunta_id)
+        _voto = voto.objects.filter(pregunta=_pregunta.id,user=user.id).order_by('-id')[:1]        
+        
+        pregunta.objects.filter(id=pregunta_id).update(n_vistas=(_pregunta.n_vistas + 1))
+        _respuestas = contenido.objects.filter(pregunta_id=pregunta_id)[1:]
+        
+        context['pregunta'] = _pregunta
+        context['autor'] = _pregunta.contenido_set.first().autor
+        context['respuestas'] = zip(_respuestas, comentarios_respuestas)
+        context['comentarios'] = _comentarios
+        context['path'] = self.request.path
+        context['object_id'] = pregunta_id        
+        context['voto'] = _voto.first()
+        return context
 
 @login_required()
 def preguntas_eliminar_view(request, pregunta_id):

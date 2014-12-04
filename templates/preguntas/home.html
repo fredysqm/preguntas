@@ -19,18 +19,9 @@
             </form>
         </div>
     </div>
-    <hr/>
-
-    <ul>
-    {% for pregunta, propio in object_list %}
-    <li>
-        {{ pregunta.titulo }} -- {{ propio }}
-    </li>
-    {% endfor %}
-    </ul>
+    <hr/>    
     
-    
-    {% for pregunta, propio in preguntas %}
+    {% for pregunta, autor in preguntas %}
         <article>
             <div class="row">
                 <div class="col col-sm-3 no-padding-right">
@@ -58,7 +49,7 @@
                 <div class="col col-sm-9">
                     <h4 class="titulo">
                         <a href="{% url 'preguntas_ver_url' pregunta.id %}">{{ pregunta.titulo }}</a>
-                        {% if propio %}
+                        {% if autor.id == user.id %}
                             <small><a href="{% url 'preguntas_editar_url' pregunta.id pregunta.slug %}">(Editar)</a></small>
                         {% endif %}
                     </h4>
