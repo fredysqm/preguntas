@@ -12,9 +12,9 @@ from .models import pregunta, contenido, tag, comentario, usuario_extra, usuario
 class pregunta_form(forms.ModelForm):
     def __init__(self, *args, **kwargs):     
         
+        contenido = forms.CharField(required=True)
+        
         super(pregunta_form, self).__init__(*args, **kwargs)
-        self.fields['contenido'] = kwargs['initial']['contenido']
-        self.fields['contenido'].widget = TextInput()
         
         self.helper = FormHelper(self)
         self.helper.form_method = 'POST'
@@ -55,7 +55,7 @@ class pregunta_form(forms.ModelForm):
 
     class Meta:
         model = pregunta
-        exclude = ('n_vistas', 'n_respuestas', 'n_votos', 'respondido', 'estado', 'autor', 'slug')
+        exclude = ('n_vistas', 'n_respuestas', 'n_votos', 'respondido', 'estado', 'slug')
 
 
 class pregunta_eliminar_form(forms.ModelForm):

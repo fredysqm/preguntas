@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
-from app.views import preguntas_lista_view, preguntas_ver_view
+from app.views import preguntas_lista_view, preguntas_crear_view, preguntas_ver_view, preguntas_responder_view
 
 admin.autodiscover()
 
@@ -17,12 +17,14 @@ urlpatterns = patterns('',
     url(r'^notificationes/', 'app.views.notificaciones_por_usuario_view', name='notificaciones_por_usuario_url'),
     url(r'^notification/', include('notification.urls')),
     
-    url(r'^crear/$', 'app.views.preguntas_crear_view', name='preguntas_crear_url'),
+    #url(r'^crear/$', 'app.views.preguntas_crear_view', name='preguntas_crear_url'),
+    url(r'^crear/$', preguntas_crear_view.as_view(), name='preguntas_crear_url'),
     #url(r'^ver/(\d+)/$', 'app.views.preguntas_ver_view', name='preguntas_ver_url'),
     url(r'^ver/(?P<pk>[\d+])/$', preguntas_ver_view.as_view(), name='preguntas_ver_url'),
     url(r'^editar/(\d+)/([\w\-]+)/$', 'app.views.preguntas_editar_view', name='preguntas_editar_url'),
     url(r'^eliminar/(\d+)/$', 'app.views.preguntas_eliminar_view', name='preguntas_eliminar_url'),
-    url(r'^responder/(\d+)/$', 'app.views.preguntas_responder_view', name='preguntas_responder_url'),
+    url(r'^responder/(\d+)/$', preguntas_responder_view.as_view(), name='preguntas_responder_url'),
+    #url(r'^responder/(\d+)/$', 'app.views.preguntas_responder_view', name='preguntas_responder_url'),
     url(r'^abiertas/$', 'app.views.preguntas_abiertas_view', name='preguntas_abiertas_url'),
     url(r'^tag/(\d+)/$', 'app.views.preguntas_por_tag_view', name='preguntas_por_tag_url'),
     url(r'^comentarios/(\d+)/$', 'app.views.preguntas_comentarios_view', name='preguntas_comentarios_url'),

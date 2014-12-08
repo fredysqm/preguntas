@@ -24,12 +24,23 @@ class preguntas_lista_view(ListView):
     def get_context_data(self, **kwargs):
         context = super(preguntas_lista_view, self).get_context_data(**kwargs)
         pregunta_autor = set()
-        for pregunta in object_list:
-            pregunta_autor.append(User.objects.get(id=pregunta.contenido_set.first().id))
+        for pregunta in self.object_list:
+            pregunta_autor.add(User.objects.get(id=pregunta.contenido_set.first().autor.id))
         context['user'] = self.request.user
-        context['preguntas'] = zip(object_list, pregunta_autor)
+        context['preguntas'] = zip(self.object_list, pregunta_autor)
         return context
+ 
+class preguntas_crear_view(CreateView):
+    form_class = pregunta_form
+    model = pregunta
+    fields = ['titulo', 'tags']
+    template_name = 'preguntas/crear2.html'
     
+    def get_context_data(self, **kwargs):
+        context = super(preguntas_crear_view, self).get_context_data(**kwargs)
+        context['contenido'] = ''
+        return context
+"""
 @login_required()
 def preguntas_crear_view(request):
     args = {}
@@ -56,7 +67,7 @@ def preguntas_crear_view(request):
     args['form'] = form
     args['all_tags'] = tag.objects.all()
     return render(request,'preguntas/crear.html', args)
-
+"""
 @login_required()
 def preguntas_editar_view(request, pregunta_id, pregunta_slug):
     args = {}
@@ -144,8 +155,19 @@ def preguntas_eliminar_view(request, pregunta_id):
     args['pregunta'] = _pregunta
     return render(request, 'preguntas/eliminar.html', args)
 
+class preguntas_responder_view(CreateView):
+    model = contenido
+    template_name = 'preguntas/responder.html'
+    fields = ['texto']
+    
+    def get_context_data(self, **kwargs):
+        context = super(preguntas_responder_view, self).get_context_data(**kwargs)
+        import pdb; pdb.set_trace()
+        context['pregunta'] = self.object
+
+"""    
 @login_required()
-def preguntas_responder_view(request,pregunta_id):
+def _preguntas_responder_view(request,pregunta_id):
     args = {}
     if request.POST:
         form = respuesta_form(request.POST)
@@ -167,7 +189,7 @@ def preguntas_responder_view(request,pregunta_id):
     args['pregunta'] = pregunta.objects.get(id=pregunta_id)
     args['respuestas'] = respuestas
     return render(request,'preguntas/responder.html', args)
-
+"""
 def preguntas_abiertas_view(request):
     args = {}
     preguntas_abiertas = pregunta.objects.filter(n_respuestas=0)
