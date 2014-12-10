@@ -3,9 +3,9 @@
 {% block content %}
 <div class="row">
     <ul>
-        {% for tag in tags %}
+        {% for tag in object_list %}
         <li><a href="{% url 'preguntas_por_tag_url' tag.id %}">{{ tag.nombre }}</a> -- **{{ tag.descripcion }}**</li>
-        <strong>x{{tag.n_preguntas}}</strong></li>
+        <strong>Nro preguntas</strong></li>
         {% empty %}
         <li>¡No hay etiquetas que mostrar!</li>
         {% endfor %}

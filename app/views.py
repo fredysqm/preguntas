@@ -1,7 +1,7 @@
-from django.views.generic import ListView, CreateView, UpdateView, DetailView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
 
 from django.shortcuts import render, get_object_or_404, get_list_or_404
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.core.context_processors import csrf
 from django.contrib.auth.decorators import login_required
@@ -10,6 +10,8 @@ import random
 
 from .forms import pregunta_form, respuesta_form, tag_form, user_form, user_editar_form, user_extra_form, pregunta_eliminar_form, respuesta_eliminar_form, comentario_form, comentario_eliminar_form, usuario_reporte_form, reporte_pregunta_form
 from .models import pregunta, contenido, tag, usuario_extra, comentario, voto, favorito
+
+from django.utils.decorators import method_decorator
 
 from django.template.defaultfilters import slugify
 
@@ -23,18 +25,22 @@ class preguntas_lista_view(ListView):
     
     def get_context_data(self, **kwargs):
         context = super(preguntas_lista_view, self).get_context_data(**kwargs)
-        pregunta_autor = set()
+        pregunta_autor = list()
         for pregunta in self.object_list:
-            pregunta_autor.add(User.objects.get(id=pregunta.contenido_set.first().autor.id))
+            pregunta_autor.append(User.objects.get(id=pregunta.contenido_set.first().autor.id))
         context['user'] = self.request.user
         context['preguntas'] = zip(self.object_list, pregunta_autor)
         return context
- 
+
 class preguntas_crear_view(CreateView):
     form_class = pregunta_form
     model = pregunta
     fields = ['titulo', 'tags']
     template_name = 'preguntas/crear2.html'
+    
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(preguntas_crear_view, self).dispatch(*args, **kwargs)
     
     def get_context_data(self, **kwargs):
         context = super(preguntas_crear_view, self).get_context_data(**kwargs)
@@ -131,8 +137,23 @@ class preguntas_ver_view(DetailView):
         context['voto'] = _voto.first()
         return context
 
+class preguntas_eliminar_view(DeleteView):
+    form_class = pregunta_eliminar_form
+    model = pregunta
+    success_url = reverse_lazy('preguntas_url')
+    template_name = 'preguntas/eliminar.html'
+    
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(preguntas_eliminar_view, self).dispatch(*args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super(preguntas_eliminar_view, self).get_context_data(**kwargs)
+        context['contenido'] = ''
+        return context
+    
 @login_required()
-def preguntas_eliminar_view(request, pregunta_id):
+def _preguntas_eliminar_view(request, pregunta_id):
     args = {}
     _pregunta = get_object_or_404(pregunta, id=pregunta_id)
 
@@ -158,7 +179,10 @@ def preguntas_eliminar_view(request, pregunta_id):
 class preguntas_responder_view(CreateView):
     model = contenido
     template_name = 'preguntas/responder.html'
-    fields = ['texto']
+    
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(preguntas_responder_view, self).dispatch(*args, **kwargs)
     
     def get_context_data(self, **kwargs):
         context = super(preguntas_responder_view, self).get_context_data(**kwargs)
@@ -318,21 +342,26 @@ def respuestas_elegir_mejor_view(request, respuesta_id):
     return HttpResponseRedirect(reverse('preguntas_ver_url', args=[_respuesta.pregunta_id]))
 
 # TAGS
-def tags_ver_view(request):
-    args = {}
-    tags = tag.objects.all()
-    args.update(csrf(request))
-    args['tags'] = tags
-    return render(request, 'tag/ver.html', args)
+class tags_ver_view(ListView):
+    queryset = tag.objects.all()
+    template_name = 'tag/ver.html'
+    object_list = queryset
 
-def tags_populares_ver_view(request):
-    args = {}
-    tags = tag.objects.all().order_by('-n_preguntas')[:20]
-    args.update(csrf(request))
-    args['tags'] = tags
-    return render(request, 'tag/ver.html', args)
+class tags_populares_ver_view(ListView):
+    queryset = tag.objects.all().order_by('-nombre')[:20]
+    template_name = 'tag/ver.html'
+    object_list = queryset
 
-@login_required()    
+class tags_crear_view(CreateView):
+    model = tag
+    template_name = 'tag/tag_crear.html'
+    model_form = tag_form
+    fields = ['nombre']
+    
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(tags_crear_view, self).dispatch(*args, **kwargs)
+"""
 def tags_crear_view(request):
     args = {}
     if request.POST:
@@ -346,7 +375,7 @@ def tags_crear_view(request):
     args.update(csrf(request))
     args['form'] = form
     return render(request,'tag/tag_crear.html', args)
-
+"""
 # USUARIOS
 def usuarios_ver_view(request):
     args = {}
