@@ -1,4 +1,4 @@
-from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView, FormView
 
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -37,6 +37,7 @@ class preguntas_crear_view(CreateView):
     model = pregunta
     fields = ['titulo', 'tags']
     template_name = 'preguntas/crear2.html'
+    success_url = '/'
     
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -45,7 +46,14 @@ class preguntas_crear_view(CreateView):
     def get_context_data(self, **kwargs):
         context = super(preguntas_crear_view, self).get_context_data(**kwargs)
         context['contenido'] = ''
+        context['all_tags'] = tag.objects.all()
         return context
+        
+    def post(self, *args, **kwargs):
+        import pdb; pdb.set_trace()
+        x = super(preguntas_crear_view, self).post(*args, **kwargs)
+        _contenido = contenido.objects.create(pregunta=self.object, texto=self.request.POST['contenido'], autor=self.request.user)
+        return x
 """
 @login_required()
 def preguntas_crear_view(request):
@@ -392,7 +400,25 @@ def usuarios_ver_view(request):
     args['usuarios'] = zip(users, detalle, extra)
     return render(request, 'usuarios/ver.html', args)
     
-def usuarios_perfil_view(request, user_id):
+class usuarios_perfil_view(DetailView):
+    model = User
+    template_name = 'usuarios/usuarios_perfil.html'
+            
+    def get_queryset(self, *args, **kwargs):
+        pk = self.kwargs['pk']
+        queryset = User.objects.filter(pk=pk)
+        return queryset
+        
+    def get_context_data(self, *args, **kwargs):
+        context = super(usuarios_perfil_view, self).get_context_data(*args, **kwargs)
+        pk = self.kwargs['pk']
+        context['usuario'] = User.objects.get(pk=pk)        
+        context['usuario_extra'] = usuario_extra.objects.get(usuario_extra=pk)        
+        contenidos = contenido.objects.filter(autor=pk)
+        context['preguntas'] = pregunta.objects.filter(id__in = contenidos.values_list('pregunta', flat=True))
+        return context
+"""
+def _usuarios_perfil_view(request, user_id):
     args = {}
     
     requested_user = get_object_or_404(User, id=user_id)
@@ -414,7 +440,7 @@ def usuarios_perfil_view(request, user_id):
     args['votos_arriba'] = _votos.filter(arriba=True).count()
     args['votos_abajo'] = _votos.filter(arriba=False).count()
     return render(request, 'usuarios/usuarios_perfil.html', args)
-
+"""
 @login_required()
 def usuarios_perfil_editar_view(request, user_id):
     args = {}
@@ -440,7 +466,16 @@ def usuarios_perfil_editar_view(request, user_id):
     args['form_detalle'] = form_detalle
     return render(request, 'usuarios/editar_perfil.html', args)
     
-def usuarios_reportar_view(request, reportado_id):
+class usuarios_reportar_view(FormView):
+    template_name = 'usuarios/reportar.html'
+    form_class = usuario_reporte_form
+    success_url = '/'
+    
+    def get(self, *args, **kwargs):
+        return super(usuarios_reportar_view, self).get(*args, **kwargs)
+    
+"""
+def _usuarios_reportar_view(request, reportado_id):
     args = {}
     _reportado = get_object_or_404(User, id=reportado_id)
     if request.POST:        
@@ -457,7 +492,8 @@ def usuarios_reportar_view(request, reportado_id):
     args.update(csrf(request))
     args['form'] = form
     return render(request,'usuarios/reportar.html', args)
-    
+"""
+
 # COMENTARIOS
 @login_required()
 def comentarios_crear_view(request):    

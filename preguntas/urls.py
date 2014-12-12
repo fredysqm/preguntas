@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
-from app.views import preguntas_lista_view, preguntas_crear_view, preguntas_ver_view, preguntas_responder_view, preguntas_eliminar_view, tags_ver_view, tags_populares_ver_view, tags_crear_view
+from app.views import preguntas_lista_view, preguntas_crear_view, preguntas_ver_view, preguntas_responder_view, preguntas_eliminar_view, tags_ver_view, tags_populares_ver_view, tags_crear_view, usuarios_perfil_view, usuarios_reportar_view
 
 admin.autodiscover()
 
@@ -48,8 +48,9 @@ urlpatterns = patterns('',
     url(r'^comentarios/(\d+)/eliminar/$', 'app.views.comentarios_eliminar_view', name='comentarios_eliminar_url'),
     
     url(r'^usuarios/crear/$', 'app.views.usuario_crear_view', name='usuarios_crear_url'),    
-    url(r'^usuarios/(\d+)/perfil/$', 'app.views.usuarios_perfil_view', name='usuarios_perfil_url'),
-    url(r'^usuarios/reportar/(\d+)/$', 'app.views.usuarios_reportar_view', name='usuarios_reportar_url'),
+    url(r'^usuarios/(?P<pk>[\d+])/perfil/$', usuarios_perfil_view.as_view(), name='usuarios_perfil_url'),
+    #url(r'^usuarios/(\d+)/perfil/$', 'app.views.usuarios_perfil_view', name='usuarios_perfil_url'),
+    url(r'^usuarios/reportar/(?P<pk>[\d+])/$', usuarios_reportar_view.as_view(), name='usuarios_reportar_url'),
     
     url(r'^buscar/$', 'app.views.buscar_view', name='buscar_url'),    
     
