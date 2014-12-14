@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 import random
 
 from .forms import pregunta_form, respuesta_form, tag_form, user_form, user_editar_form, user_extra_form, pregunta_eliminar_form, respuesta_eliminar_form, comentario_form, comentario_eliminar_form, usuario_reporte_form, reporte_pregunta_form
-from .models import pregunta, contenido, tag, usuario_extra, comentario, voto, favorito
+from .models import pregunta, contenido, tag, usuario_extra, comentario, voto, favorito, usuario_reporte
 
 from django.utils.decorators import method_decorator
 
@@ -466,14 +466,23 @@ def usuarios_perfil_editar_view(request, user_id):
     args['form_detalle'] = form_detalle
     return render(request, 'usuarios/editar_perfil.html', args)
     
-class usuarios_reportar_view(FormView):
+class usuarios_reportar_view(CreateView):
+    model = usuario_reporte
     template_name = 'usuarios/reportar.html'
     form_class = usuario_reporte_form
     success_url = '/'
     
+    def get_initial(self):
+        #import pdb; pdb.set_trace()
+        return {'user': User.objects.get(pk=self.request.user.id),'reportado': User.objects.get(pk=self.kwargs['pk'])}
+    
+    def post(self, *args, **kwargs):
+        return super(usuarios_reportar_view, self).post(self.request, **kwargs)
+    
+    """
     def get(self, *args, **kwargs):
         return super(usuarios_reportar_view, self).get(*args, **kwargs)
-    
+    """
 """
 def _usuarios_reportar_view(request, reportado_id):
     args = {}

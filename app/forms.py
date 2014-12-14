@@ -4,7 +4,7 @@ from django import forms
 from django.contrib.auth.models import User
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Field, Fieldset, Button, HTML
+from crispy_forms.layout import Submit, Layout, Field, Fieldset, Button, HTML, Hidden
 from crispy_forms.bootstrap import PrependedText, PrependedAppendedText, AppendedText, FormActions
 
 from .models import pregunta, contenido, tag, comentario, usuario_extra, usuario_reporte, contenido_reporte
@@ -231,13 +231,16 @@ class usuario_reporte_form(forms.ModelForm):
             Fieldset('<span class="glyphicon glyphicon-pencil"></span> Reportar usuario',
                 Field('tipo'),
                 'mensaje',
+                Hidden('user', ''),
+                Hidden('reportado', ''),
             ),
             FormActions(
                 Submit('submit', u'Reportar'),
                 css_class='text-right'
             ),
+            
         )
     
     class Meta:
         model = usuario_reporte
-        exclude = ('estado','fecha_hora', 'user', 'reportado',)
+        fields = ('user', 'reportado', 'tipo', 'mensaje')
