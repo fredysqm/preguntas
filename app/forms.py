@@ -188,9 +188,28 @@ class tag_form(forms.ModelForm):
         exclude = ('n_preguntas', 'slug')
 
 class comentario_form(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(comentario_form, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.form_method = 'POST'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-md-3'
+        self.helper.field_class = 'col-md-9'
+
+        self.helper.layout = Layout(
+            Fieldset('<span class="glyphicon glyphicon-pencil"></span> Crear comentario',
+                'texto',
+            ),
+            FormActions(
+                Submit('submit', u'Crear'),
+                css_class='text-right'
+            ),
+        )
+    
     class Meta:
         model = comentario
-        exclude = ('n_votos','estado','fecha_hora',)
+        fields = ('texto',)
 
 class comentario_eliminar_form(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -231,8 +250,6 @@ class usuario_reporte_form(forms.ModelForm):
             Fieldset('<span class="glyphicon glyphicon-pencil"></span> Reportar usuario',
                 Field('tipo'),
                 'mensaje',
-                Hidden('user', ''),
-                Hidden('reportado', ''),
             ),
             FormActions(
                 Submit('submit', u'Reportar'),
@@ -243,4 +260,4 @@ class usuario_reporte_form(forms.ModelForm):
     
     class Meta:
         model = usuario_reporte
-        fields = ('user', 'reportado', 'tipo', 'mensaje')
+        fields = ('tipo', 'mensaje')

@@ -1,54 +1,8 @@
 {% extends 'base.html' %}
-{% block title %}Comentarios{% endblock %}
+{% load crispy_forms_tags %}
+{% block title %}Crear comentario{% endblock %}
 {% block content %}
-    <div class="row">
-        <!-- Pregunta -->
-        <div class="pregunta col-xs-8 col-sm-8 col-md-8 col-lg-8">
-            <h2><strong>Crear un comentario</strong></h2>
-            <p>Crear un comentario</p>
-        </div>
-    </div>
-    <div class="row">
-        <hr/>
-    </div>
-    <div class="row">
-        <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
-            <!-- Formulario -->
-            <p><a href="{% url 'preguntas_url' %}">Lista de preguntas</a></p>
-            <form action="{% url 'comentarios_crear_url' %}" method="post">
-                {% csrf_token %}
-                {{ form.non_field_errors }}
-                <div class="fieldWrapper">
-                    {{ form.content_type.errors }}
-                    {{ form.content_type.as_hidden }}
-                </div>
-                <div class="fieldWrapper">
-                    {{ form.object_id.errors }}
-                    {{ form.object_id.as_hidden }}
-                </div>
-                <div class="fieldWrapper">
-                    {{ form.autor.errors }}
-                    {{ form.autor.as_hidden }}
-                </div>
-                <div class="fieldWrapper">
-                    {{ form.contenido.errors }}
-                    <label class="label-fix" for="id_contenido">Contenido:</label>
-                    {{ form.contenido }}
-                </div>
-                <div class="fieldWrapper">
-                    {{ form.n_votos.errors }}
-                    {{ form.n_votos.as_hidden }}
-                </div>
-                <div class="fieldWrapper">
-                    {{ form.estado.errors }}
-                    {{ form.estado.as_hidden }}
-                </div>
-                <input type="submit" name="submit" value="Crear Comentario"/>
-            </form>
-
-        </div>
-        <div class="row">
-            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8"><hr/></div>
-        </div>        
+    <div class="well bs-component">
+        {% crispy form %}
     </div>
 {% endblock %}

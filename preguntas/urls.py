@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
-from app.views import preguntas_lista_view, preguntas_crear_view, preguntas_ver_view, preguntas_responder_view, preguntas_eliminar_view, tags_ver_view, tags_populares_ver_view, tags_crear_view, usuarios_perfil_view, usuarios_reportar_view
+from app.views import preguntas_lista_view, preguntas_crear_view, preguntas_ver_view, preguntas_responder_view, preguntas_eliminar_view, tags_ver_view, tags_populares_ver_view, tags_crear_view, usuarios_perfil_view, usuarios_reportar_view, comentarios_crear_view, buscar_view,notificaciones_por_usuario_view
 
 admin.autodiscover()
 
@@ -14,7 +14,7 @@ urlpatterns = patterns('',
     url(r'^accounts/password/reset', 'django.contrib.auth.views.password_reset',
    name='password_reset'),
    
-    url(r'^notificationes/', 'app.views.notificaciones_por_usuario_view', name='notificaciones_por_usuario_url'),
+    url(r'^notificationes/', notificaciones_por_usuario_view.as_view(), name='notificaciones_por_usuario_url'),
     url(r'^notification/', include('notification.urls')),
     
     url(r'^crear/$', preguntas_crear_view.as_view(), name='preguntas_crear_url'),
@@ -43,7 +43,7 @@ urlpatterns = patterns('',
     url(r'user/(\d+)/$', 'app.views.usuarios_perfil_view', name='usuarios_perfil_url'),
     url(r'user/(\d+)/editar/$', 'app.views.usuarios_perfil_editar_view', name='usuarios_perfil_editar_url'),
 
-    url(r'^comentarios/crear/$', 'app.views.comentarios_crear_view', name='comentarios_crear_url'),
+    url(r'^comentarios/crear/', comentarios_crear_view.as_view(), name='comentarios_crear_url'),
     url(r'^comentarios/(\d+)/editar/$', 'app.views.comentarios_editar_view', name='comentarios_editar_url'),
     url(r'^comentarios/(\d+)/eliminar/$', 'app.views.comentarios_eliminar_view', name='comentarios_eliminar_url'),
     
@@ -52,6 +52,6 @@ urlpatterns = patterns('',
     #url(r'^usuarios/(\d+)/perfil/$', 'app.views.usuarios_perfil_view', name='usuarios_perfil_url'),
     url(r'^usuarios/reportar/(?P<pk>[\d+])/$', usuarios_reportar_view.as_view(), name='usuarios_reportar_url'),
     
-    url(r'^buscar/$', 'app.views.buscar_view', name='buscar_url'),    
+    url(r'^buscar/$', buscar_view.as_view(), name='buscar_url'),    
     
 )

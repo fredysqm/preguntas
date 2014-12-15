@@ -472,40 +472,43 @@ class usuarios_reportar_view(CreateView):
     form_class = usuario_reporte_form
     success_url = '/'
     
-    def get_initial(self):
-        #import pdb; pdb.set_trace()
-        return {'user': User.objects.get(pk=self.request.user.id),'reportado': User.objects.get(pk=self.kwargs['pk'])}
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(usuarios_reportar_view, self).dispatch(*args, **kwargs)
+    
+    def form_valid(self, form, *args, **kwargs):
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user
+        self.object.reportado = User.objects.get(pk=self.kwargs['pk'])
+        self.object.save()
+        return super(usuarios_reportar_view, self).form_valid(form)
     
     def post(self, *args, **kwargs):
         return super(usuarios_reportar_view, self).post(self.request, **kwargs)
-    
-    """
-    def get(self, *args, **kwargs):
-        return super(usuarios_reportar_view, self).get(*args, **kwargs)
-    """
-"""
-def _usuarios_reportar_view(request, reportado_id):
-    args = {}
-    _reportado = get_object_or_404(User, id=reportado_id)
-    if request.POST:        
-        form = reporte_usuario_form(request.POST)
-        if form.is_valid():            
-            _reporte = form.save(commit=False)
-            _reporte.user = request.user
-            _reporte.reportado = _reportado
-            _reporte.save()
-            return HttpResponseRedirect(reverse('preguntas_url'))
-    else:
-        form = reporte_usuario_form(initial={'user':request.user,'reportado':_reportado,})
-
-    args.update(csrf(request))
-    args['form'] = form
-    return render(request,'usuarios/reportar.html', args)
-"""
-
+   
 # COMENTARIOS
+class comentarios_crear_view(CreateView):
+    model = comentario
+    template_name = 'comentarios/crear.html'
+    form_class = comentario_form
+    success_url = '/'
+    
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(comentarios_crear_view, self).dispatch(*args, **kwargs)
+    
+    ##### ESTOY AQUI. OBTENER LA PREGUNTA U OBJETO CONTENIDO RELACIONADA AL COMENTARIO
+    def form_valid(self, form, *args, **kwargs):
+        self.object = form.save(commit=False)
+        import pdb; pdb.set_trace()
+        import re
+        pregunta_id = re.search(r'(\d+)', self.request.GET['return_url'])
+        self.object.contenido = contenido.objects.get(pk=self.kwargs['pk'])
+        self.object.save()
+        return super(usuarios_reportar_view, self).form_valid(form)
+    
 @login_required()
-def comentarios_crear_view(request):    
+def _comentarios_crear_view(request):    
     args = {}
     if request.POST:
         form = comentario_form(request.POST)
@@ -575,7 +578,31 @@ def usuario_crear_view( request ):
     return render(request, 'usuarios/crear_usuario.html', args)
 
 # Busqueda
-def buscar_view(request):
+class buscar_view(ListView):
+    model = pregunta
+    template_name = 'preguntas/home.html'
+    
+    def get(self, *args, **kwargs):
+        import pdb; pdb.set_trace()
+        return super(buscar_view, self).get(*args, **kwargs)
+        
+    def post(self, *args, **kwargs): 
+        import pdb; pdb.set_trace()
+        return super(buscar_view, self).get(*args, **kwargs)
+    
+    def get_kwargs(self, *args, **kwargs):
+        import pdb; pdb.set_trace()
+        busqueda = self.request.POST['txt_search']
+        queryset = pregunta.objects.filter(titulo__search=busqueda)
+        return queryset
+    
+    def get_context_data(self, *args, **kwargs):
+        import pdb; pdb.set_trace()
+        busqueda = self.request.POST['txt_search']
+        queryset = pregunta.objects.filter(titulo__search=busqueda)
+        return queryset
+
+def _buscar_view(request):
     args = {}
     busqueda = request.POST['txt_search']
     _preguntas = pregunta.objects.filter(titulo__search=busqueda)
@@ -584,7 +611,15 @@ def buscar_view(request):
     return render(request, 'preguntas/home.html', args)
 
 # NOTIFICACIONES
-def notificaciones_por_usuario_view(request):
+class notificaciones_por_usuario_view(ListView):
+    model = notification
+    template_name = 'notificaciones/home.html'
+    
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(notificaciones_por_usuario_view, self).dispatch(*args, **kwargs)
+
+def _notificaciones_por_usuario_view(request):
     args = {}
     n = notification.objects.filter(user=request.user, viewed=False)
     args['notifications'] = n
