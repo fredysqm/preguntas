@@ -14,11 +14,11 @@ USE_TZ = True
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "preguntas/static"),
 )
 
 TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, "templates"),
+    os.path.join(BASE_DIR, "preguntas/templates"),
 )
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'

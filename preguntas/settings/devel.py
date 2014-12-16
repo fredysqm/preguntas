@@ -19,6 +19,7 @@ INSTALLED_APPS = (
     'registration',
     'notification',
     'temptags',
+    'rest_framework'
     #'debug_toolbar.apps.DebugToolbarConfig',
 )
 
