@@ -175,7 +175,6 @@ class tag_form(forms.ModelForm):
         self.helper.layout = Layout(
             Fieldset('<span class="glyphicon glyphicon-pencil"></span> Crear Tag',
                 'nombre',
-                'descripcion',
             ),
             FormActions(
                 Submit('submit', u'Crear'),
@@ -185,7 +184,7 @@ class tag_form(forms.ModelForm):
     
     class Meta:
         model = tag
-        exclude = ('n_preguntas', 'slug')
+        exclude = ('slug',)
 
 class comentario_form(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -224,7 +223,7 @@ class comentario_eliminar_form(forms.ModelForm):
         self.helper.layout = Layout(
             Fieldset("""<span class="glyphicon glyphicon-pencil"></span> Quiere eliminar el siguiente 
                         comentario?<hr/>
-                        <h2><strong>{{ comentario.contenido }}</strong></h2>
+                        <h3><strong>{{ comentario.texto }}</strong></h3>
                         <p>{{ comentario.autor }}</p>""",
             ),
             FormActions(                

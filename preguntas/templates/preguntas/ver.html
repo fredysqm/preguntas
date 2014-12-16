@@ -5,7 +5,7 @@
         <!-- Pregunta -->
         <div class="pregunta col-xs-8 col-sm-8 col-md-8 col-lg-8">
         <h2><strong>{{ pregunta.titulo }}</strong></h2>
-        <p>{{ pregunta.contenido }}</p>
+        <p>{{ pregunta_contenido.texto }}</p>
         <p><a href="{% url 'usuarios_reportar_url' autor.id %}">Reportar usuario</a></p>
         <p><a href="{% url 'preguntas_reportar_url' pregunta.id %}">Reportar pregunta</a></p>
         <ul>
@@ -14,7 +14,7 @@
             <li>Votos {{ pregunta.n_votos }}</li>
             <li>{{ pregunta.n_vistas }} Vistas</li>
         </ul>
-        <p><a href="/comentarios/crear?return_url={{ path }}&object_id={{ object_id }}">Añadir comentario a la pregunta</a></p>
+        <p><a href="/comentarios/crear?return_url={{ path }}&object_id={{ pregunta_contenido.id }}">Añadir comentario a la pregunta</a></p>
         <hr/>
         
         {% if not user.is_authenticated %}
@@ -91,7 +91,7 @@
         <ul>        
         {% if comentarios.count > 0 %}
             {% for comentario in comentarios %}
-            <li><strong>{{ comentario.contenido }}</strong> -- Por <em>{{ comentario.autor }} </em>
+            <li><strong>{{ comentario.texto }}</strong> -- Por <em>{{ comentario.autor }} </em>
             {% if user.id == comentario.autor.id %} <a href="{% url 'comentarios_editar_url' comentario.id %}">(Editar)</a> {% endif %}
             </li>
             {% endfor %}

@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from app.views import preguntas_lista_view, preguntas_crear_view, preguntas_ver_view, preguntas_responder_view, preguntas_eliminar_view, tags_ver_view, tags_populares_ver_view, tags_crear_view, usuarios_perfil_view, usuarios_reportar_view, comentarios_crear_view, buscar_view,notificaciones_por_usuario_view
+from app.views import preguntas_lista_view, preguntas_crear_view, preguntas_ver_view, preguntas_responder_view, preguntas_eliminar_view, tags_ver_view, tags_populares_ver_view, tags_crear_view, usuarios_perfil_view, usuarios_reportar_view, comentarios_crear_view, buscar_view,notificaciones_por_usuario_view, comentarios_editar_view, comentarios_eliminar_view
 
 urlpatterns = patterns('',
     url(r'^$', preguntas_lista_view.as_view(), name='preguntas_url'),
@@ -37,8 +37,8 @@ urlpatterns = patterns('',
     url(r'user/(\d+)/editar/$', 'app.views.usuarios_perfil_editar_view', name='usuarios_perfil_editar_url'),
 
     url(r'^comentarios/crear/', comentarios_crear_view.as_view(), name='comentarios_crear_url'),
-    url(r'^comentarios/(\d+)/editar/$', 'app.views.comentarios_editar_view', name='comentarios_editar_url'),
-    url(r'^comentarios/(\d+)/eliminar/$', 'app.views.comentarios_eliminar_view', name='comentarios_eliminar_url'),
+    url(r'^comentarios/(?P<pk>[\d]+)/editar/$', comentarios_editar_view.as_view(), name='comentarios_editar_url'),
+    url(r'^comentarios/(?P<pk>[\d]+)/eliminar/$', comentarios_eliminar_view.as_view(), name='comentarios_eliminar_url'),
 
     url(r'^usuarios/crear/$', 'app.views.usuario_crear_view', name='usuarios_crear_url'),
     url(r'^usuarios/(?P<pk>[\d+])/perfil/$', usuarios_perfil_view.as_view(), name='usuarios_perfil_url'),

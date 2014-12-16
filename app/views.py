@@ -50,38 +50,10 @@ class preguntas_crear_view(CreateView):
         return context
         
     def post(self, *args, **kwargs):
-        import pdb; pdb.set_trace()
         x = super(preguntas_crear_view, self).post(*args, **kwargs)
         _contenido = contenido.objects.create(pregunta=self.object, texto=self.request.POST['contenido'], autor=self.request.user)
         return x
-"""
-@login_required()
-def preguntas_crear_view(request):
-    args = {}
-    if request.POST:
-        form = pregunta_form(request.POST)
-        if form.is_valid():
-            _pregunta = form.save(commit=False)
-            _pregunta.slug = slugify(_pregunta.titulo)
-            _pregunta.autor_id = request.user.id            
-            _pregunta.save()
-            _contenido = contenido.objects.create(pregunta=_pregunta, autor=request.user,texto=form.data['contenido'])
-            
-            _tags = form.cleaned_data['tags']
-            for _tag in _tags:
-                _pregunta.tags.add(_tag)
-                #_n_preguntas = _tag.n_preguntas
-                #tag.objects.filter(id=_tag.id).update(n_preguntas=(_n_preguntas+1))
-                        
-            return HttpResponseRedirect(reverse('preguntas_url'))
-    else:   
-        form = pregunta_form()
 
-    args.update(csrf(request))
-    args['form'] = form
-    args['all_tags'] = tag.objects.all()
-    return render(request,'preguntas/crear.html', args)
-"""
 @login_required()
 def preguntas_editar_view(request, pregunta_id, pregunta_slug):
     args = {}
@@ -126,11 +98,13 @@ class preguntas_ver_view(DetailView):
         _pregunta = self.object
         pregunta_id = self.object.id
         user = self.request.user
-        _respuestas = contenido.objects.filter(pregunta_id=pregunta_id)[1:]
+        respuestas = contenido.objects.filter(pregunta_id=pregunta_id)
+        pregunta_contenido = respuestas.first()
+        _respuestas = respuestas[1:]
         comentarios_respuestas = []
         for _respuesta in _respuestas.values():
             comentarios_respuestas.append(comentario.objects.filter(contenido=_respuesta['id']))
-        _comentarios = comentario.objects.filter(contenido=pregunta_id)
+        _comentarios = comentario.objects.filter(contenido=pregunta_contenido.id)
         _voto = voto.objects.filter(pregunta=_pregunta.id,user=user.id).order_by('-id')[:1]        
         
         pregunta.objects.filter(id=pregunta_id).update(n_vistas=(_pregunta.n_vistas + 1))
@@ -141,7 +115,7 @@ class preguntas_ver_view(DetailView):
         context['respuestas'] = zip(_respuestas, comentarios_respuestas)
         context['comentarios'] = _comentarios
         context['path'] = self.request.path
-        context['object_id'] = pregunta_id        
+        context['pregunta_contenido'] = pregunta_contenido
         context['voto'] = _voto.first()
         return context
 
@@ -363,27 +337,14 @@ class tags_populares_ver_view(ListView):
 class tags_crear_view(CreateView):
     model = tag
     template_name = 'tag/tag_crear.html'
-    model_form = tag_form
+    form_class = tag_form
     fields = ['nombre']
+    success_url = reverse_lazy('tags_ver_url')
     
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(tags_crear_view, self).dispatch(*args, **kwargs)
-"""
-def tags_crear_view(request):
-    args = {}
-    if request.POST:
-        form = tag_form(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('preguntas_url'))
-    else:
-        form = tag_form()
 
-    args.update(csrf(request))
-    args['form'] = form
-    return render(request,'tag/tag_crear.html', args)
-"""
 # USUARIOS
 def usuarios_ver_view(request):
     args = {}
@@ -497,56 +458,40 @@ class comentarios_crear_view(CreateView):
     def dispatch(self, *args, **kwargs):
         return super(comentarios_crear_view, self).dispatch(*args, **kwargs)
     
-    ##### ESTOY AQUI. OBTENER LA PREGUNTA U OBJETO CONTENIDO RELACIONADA AL COMENTARIO
     def form_valid(self, form, *args, **kwargs):
         self.object = form.save(commit=False)
-        import pdb; pdb.set_trace()
-        import re
-        pregunta_id = re.search(r'(\d+)', self.request.GET['return_url'])
-        self.object.contenido = contenido.objects.get(pk=self.kwargs['pk'])
+        pregunta_contenido = self.request.GET['object_id']
+        self.object.contenido = contenido.objects.get(pk=pregunta_contenido)
+        self.object.autor = self.request.user
         self.object.save()
-        return super(usuarios_reportar_view, self).form_valid(form)
+        return super(comentarios_crear_view, self).form_valid(form)
+
+class comentarios_editar_view(UpdateView):
+    model = comentario
+    template_name = 'comentarios/editar.html'
+    fields = ['texto']
+    form_class = comentario_form  
+    
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        self.success_url = reverse_lazy('preguntas_ver_url', kwargs={'pk':pregunta.objects.get(pk=contenido.objects.get(pk=comentario.objects.get(pk=kwargs['pk']).contenido.id).pregunta.id).id})
+        import pdb; pdb.set_trace()
+        return super(comentarios_editar_view, self).dispatch(*args, **kwargs)
+
+class comentarios_eliminar_view(DeleteView):
+    form_class = comentario_eliminar_form
+    model = comentario
+    template_name = 'comentarios/eliminar.html'    
+    fields = ['texto']
+    
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        self.success_url = reverse_lazy('preguntas_ver_url', kwargs={'pk':pregunta.objects.get(pk=contenido.objects.get(pk=comentario.objects.get(pk=kwargs['pk']).contenido.id).pregunta.id).id})
+        import pdb; pdb.set_trace()
+        return super(comentarios_eliminar_view, self).dispatch(self.request, **kwargs)
     
 @login_required()
-def _comentarios_crear_view(request):    
-    args = {}
-    if request.POST:
-        form = comentario_form(request.POST)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('preguntas_url'))
-    else:
-        if 'respuesta' in request.GET['return_url']:
-            form = comentario_form(initial={'n_votos' : 0, 'estado' : 0, 'autor' : request.user.id, 'content_type' : 12, 'object_id' : request.GET['object_id']})
-        else:
-            form = comentario_form(initial={'n_votos' : 0, 'estado' : 0, 'autor' : request.user.id, 'content_type' : 11, 'object_id' : request.GET['object_id']})
-
-    args.update(csrf(request))
-    args['form'] = form
-    return render(request, 'comentarios/crear.html', args)
-
-@login_required()
-def comentarios_editar_view(request, comentario_id):
-    args = {}
-    _comentario = get_object_or_404(comentario, id=comentario_id)
-    if request.POST:
-        form = comentario_form(request.POST, instance=_comentario)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('preguntas_url'))
-    else:
-        form = comentario_form(initial={'content_type':_comentario.content_type,
-                           'object_id':_comentario.object_id, 'autor':_comentario.autor,
-                           'contenido':_comentario.contenido, 'n_votos':_comentario.n_votos,
-                           'estado':_comentario.estado})
-
-    args.update(csrf(request))
-    args['comentario'] = _comentario
-    args['form'] = form
-    return render(request, 'comentarios/editar.html', args)
-
-@login_required()
-def comentarios_eliminar_view(request, comentario_id):
+def _comentarios_eliminar_view(request, comentario_id):
     args = {}
     _comentario = get_object_or_404(comentario, id=comentario_id)
 
