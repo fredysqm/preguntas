@@ -13,9 +13,14 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
+    'api',
     'crispy_forms',
     'pipeline',
-    'pipeline',
+    'mockups',
+    'registration',
+    'notification',
+    'temptags',
+    'rest_framework'
 )
 
 MIDDLEWARE_CLASSES = (

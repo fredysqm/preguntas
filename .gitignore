@@ -39,6 +39,7 @@ Thumbs.db
 
 # project
 preguntas/settings/local.py
+api/migrations/*
 app/migrations/*
-static/less/*.css
-static/stylus/*.css
+preguntas/static/less/*.css
+preguntas/static/stylus/*.css

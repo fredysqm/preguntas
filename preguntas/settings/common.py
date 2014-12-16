@@ -6,10 +6,12 @@ ROOT_URLCONF = 'preguntas.urls'
 WSGI_APPLICATION = 'preguntas.wsgi.application'
 
 LANGUAGE_CODE = 'es-PE'
-TIME_ZONE = 'America/Lima'
 USE_I18N = True
 USE_L10N = True
-USE_TZ = True
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+LOGIN_URL = '/admin/'
 
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 STATIC_URL = '/static/'
@@ -20,10 +22,6 @@ STATICFILES_DIRS = (
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, "preguntas/templates"),
 )
-
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
-
-LOGIN_URL = '/admin/'
 
 PIPELINE_COMPILERS = (
     'pipeline.compilers.coffee.CoffeeScriptCompiler',
