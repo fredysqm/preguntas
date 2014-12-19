@@ -52,3 +52,9 @@ PIPELINE_JS = {
         'output_filename': 'js/all.js',
     },
 }
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework_jsonp.renderers.JSONPRenderer',
+    ),
+}
