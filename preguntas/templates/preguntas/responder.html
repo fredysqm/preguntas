@@ -21,7 +21,7 @@
         <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
             <!-- Formulario -->
             <p><a href="{% url 'preguntas_url' %}">Lista de preguntas</a></p>
-            <form action=" {% url 'preguntas_responder_url' pregunta.id %}" method="post">-->
+            <form action=" {% url 'preguntas_responder_url' pregunta.pk %}" method="post">
                 {% csrf_token %}
                 {{ form.non_field_errors }}
                 <div class="fieldWrapper">

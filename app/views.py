@@ -161,12 +161,15 @@ def _preguntas_eliminar_view(request, pregunta_id):
 class preguntas_responder_view(CreateView):
     model = contenido
     template_name = 'preguntas/responder.html'
+    form_class = respuesta_form
+    fields = ['texto']
+    success_url = '/'
     
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(preguntas_responder_view, self).dispatch(*args, **kwargs)
     
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, *args, **kwargs):
         context = super(preguntas_responder_view, self).get_context_data(**kwargs)
         import pdb; pdb.set_trace()
         context['pregunta'] = self.object
@@ -196,11 +199,15 @@ def _preguntas_responder_view(request,pregunta_id):
     args['respuestas'] = respuestas
     return render(request,'preguntas/responder.html', args)
 """
-def preguntas_abiertas_view(request):
-    args = {}
-    preguntas_abiertas = pregunta.objects.filter(n_respuestas=0)
-    args['preguntas'] = preguntas_abiertas
-    return render(request,'preguntas/home.html',args)
+class preguntas_abiertas_view(ListView):
+    queryset = pregunta.objects.filter(n_respuestas=0)
+    template_name = 'preguntas/home.html'
+    object_list = queryset
+    
+    def get_context_data(self, *args, **kwargs):
+        context = super(preguntas_abiertas_view, self).get_context_data(**kwargs)
+        context['preguntas'] = self.object_list
+        return context
 
 def preguntas_por_tag_view(request, tag_id):
     args = {}
