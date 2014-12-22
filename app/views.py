@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 import random
 
 from .forms import pregunta_form, respuesta_form, tag_form, user_form, user_editar_form, user_extra_form, pregunta_eliminar_form, respuesta_eliminar_form, comentario_form, comentario_eliminar_form, usuario_reporte_form, reporte_pregunta_form
-from .models import pregunta, contenido, tag, usuario_extra, comentario, voto, favorito, usuario_reporte
+from .models import pregunta, contenido, tag, usuario_extra, comentario, voto, favorito, usuario_reporte, contenido_reporte
 
 from django.utils.decorators import method_decorator
 
@@ -209,6 +209,19 @@ class preguntas_abiertas_view(ListView):
         context['preguntas'] = self.object_list
         return context
 
+class preguntas_por_tag_view(ListView):
+    
+    def get_context_data(self, *args, **kwargs):
+        context = super(preguntas_por_tag_view, self).get_context_data(**kwargs)
+        tag_id = self.kwargs['tag_id']
+        chosen_tag = tag.objects.get(id=tag_id)
+        queryset = pregunta.objects.filter(tag__set__contains = chosen_tag.id)
+        template_name = 'preguntas/home.html'
+        object_list = queryset        
+        context['tagged'] = tagged_preguntas
+        context['tag'] = chosen_tag
+        return context
+"""
 def preguntas_por_tag_view(request, tag_id):
     args = {}
     tagged_preguntas = get_list_or_404(pregunta, tags=tag_id)
@@ -217,7 +230,23 @@ def preguntas_por_tag_view(request, tag_id):
     args['tagged'] = tagged_preguntas
     args['tag'] = chosen_tag
     return render(request,'preguntas/tag.html', args)
+        """
+        
+class preguntas_comentarios_view(ListView):
+    
+    def get_context_data(self, *args, **kwargs):
+        context = super(preguntas_comentarios_view, self).get_context_data(**kwargs)
+        pregunta_id = self.kwargs['pk']
+        queryset = pregunta.objects.filter(id=pregunta_id)
+        template_name = 'preguntas/home.html'
+        respuestas = contenido.objects.filter(pregunta_id=pregunta_id)
+        pregunta_contenido = respuestas.first()
+        _comentarios = comentario.objects.filter(contenido=pregunta_contenido.id)
+        context['pregunta'] = queryset
+        context['comentarios'] = _comentarios
+        return context
 
+"""        
 def preguntas_comentarios_view(request, pregunta_id):
     args = {}
     _pregunta = get_object_or_404(pregunta, id=pregunta_id)
@@ -226,7 +255,7 @@ def preguntas_comentarios_view(request, pregunta_id):
     args['pregunta'] = _pregunta
     args['comentarios'] = _comentarios
     return render(request,'preguntas/comentarios.html', args)
-
+"""
 def preguntas_favorito_view(request, pregunta_id):
     args = {}    
     _pregunta = get_object_or_404(pregunta, id=pregunta_id)
@@ -250,7 +279,26 @@ def preguntas_votar_abajo_view(request, pregunta_id):
     pregunta.objects.filter(id=_pregunta.id).update(n_votos=(_pregunta.n_votos-1))
     return HttpResponseRedirect(reverse('preguntas_ver_url', args=[pregunta_id]))
 
-def preguntas_reportar_view(request, reportada_id):
+    
+class preguntas_reportar_view(FormView):
+    model = contenido_reporte
+    template_name = 'preguntas/reportar.html'
+    form_class = reporte_pregunta_form
+    fields = ['tipo', 'mensaje']
+    success_url = '/'
+    
+    def get_context_data(self, *args, **kwargs):
+        context = super(preguntas_reportar_view, self).get_context_data(*args, **kwargs)
+        return context
+    
+    def post(self, *args, **kwargs):
+        import pdb; pdb.set_trace()
+        x = super(preguntas_reportar_view, self).post(*args, **kwargs)
+        _contenido = contenido.objects.filter(pregunta=self.kwargs['pk'])
+        _reporte = contenido_reporte.objects.create(user=self.request.user, contenido=_contenido, tipo=self.request.POST['tipo'], texto=self.request.POST['contenido'], mensaje=self.request.POST['mensaje'])
+        return x
+"""    
+def _preguntas_reportar_view(request, reportada_id):
     args = {}
     _pregunta = get_object_or_404(pregunta, id=reportada_id)
     if request.POST:        
@@ -267,7 +315,7 @@ def preguntas_reportar_view(request, reportada_id):
     args.update(csrf(request))
     args['form'] = form
     return render(request,'preguntas/reportar.html', args)
-    
+"""    
     #def preguntas_similares_view(request, pregunta_id):
 #    args = {}
 #    _pregunta = get_object_or_404(pregunta, id=pregunta_id)

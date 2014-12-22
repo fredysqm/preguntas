@@ -113,7 +113,7 @@ class reporte_pregunta_form(forms.ModelForm):
     
     class Meta:
         model = contenido_reporte
-        exclude = ('estado','fecha_hora', 'user', 'pregunta',)
+        exclude = ('estado','fecha_hora', 'user', 'pregunta', 'reportado')
         
 class user_form(forms.ModelForm):
     class Meta:
