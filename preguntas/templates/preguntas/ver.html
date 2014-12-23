@@ -6,8 +6,8 @@
         <div class="pregunta col-xs-8 col-sm-8 col-md-8 col-lg-8">
         <h2><strong>{{ pregunta.titulo }}</strong></h2>
         <p>{{ pregunta_contenido.texto }}</p>
-        <p><a href="{% url 'usuarios_reportar_url' autor.id %}">Reportar usuario</a></p>
-        <p><a href="{% url 'preguntas_reportar_url' pregunta.id %}">Reportar pregunta</a></p>
+        <p><a href="{% url 'usuarios_reportar_url' autor.id %}">Reportar usuario</a> -- 
+        <a href="{% url 'preguntas_reportar_url' pregunta.id %}">Reportar pregunta</a></p>
         <ul>
             <li>Por {{ autor.username }}</li>
             <li>{{ pregunta.n_respuestas }} Respuestas</li>
@@ -56,9 +56,9 @@
         <ul>
         {% if respuestas.count > 0 %}            
             {% for respuesta, comentarios in respuestas %}
-            <li><strong>{{ respuesta.contenido }}</strong> -- Por <em>{{ respuesta.autor }}</em>
-                {% if user.id == pregunta.autor_id %}<a href="{% url 'respuestas_editar_url' respuesta.id %}">(Editar)</a>{% endif %}
-                {% if respuesta.mejor %}☻☻☻{% else %}
+            <li><strong>{{ respuesta.texto }}</strong> -- Por <em>{{ respuesta.autor }}</em>
+                {% if user.id == respuesta.autor.id %}<a href="{% url 'respuestas_editar_url' respuesta.id %}">(Editar)</a>{% endif %}
+                {% if respuesta.mejor %}¡Mejor respuesta!{% else %}
                     {% if user.id == pregunta.autor_id %}<a href="{% url 'respuestas_elegir_mejor_url' respuesta.id %}">(Mejor)</a>{% endif %}
                 {% endif %}</li>
             <hr/>

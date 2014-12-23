@@ -27,7 +27,7 @@ def notificacion_respuesta_crear_view(sender, **kwargs):
     if kwargs.get('created', False):
         respuesta = kwargs.get('instance')
         if contenido.objects.filter(pregunta=respuesta.pregunta).count() > 1:
-            pregunta_autor = contenido.objects.get(id=respuesta.pregunta).autor
+            pregunta_autor = contenido.objects.get(id=respuesta.pregunta.id).autor
             notification.objects.create(user=pregunta_autor,
                                         title='Nueva respuesta',
                                         message='Alguien respondio tu pregunta.')

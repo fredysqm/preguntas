@@ -131,9 +131,29 @@ class user_extra_form(forms.ModelForm):
         fields = ('descripcion',)
         
 class respuesta_form(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(respuesta_form, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.form_method = 'POST'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-md-3'
+        self.helper.field_class = 'col-md-9'
+        
+        self.helper.layout = Layout(
+            Fieldset("""<span class="glyphicon glyphicon-pencil"></span> Respuesta<hr/>
+                        """,
+                        'texto',
+            ),
+            FormActions(                
+                Submit('submit', u'Guardar'),
+                css_class='text-right'
+            ),
+        )
+    
     class Meta:
         model = contenido
-        exclude = ('n_votos', 'estado',)
+        exclude = ('n_votos', 'estado', 'pregunta', 'autor')
 
 class respuesta_eliminar_form(forms.ModelForm):
     def __init__(self, *args, **kwargs):

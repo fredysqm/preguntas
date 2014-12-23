@@ -96,8 +96,10 @@ class preguntas_ver_view(DetailView):
     def get_context_data(self, **kwargs):
         context = super(preguntas_ver_view, self).get_context_data(**kwargs)
         _pregunta = self.object
+        _pregunta_contenido = contenido.objects.filter(pregunta=_pregunta.pk)
         pregunta_id = self.object.id
         user = self.request.user
+        
         respuestas = contenido.objects.filter(pregunta_id=pregunta_id)
         pregunta_contenido = respuestas.first()
         _respuestas = respuestas[1:]
@@ -109,8 +111,9 @@ class preguntas_ver_view(DetailView):
         
         pregunta.objects.filter(id=pregunta_id).update(n_vistas=(_pregunta.n_vistas + 1))
         _respuestas = contenido.objects.filter(pregunta_id=pregunta_id)[1:]
-        
+        import pdb; pdb.set_trace()
         context['pregunta'] = _pregunta
+        context['pregunta_contenido'] = _pregunta_contenido
         context['autor'] = _pregunta.contenido_set.first().autor
         context['respuestas'] = zip(_respuestas, comentarios_respuestas)
         context['comentarios'] = _comentarios
@@ -158,7 +161,7 @@ def _preguntas_eliminar_view(request, pregunta_id):
     args['pregunta'] = _pregunta
     return render(request, 'preguntas/eliminar.html', args)
 
-class preguntas_responder_view(CreateView):
+class preguntas_responder_view(FormView):
     model = contenido
     template_name = 'preguntas/responder.html'
     form_class = respuesta_form
@@ -170,10 +173,31 @@ class preguntas_responder_view(CreateView):
         return super(preguntas_responder_view, self).dispatch(*args, **kwargs)
     
     def get_context_data(self, *args, **kwargs):
-        context = super(preguntas_responder_view, self).get_context_data(**kwargs)
         import pdb; pdb.set_trace()
-        context['pregunta'] = self.object
-
+        context = super(preguntas_responder_view, self).get_context_data(**kwargs)
+        contenidos = contenido.objects.filter(pregunta=self.kwargs['pk'])
+        context['pregunta'] = pregunta.objects.get(pk=self.kwargs['pk'])
+        context['pregunta_contenido'] = contenidos[0]        
+        if len(contenidos) > 1:
+            context['respuestas'] = contenidos[1:]
+        else:
+            context['respuestas'] = []
+        return context
+    
+    def post(self, *args, **kwargs):
+        import pdb; pdb.set_trace()
+        context = super(preguntas_responder_view, self).get_context_data(**kwargs)
+        context['pregunta'] = pregunta.objects.get(pk=self.kwargs['pk'])
+        contenidos = contenido.objects.filter(pregunta=self.kwargs['pk'])
+        context['pregunta_contenido'] = contenidos[0]
+        context['autor'] = User.objects.get(pk=self.request.user.id)
+        if len(contenidos) > 1:
+            context['respuestas'] = contenidos[1:]
+        else:
+            context['respuestas'] = []
+        x = super(preguntas_responder_view, self).post(*args, **kwargs)
+        _contenido = contenido.objects.create(pregunta=context['pregunta'], autor=context['autor'], texto=self.request.POST['texto'])
+        return x
 """    
 @login_required()
 def _preguntas_responder_view(request,pregunta_id):
@@ -280,50 +304,40 @@ def preguntas_votar_abajo_view(request, pregunta_id):
     return HttpResponseRedirect(reverse('preguntas_ver_url', args=[pregunta_id]))
 
     
-class preguntas_reportar_view(FormView):
+class preguntas_reportar_view(CreateView):
     model = contenido_reporte
     template_name = 'preguntas/reportar.html'
     form_class = reporte_pregunta_form
     fields = ['tipo', 'mensaje']
-    success_url = '/'
+    
     
     def get_context_data(self, *args, **kwargs):
         context = super(preguntas_reportar_view, self).get_context_data(*args, **kwargs)
         return context
     
+    # Me falta corregir el success_url
     def post(self, *args, **kwargs):
-        import pdb; pdb.set_trace()
+        self.success_url = '/ver/' + kwargs['pk']
         x = super(preguntas_reportar_view, self).post(*args, **kwargs)
-        _contenido = contenido.objects.filter(pregunta=self.kwargs['pk'])
-        _reporte = contenido_reporte.objects.create(user=self.request.user, contenido=_contenido, tipo=self.request.POST['tipo'], texto=self.request.POST['contenido'], mensaje=self.request.POST['mensaje'])
+        _contenido = contenido.objects.filter(pregunta=self.kwargs['pk'])[0]
+        _reporte = contenido_reporte.objects.create(user=self.request.user, contenido=_contenido, tipo=self.request.POST['tipo'], mensaje=self.request.POST['mensaje'])        
         return x
-"""    
-def _preguntas_reportar_view(request, reportada_id):
-    args = {}
-    _pregunta = get_object_or_404(pregunta, id=reportada_id)
-    if request.POST:        
-        form = reporte_pregunta_form(request.POST)
-        if form.is_valid():            
-            _reporte = form.save(commit=False)
-            _reporte.user = request.user
-            _reporte.pregunta = _pregunta
-            _reporte.save()
-            return HttpResponseRedirect(reverse('preguntas_url'))
-    else:
-        form = reporte_usuario_form(initial={'user':request.user,'pregunta':_pregunta,})
-
-    args.update(csrf(request))
-    args['form'] = form
-    return render(request,'preguntas/reportar.html', args)
-"""    
-    #def preguntas_similares_view(request, pregunta_id):
-#    args = {}
-#    _pregunta = get_object_or_404(pregunta, id=pregunta_id)
-#    palabras = _pregunta.slug.split(str='-')
-#    palabras = palabras - ['de', 'para', 'el', 'la', 'y']
-#    return None
     
 # RESPUESTAS
+# sin probar -- arreglar responder primero
+class respuestas_editar_view(UpdateView):
+    model = contenido
+    form_class = respuesta_form
+    template_url = 'respuestas/editar.html'
+    fields = ['texto']
+    success_url = '/'
+    
+    def get_context_data(self, *args, **kwargs):
+        context = super(respuestas_editar_view, self).get_context_data(*args, **kwargs)
+        _respuesta = respuesta.objects.get(id=respuesta_id)        
+        context['respuesta'] = _respuesta    
+        return context
+"""
 @login_required()
 def respuestas_editar_view(request, respuesta_id):
     args = {}
@@ -342,7 +356,7 @@ def respuestas_editar_view(request, respuesta_id):
     args['respuesta'] = _respuesta
     args['form'] = form
     return render(request, 'respuestas/editar.html', args)
-
+"""
 @login_required()
 def respuestas_eliminar_view(request, respuesta_id):
     args = {}

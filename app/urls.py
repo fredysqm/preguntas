@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from app.views import preguntas_lista_view, preguntas_crear_view, preguntas_ver_view, preguntas_responder_view, preguntas_eliminar_view, tags_ver_view, tags_populares_ver_view, tags_crear_view, usuarios_perfil_view, usuarios_reportar_view, comentarios_crear_view, buscar_view,notificaciones_por_usuario_view, comentarios_editar_view, comentarios_eliminar_view, preguntas_abiertas_view, preguntas_por_tag_view, preguntas_comentarios_view, preguntas_reportar_view
+from app.views import preguntas_lista_view, preguntas_crear_view, preguntas_ver_view, preguntas_responder_view, preguntas_eliminar_view, tags_ver_view, tags_populares_ver_view, tags_crear_view, usuarios_perfil_view, usuarios_reportar_view, comentarios_crear_view, buscar_view,notificaciones_por_usuario_view, comentarios_editar_view, comentarios_eliminar_view, preguntas_abiertas_view, preguntas_por_tag_view, preguntas_comentarios_view, preguntas_reportar_view, respuestas_editar_view
 
 urlpatterns = patterns('',
     url(r'^$', preguntas_lista_view.as_view(), name='preguntas_url'),
@@ -23,7 +23,7 @@ urlpatterns = patterns('',
     url(r'^votar_abajo/(\d+)/$', 'app.views.preguntas_votar_abajo_view', name='preguntas_votar_abajo_url'),
     url(r'^reportar/(?P<pk>[\d]+)/$', preguntas_reportar_view.as_view(), name='preguntas_reportar_url'),
 
-    url(r'^respuestas/(\d+)/editar/$', 'app.views.respuestas_editar_view', name='respuestas_editar_url'),
+    url(r'^respuestas/(\d+)/editar/$', respuestas_editar_view.as_view(), name='respuestas_editar_url'),
     url(r'^respuestas/(\d+)/eliminar/$', 'app.views.respuestas_eliminar_view', name='respuestas_eliminar_url'),
     url(r'^respuestas/(\d+)/mejor/$', 'app.views.respuestas_elegir_mejor_view', name='respuestas_elegir_mejor_url'),
 
