@@ -111,7 +111,6 @@ class preguntas_ver_view(DetailView):
         
         pregunta.objects.filter(id=pregunta_id).update(n_vistas=(_pregunta.n_vistas + 1))
         _respuestas = contenido.objects.filter(pregunta_id=pregunta_id)[1:]
-        import pdb; pdb.set_trace()
         context['pregunta'] = _pregunta
         context['pregunta_contenido'] = _pregunta_contenido
         context['autor'] = _pregunta.contenido_set.first().autor
@@ -415,20 +414,21 @@ class tags_crear_view(CreateView):
         return super(tags_crear_view, self).dispatch(*args, **kwargs)
 
 # USUARIOS
-def usuarios_ver_view(request):
-    args = {}
+class usuarios_ver_view(ListView):
+    model = User
+    template_name = 'usuarios/ver.html'
     
-    limit = User.objects.count() - 1
-    if limit < 10:
-        index = random.sample(xrange(1, limit + 1), limit)
-    else:
-        index = random.sample(xrange(1, limit), 10)
-    users = list(User.objects.all()[i] for i in index)
-    detalle = usuario_detalles.objects.filter(usuario_detalles__in = users)
-    extra = usuario_extra.objects.filter(usuario_extra__in = users)
-    args.update(csrf(request))        
-    args['usuarios'] = zip(users, detalle, extra)
-    return render(request, 'usuarios/ver.html', args)
+    def get_context_data(self, *args, **kwargs):
+        context = super(usuarios_ver_view, self).get_context_data(*args, **kwargs)
+        limit = User.objects.count() - 1
+        if limit < 10:
+            index = random.sample(xrange(1, limit + 1), limit)
+        else:
+            index = random.sample(xrange(1, limit), 10)
+        users = list(User.objects.all()[i] for i in index)
+        extra = usuario_extra.objects.filter(usuario_extra__in = users)
+        context['usuarios'] = zip(users, extra)
+        return context    
     
 class usuarios_perfil_view(DetailView):
     model = User
@@ -471,16 +471,56 @@ def _usuarios_perfil_view(request, user_id):
     args['votos_abajo'] = _votos.filter(arriba=False).count()
     return render(request, 'usuarios/usuarios_perfil.html', args)
 """
-@login_required()
-def usuarios_perfil_editar_view(request, user_id):
+
+class usuarios_perfil_editar_view(UpdateView):
+    model = User
+    template_name = 'usuarios/editar_perfil.html'
+    form_maestro = None
+    form_detalle = None
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(usuarios_perfil_editar_view, self).dispatch(*args, **kwargs)
+    
+    def post(self, *args, **kwargs):
+        user_id = self.kwargs['pk']
+        requested_user = get_object_or_404(User, id=user_id)
+        requested_user_extra = usuario_extra.objects.get(usuario_extra=user_id)
+        
+        self.form_maestro = user_editar_form(self.request.POST, instance=requested_user)
+        self.form_detalle = user_extra_form(self.request.POST, instance=requested_user_extra)
+        if self.form_maestro.is_valid() and self.form_detalle.is_valid():
+            self.form_maestro.save()
+            self.form_detalle.save()
+        
+        self.success_url = reverse_lazy('usuarios_perfil_url', args=[user_id])
+        return super(usuarios_perfil_editar_view, self).post(*args, **kwargs)
+    
+    def get(self, *args, **kwargs):
+        user_id = self.kwargs['pk']
+        requested_user = get_object_or_404(User, id=user_id)
+        requested_user_extra = usuario_extra.objects.get(usuario_extra=user_id)
+        
+        self.form_maestro = user_editar_form(initial={'first_name' : requested_user.first_name,
+                                      'last_name'  : requested_user.last_name,
+                                      'email'      : requested_user.email,})        
+        self.form_detalle = user_extra_form(initial={'descripcion' : requested_user_extra.descripcion})
+        return super(usuarios_perfil_editar_view, self).get(*args, **kwargs)
+    
+    def get_context_data(self, *args, **kwargs):
+        context = super(usuarios_perfil_editar_view, self).get_context_data(*args, **kwargs)
+        context['form_maestro'] = self.form_maestro
+        context['form_detalle'] = self.form_detalle
+
+#@login_required()
+def _usuarios_perfil_editar_view(request, user_id):
     args = {}
     requested_user = get_object_or_404(User, id=user_id)
-    requested_user_details = usuario_detalles.objects.get(usuario_detalles=user_id)
     requested_user_extra = usuario_extra.objects.get(usuario_extra=user_id)
     
     if request.POST:
         form_maestro = user_editar_form(request.POST, instance=requested_user)
-        form_detalle = user_detalles_form(request.POST, instance=requested_user_details)
+        form_detalle = user_extra_form(request.POST, instance=requested_user_extra)
         if form_maestro.is_valid() and form_detalle.is_valid():
             form_maestro.save()
             form_detalle.save()
@@ -489,7 +529,7 @@ def usuarios_perfil_editar_view(request, user_id):
         form_maestro = user_editar_form(initial={'first_name' : requested_user.first_name,
                                       'last_name'  : requested_user.last_name,
                                       'email'      : requested_user.email,})        
-        form_detalle = user_detalles_form(initial={'descripcion' : requested_user_details.descripcion})
+        form_detalle = user_extra_form(initial={'descripcion' : requested_user_extra.descripcion})
             
     args.update(csrf(request))
     args['form_maestro'] = form_maestro
@@ -544,7 +584,6 @@ class comentarios_editar_view(UpdateView):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         self.success_url = reverse_lazy('preguntas_ver_url', kwargs={'pk':pregunta.objects.get(pk=contenido.objects.get(pk=comentario.objects.get(pk=kwargs['pk']).contenido.id).pregunta.id).id})
-        import pdb; pdb.set_trace()
         return super(comentarios_editar_view, self).dispatch(*args, **kwargs)
 
 class comentarios_eliminar_view(DeleteView):
@@ -588,7 +627,7 @@ def usuario_crear_view( request ):
     else:
         form = user_form()
 
-    args[ 'form' ] = form
+    args['form'] = form
     return render(request, 'usuarios/crear_usuario.html', args)
 
 # Busqueda
@@ -596,33 +635,19 @@ class buscar_view(ListView):
     model = pregunta
     template_name = 'preguntas/home.html'
     
-    def get(self, *args, **kwargs):
-        import pdb; pdb.set_trace()
-        return super(buscar_view, self).get(*args, **kwargs)
-        
     def post(self, *args, **kwargs): 
-        import pdb; pdb.set_trace()
+        self.success_url = '/'
         return super(buscar_view, self).get(*args, **kwargs)
     
-    def get_kwargs(self, *args, **kwargs):
-        import pdb; pdb.set_trace()
+    def get_context_data(self, *args, **kwargs):        
+        context = super(buscar_view, self).get_context_data(*args, **kwargs)
         busqueda = self.request.POST['txt_search']
         queryset = pregunta.objects.filter(titulo__search=busqueda)
-        return queryset
-    
-    def get_context_data(self, *args, **kwargs):
-        import pdb; pdb.set_trace()
-        busqueda = self.request.POST['txt_search']
-        queryset = pregunta.objects.filter(titulo__search=busqueda)
-        return queryset
-
-def _buscar_view(request):
-    args = {}
-    busqueda = request.POST['txt_search']
-    _preguntas = pregunta.objects.filter(titulo__search=busqueda)
-    args['preguntas'] = _preguntas
-    #return render(request, 'busqueda/busqueda_preguntas.html', args)
-    return render(request, 'preguntas/home.html', args)
+        pregunta_autor = list()
+        for _pregunta in queryset:
+            pregunta_autor.append(User.objects.get(id=_pregunta.contenido_set.first().autor.id))
+        context['preguntas'] = zip(queryset, pregunta_autor)
+        return context
 
 # NOTIFICACIONES
 class notificaciones_por_usuario_view(ListView):
@@ -632,9 +657,8 @@ class notificaciones_por_usuario_view(ListView):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(notificaciones_por_usuario_view, self).dispatch(*args, **kwargs)
-
-def _notificaciones_por_usuario_view(request):
-    args = {}
-    n = notification.objects.filter(user=request.user, viewed=False)
-    args['notifications'] = n
-    return render(request, 'notificaciones/home.html', args)
+        
+    def get_context_data(self, *args, **kwargs):
+        context = super(notificaciones_por_usuario_view, self).get_context_data(*args, **kwargs)
+        context['notifications'] = notification.objects.filter(user=self.request.user, viewed=False)
+        return context

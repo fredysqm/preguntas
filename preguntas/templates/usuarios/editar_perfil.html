@@ -6,14 +6,6 @@
     <form action="{% url 'usuarios_perfil_editar_url' user.id %}" method="post">{% csrf_token %}
         {{ form_maestro.non_field_errors }}
         <div class="fieldWrapper">
-            {{ form_maestro.username.errors }}
-            {{ form_maestro.username.as_hidden }}
-        </div>
-        <div class="fieldWrapper">
-            {{ form_maestro.password.errors }}
-            {{ form_maestro.password.as_hidden }}
-        </div>
-        <div class="fieldWrapper">
             {{ form_maestro.first_name.errors }}
             <label class="label-fix" for="id_first_name">First Name:</label>
             {{ form_maestro.first_name }}
@@ -34,10 +26,6 @@
             {{ form_detalle.descripcion.errors }}
             <label class="label-fix" for="id_descripcion">Descripción:</label>
             {{ form_detalle.descripcion }}
-        </div>
-        <div class="fieldWrapper">
-            {{ form_detalle.usuario_detalles_id.errors }}
-            {{ form_detalle.usuario_detalles_id.as_hidden }}
         </div>
     <input type="submit" name="submit" value="Editar Perfil"/>
     </form>

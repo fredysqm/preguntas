@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from app.views import preguntas_lista_view, preguntas_crear_view, preguntas_ver_view, preguntas_responder_view, preguntas_eliminar_view, tags_ver_view, tags_populares_ver_view, tags_crear_view, usuarios_perfil_view, usuarios_reportar_view, comentarios_crear_view, buscar_view,notificaciones_por_usuario_view, comentarios_editar_view, comentarios_eliminar_view, preguntas_abiertas_view, preguntas_por_tag_view, preguntas_comentarios_view, preguntas_reportar_view, respuestas_editar_view
+from app.views import preguntas_lista_view, preguntas_crear_view, preguntas_ver_view, preguntas_responder_view, preguntas_eliminar_view, tags_ver_view, tags_populares_ver_view, tags_crear_view, usuarios_perfil_view, usuarios_reportar_view, comentarios_crear_view, buscar_view,notificaciones_por_usuario_view, comentarios_editar_view, comentarios_eliminar_view, preguntas_abiertas_view, preguntas_por_tag_view, preguntas_comentarios_view, preguntas_reportar_view, respuestas_editar_view, usuarios_ver_view, usuarios_perfil_editar_view
 
 urlpatterns = patterns('',
     url(r'^$', preguntas_lista_view.as_view(), name='preguntas_url'),
@@ -31,9 +31,8 @@ urlpatterns = patterns('',
     url(r'^tags/crear/$', tags_crear_view.as_view(), name='tags_crear_url'),
     url(r'^tags/populares/$', tags_populares_ver_view.as_view(), name='tags_populares_ver_url'),
     url(r'^tags/populares/$', 'app.views.tags_populares_ver_view', name='tags_populares_ver_url'),
-    url(r'users/$', 'app.views.usuarios_ver_view', name='usuarios_ver_url'),
-    url(r'user/(\d+)/$', 'app.views.usuarios_perfil_view', name='usuarios_perfil_url'),
-    url(r'user/(\d+)/editar/$', 'app.views.usuarios_perfil_editar_view', name='usuarios_perfil_editar_url'),
+    url(r'users/$', usuarios_ver_view.as_view(), name='usuarios_ver_url'),
+    url(r'user/(?P<pk>[\d]+)/editar/$', usuarios_perfil_editar_view.as_view(), name='usuarios_perfil_editar_url'),
 
     url(r'^comentarios/crear/', comentarios_crear_view.as_view(), name='comentarios_crear_url'),
     url(r'^comentarios/(?P<pk>[\d]+)/editar/$', comentarios_editar_view.as_view(), name='comentarios_editar_url'),

@@ -251,6 +251,7 @@ class comentario_eliminar_form(forms.ModelForm):
                 css_class='text-right'
             ),
         )
+        
     class Meta:
         model = comentario
         exclude = ('content_type', 'object_id', 'autor', 'contenido', 'n_votos', 'estado',)
