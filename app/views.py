@@ -511,6 +511,7 @@ class usuarios_perfil_editar_view(UpdateView):
         context = super(usuarios_perfil_editar_view, self).get_context_data(*args, **kwargs)
         context['form_maestro'] = self.form_maestro
         context['form_detalle'] = self.form_detalle
+        return context
 
 #@login_required()
 def _usuarios_perfil_editar_view(request, user_id):

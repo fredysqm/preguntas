@@ -1,32 +1,10 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 {% block title %}Editar perfil{% endblock %}
 {% block content %}
-    <h2>Editar Perfil</h2>
-    <p><a href="{% url 'preguntas_url' %}">Lista de preguntas</a></p>
-    <form action="{% url 'usuarios_perfil_editar_url' user.id %}" method="post">{% csrf_token %}
-        {{ form_maestro.non_field_errors }}
-        <div class="fieldWrapper">
-            {{ form_maestro.first_name.errors }}
-            <label class="label-fix" for="id_first_name">First Name:</label>
-            {{ form_maestro.first_name }}
-        </div>
-        <div class="fieldWrapper">
-            {{ form_maestro.last_name.errors }}
-            <label class="label-fix" for="id_first_name">Last Name:</label>
-            {{ form_maestro.last_name }}
-        </div>
-        <div class="fieldWrapper">
-            {{ form_maestro.email.errors }}
-            <label class="label-fix" for="id_email">Email:</label>
-            {{ form_maestro.email }}
-        </div>
-        <hr/>
-        {{ form_detalle.non_field_errors }}
-        <div class="fieldWrapper">
-            {{ form_detalle.descripcion.errors }}
-            <label class="label-fix" for="id_descripcion">Descripción:</label>
-            {{ form_detalle.descripcion }}
-        </div>
-    <input type="submit" name="submit" value="Editar Perfil"/>
-    </form>
+
+    <div class="well bs-component">
+        {% crispy form_maestro %}
+        {% crispy form_detalle %}
+    </div>
 {% endblock %}
