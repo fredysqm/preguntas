@@ -54,8 +54,25 @@ class preguntas_crear_view(CreateView):
         _contenido = contenido.objects.create(pregunta=self.object, texto=self.request.POST['contenido'], autor=self.request.user)
         return x
 
-@login_required()
-def preguntas_editar_view(request, pregunta_id, pregunta_slug):
+class preguntas_editar_view(UpdateView):
+    model = contenido
+    form_class = pregunta_form
+    template_name = 'preguntas/editar.html'
+    fields = ['texto']
+    success_url = '/'
+    
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(preguntas_editar_view, self).dispatch(*args, **kwargs)
+    
+    def get_context_data(self, **kwargs):        
+        pregunta_id = self.kwargs['pk']
+        context = super(preguntas_editar_view, self).get_context_data(**kwargs)
+        context['contenido'] = pregunta.objects.get(id=pregunta_id)
+        context['all_tags'] = tag.objects.all()
+        return context    
+    
+def _preguntas_editar_view(request, pregunta_id, pregunta_slug):
     args = {}
     _pregunta = get_object_or_404(pregunta, id=pregunta_id)
     _contenido = _pregunta.contenido_set.first()
@@ -172,7 +189,6 @@ class preguntas_responder_view(FormView):
         return super(preguntas_responder_view, self).dispatch(*args, **kwargs)
     
     def get_context_data(self, *args, **kwargs):
-        import pdb; pdb.set_trace()
         context = super(preguntas_responder_view, self).get_context_data(**kwargs)
         contenidos = contenido.objects.filter(pregunta=self.kwargs['pk'])
         context['pregunta'] = pregunta.objects.get(pk=self.kwargs['pk'])
@@ -184,7 +200,6 @@ class preguntas_responder_view(FormView):
         return context
     
     def post(self, *args, **kwargs):
-        import pdb; pdb.set_trace()
         context = super(preguntas_responder_view, self).get_context_data(**kwargs)
         context['pregunta'] = pregunta.objects.get(pk=self.kwargs['pk'])
         contenidos = contenido.objects.filter(pregunta=self.kwargs['pk'])
@@ -197,31 +212,7 @@ class preguntas_responder_view(FormView):
         x = super(preguntas_responder_view, self).post(*args, **kwargs)
         _contenido = contenido.objects.create(pregunta=context['pregunta'], autor=context['autor'], texto=self.request.POST['texto'])
         return x
-"""    
-@login_required()
-def _preguntas_responder_view(request,pregunta_id):
-    args = {}
-    if request.POST:
-        form = respuesta_form(request.POST)
-        if form.is_valid():
-            pregunta_obj = pregunta.objects.filter(id=pregunta_id).values('n_respuestas')[0]
-            pregunta.objects.filter(id=pregunta_id).update(n_respuestas=(pregunta_obj['n_respuestas']+1))
-            form.save()
-            return HttpResponseRedirect(reverse('preguntas_url'))
-    else:
-        form = respuesta_form(initial={'pregunta':pregunta_id, 'autor':request.user.id})
 
-    pregunta_obj = get_object_or_404(pregunta, id=pregunta_id)
-    pregunta.objects.filter(id=pregunta_id).update(n_vistas=(pregunta_obj.n_vistas + 1))
-
-    respuestas = respuesta.objects.filter(pregunta=pregunta_id)
-
-    args.update(csrf(request))
-    args['form'] = form
-    args['pregunta'] = pregunta.objects.get(id=pregunta_id)
-    args['respuestas'] = respuestas
-    return render(request,'preguntas/responder.html', args)
-"""
 class preguntas_abiertas_view(ListView):
     queryset = pregunta.objects.filter(n_respuestas=0)
     template_name = 'preguntas/home.html'
@@ -315,49 +306,51 @@ class preguntas_reportar_view(CreateView):
         return context
     
     # Me falta corregir el success_url
-    def post(self, *args, **kwargs):
-        self.success_url = '/ver/' + kwargs['pk']
+    def post(self, *args, **kwargs):        
         x = super(preguntas_reportar_view, self).post(*args, **kwargs)
         _contenido = contenido.objects.filter(pregunta=self.kwargs['pk'])[0]
         _reporte = contenido_reporte.objects.create(user=self.request.user, contenido=_contenido, tipo=self.request.POST['tipo'], mensaje=self.request.POST['mensaje'])        
         return x
+        
+    def get_success_url(self, *args, **kwargs):
+        return '/ver/' + kwargs['pk']
     
 # RESPUESTAS
-# sin probar -- arreglar responder primero
 class respuestas_editar_view(UpdateView):
     model = contenido
     form_class = respuesta_form
-    template_url = 'respuestas/editar.html'
+    template_name = 'respuestas/editar.html'
     fields = ['texto']
     success_url = '/'
     
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(usuarios_perfil_editar_view, self).dispatch(*args, **kwargs)
+    
     def get_context_data(self, *args, **kwargs):
+        respuesta_id = self.kwargs['pk']
         context = super(respuestas_editar_view, self).get_context_data(*args, **kwargs)
-        _respuesta = respuesta.objects.get(id=respuesta_id)        
+        _respuesta = contenido.objects.get(id=respuesta_id)
         context['respuesta'] = _respuesta    
         return context
-"""
-@login_required()
-def respuestas_editar_view(request, respuesta_id):
-    args = {}
-    if request.POST:
-        _respuesta = respuesta.objects.get(id=respuesta_id)
-        form = respuesta_form(request.POST, instance=_respuesta)
-        if form.is_valid():
-            form.save()
-            return HttpResponseRedirect(reverse('preguntas_url'))
-    else:
-        _respuesta = respuesta.objects.get(id=respuesta_id)
-        form = respuesta_form(initial={'pregunta':_respuesta.pregunta,
-                           'autor':_respuesta.autor, 'contenido':_respuesta.contenido})
 
-    args.update(csrf(request))
-    args['respuesta'] = _respuesta
-    args['form'] = form
-    return render(request, 'respuestas/editar.html', args)
-"""
-@login_required()
-def respuestas_eliminar_view(request, respuesta_id):
+class respuestas_eliminar_view(DeleteView):
+    model = contenido
+    success_url = '/'    
+    form_class = respuesta_eliminar_form    
+    template_name = 'respuestas/eliminar.html'
+    
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(respuestas_eliminar_view, self).dispatch(*args, **kwargs)
+    """
+    def get_context_data(self, **kwargs):
+        context = super(preguntas_eliminar_view, self).get_context_data(**kwargs)
+        context['contenido'] = ''
+        return context
+    """
+
+def _respuestas_eliminar_view(request, respuesta_id):
     args = {}
     _respuesta = get_object_or_404(respuesta, id=respuesta_id)
 
@@ -447,30 +440,6 @@ class usuarios_perfil_view(DetailView):
         contenidos = contenido.objects.filter(autor=pk)
         context['preguntas'] = pregunta.objects.filter(id__in = contenidos.values_list('pregunta', flat=True))
         return context
-"""
-def _usuarios_perfil_view(request, user_id):
-    args = {}
-    
-    requested_user = get_object_or_404(User, id=user_id)
-    requested_user_details = usuario_detalles.objects.get(usuario_detalles=user_id)
-    requested_user_extra = usuario_extra.objects.get(usuario_extra=user_id)
-    
-    _preguntas = pregunta.objects.filter(autor=user_id).order_by("-fecha_hora")[:5]
-    _respuestas = respuesta.objects.filter(autor=user_id).order_by("-fecha_hora")[:5]
-    
-    _votos = voto.objects.filter(user=user_id)
-    
-    args.update(csrf(request))
-    args['usuario'] = requested_user
-    args['usuario_detalles'] = requested_user_details
-    args['usuario_extra'] = requested_user_extra
-    args['preguntas'] = _preguntas
-    args['respuestas'] = _respuestas
-    args['votos_total'] = _votos.count()
-    args['votos_arriba'] = _votos.filter(arriba=True).count()
-    args['votos_abajo'] = _votos.filter(arriba=False).count()
-    return render(request, 'usuarios/usuarios_perfil.html', args)
-"""
 
 class usuarios_perfil_editar_view(UpdateView):
     model = User
@@ -519,7 +488,7 @@ def _usuarios_perfil_editar_view(request, user_id):
     requested_user = get_object_or_404(User, id=user_id)
     requested_user_extra = usuario_extra.objects.get(usuario_extra=user_id)
     
-    if request.POST:
+    if request.POST:        
         form_maestro = user_editar_form(request.POST, instance=requested_user)
         form_detalle = user_extra_form(request.POST, instance=requested_user_extra)
         if form_maestro.is_valid() and form_detalle.is_valid():

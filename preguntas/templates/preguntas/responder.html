@@ -34,7 +34,7 @@
             <!-- Respuestas -->
             {% if respuestas.count > 0 %}
                 {% for respuesta in respuestas %}
-                <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 {% cycle 'checkered' 'non-checkered' %} ">
+                <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
                     <p>{{ respuesta.contenido }}</p>
                     <p><strong>Autor: {{ respuesta.autor }}</strong> -- {{ respuesta.fecha_hora }}</p>
                     <p>Respondida hace ...</p>
