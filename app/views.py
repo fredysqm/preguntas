@@ -54,6 +54,7 @@ class preguntas_crear_view(CreateView):
         _contenido = contenido.objects.create(pregunta=self.object, texto=self.request.POST['contenido'], autor=self.request.user)
         return x
 
+#Con errores aun
 class preguntas_editar_view(UpdateView):
     model = contenido
     form_class = pregunta_form
@@ -270,37 +271,74 @@ def preguntas_comentarios_view(request, pregunta_id):
     args['comentarios'] = _comentarios
     return render(request,'preguntas/comentarios.html', args)
 """
-def preguntas_favorito_view(request, pregunta_id):
-    args = {}    
+# No funciona el success_url
+class preguntas_favorito_view(DetailView):
+    model = pregunta
+    template_name = 'preguntas/ver.html'
+    
+    def get_context_data(self, *args, **kwargs):
+        #import pdb; pdb.set_trace()
+        context = super(preguntas_favorito_view, self).get_context_data(*args, **kwargs)
+        pregunta = self.kwargs['pk']
+        favorito.objects.create(user=self.request.user, pregunta=self.object)
+        return context
+        
+    def get_success_url(self, *args, **kwargs):
+        #import pdb; pdb.set_trace()
+        self.success_url = reverse_lazy('ver', kwargs={'pregunta':self.kwargs['pk']})
+        return self.success_url
+"""
+def _preguntas_favorito_view(request, pregunta_id):
+    args = {}
     _pregunta = get_object_or_404(pregunta, id=pregunta_id)
     _favorito = favorito.objects.get(pregunta=_pregunta.id, user=request.user.id)
     if _favorito:
         favorito.objects.filter(id=_favorito.id).update(estado=1)
     else:
         favorito.objects.create(pregunta=_pregunta.id, user=request.user.id)
+"""
+#Controlar que los votos no se repitan
+# En este y en el siguiente no se actualizan bien los resultados. Tal vez estos metodos son muy lentos.
+class preguntas_votar_arriba_view(DetailView):
+    model = pregunta
+    template_name = 'preguntas/ver.html'
     
-def preguntas_votar_arriba_view(request, pregunta_id):
-    args = {}
-    _pregunta = get_object_or_404(pregunta, id=pregunta_id)    
-    voto.objects.create(user=request.user, pregunta=_pregunta, arriba=True)
-    pregunta.objects.filter(id=_pregunta.id).update(n_votos=(_pregunta.n_votos+1))    
-    return HttpResponseRedirect(reverse('preguntas_ver_url', args=[pregunta_id]))
+    def get_context_data(self, *args, **kwargs):
+        context = super(preguntas_votar_arriba_view, self).get_context_data(*args, **kwargs)
+        pregunta_id = self.kwargs['pk']
+        _pregunta = pregunta.objects.get(id=pregunta_id)
+        voto.objects.create(user=self.request.user, pregunta=_pregunta, valor=1)
+        pregunta.objects.filter(id=_pregunta.id).update(n_votos=(_pregunta.n_votos+1))
+        context['autor'] = User.objects.get(id=contenido.objects.filter(pregunta=self.object.id)[0].autor.id)
+        return context
 
-def preguntas_votar_abajo_view(request, pregunta_id):
-    args = {}
-    _pregunta = get_object_or_404(pregunta, id=pregunta_id)
-    voto.objects.create(user=request.user, pregunta=_pregunta)
-    pregunta.objects.filter(id=_pregunta.id).update(n_votos=(_pregunta.n_votos-1))
-    return HttpResponseRedirect(reverse('preguntas_ver_url', args=[pregunta_id]))
+    def get_success_url(self, *args, **kwargs):
+        self.success_url = reverse_lazy('ver', kwargs={'pregunta':self.kwargs['pk']})
+        return self.success_url
 
+class preguntas_votar_abajo_view(DetailView):
+    model = pregunta
+    template_name = 'preguntas/ver.html'
+    
+    def get_context_data(self, *args, **kwargs):
+        context = super(preguntas_votar_abajo_view, self).get_context_data(*args, **kwargs)
+        pregunta_id = self.kwargs['pk']
+        _pregunta = pregunta.objects.get(id=pregunta_id)
+        voto.objects.create(user=self.request.user, pregunta=_pregunta, valor=0)
+        pregunta.objects.filter(id=_pregunta.id).update(n_votos=(_pregunta.n_votos-1))
+        context['autor'] = User.objects.get(id=contenido.objects.filter(pregunta=self.object.id)[0].autor.id)
+        return context
+
+    def get_success_url(self, *args, **kwargs):
+        self.success_url = reverse_lazy('ver', kwargs={'pregunta':self.kwargs['pk']})
+        return self.success_url
     
 class preguntas_reportar_view(CreateView):
     model = contenido_reporte
     template_name = 'preguntas/reportar.html'
     form_class = reporte_pregunta_form
     fields = ['tipo', 'mensaje']
-    
-    
+        
     def get_context_data(self, *args, **kwargs):
         context = super(preguntas_reportar_view, self).get_context_data(*args, **kwargs)
         return context
@@ -373,7 +411,28 @@ def _respuestas_eliminar_view(request, respuesta_id):
     args['respuesta'] = _respuesta
     return render(request, 'respuestas/eliminar.html', args)
 
-def respuestas_elegir_mejor_view(request, respuesta_id):
+#Falta corregir la parte de actualizar las otras respuestas
+class respuestas_elegir_mejor_view(DetailView):
+    model = contenido
+    
+    def get_context_data(self, *args, **kwargs):
+        context = super(respuestas_elegir_mejor_view, self).get_context_data(*args, **kwargs)
+        respuesta_id = self.kwargs['pk']
+        _respuesta = get_object_or_404(contenido, id=respuesta_id)
+        _pregunta = pregunta.objects.get(id=_respuesta.pregunta_id)
+        _respuestas = contenido.objects.filter(pregunta=_pregunta.id)
+        for res in _respuestas:
+            if str(res.id) == str(_respuesta.id):
+                contenido.objects.filter(id=respuesta_id).update(mejor=True)
+            elif res.mejor:
+                contenido.objects.filter(id=res.id).update(mejor=False)
+        return context
+    
+    def get_success_url(self, *args, **kwargs):
+        self.success_url = reverse_lazy('ver', kwargs={'pregunta':self.kwargs['pk']})
+        return self.success_url
+"""
+def _respuestas_elegir_mejor_view(request, respuesta_id):
     _respuesta = get_object_or_404(respuesta, id=respuesta_id)
     _pregunta = pregunta.objects.get(id=_respuesta.pregunta_id)
     _respuestas = respuesta.objects.filter(pregunta=_pregunta.id)
@@ -383,7 +442,7 @@ def respuestas_elegir_mejor_view(request, respuesta_id):
         elif res.mejor:
             respuesta.objects.filter(id=res.id).update(mejor=False)
     return HttpResponseRedirect(reverse('preguntas_ver_url', args=[_respuesta.pregunta_id]))
-
+"""
 # TAGS
 class tags_ver_view(ListView):
     queryset = tag.objects.all()

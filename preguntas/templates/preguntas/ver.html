@@ -59,7 +59,7 @@
             <li><strong>{{ respuesta.texto }}</strong> -- Por <em>{{ respuesta.autor }}</em>
                 {% if user.id == respuesta.autor.id %}<a href="{% url 'respuestas_editar_url' respuesta.id %}">(Editar)</a>{% endif %}
                 {% if respuesta.mejor %}¡Mejor respuesta!{% else %}
-                    {% if user.id == pregunta.autor_id %}<a href="{% url 'respuestas_elegir_mejor_url' respuesta.id %}">(Mejor)</a>{% endif %}
+                    {% if user.id == autor.id %}<a href="{% url 'respuestas_elegir_mejor_url' respuesta.id %}">(Mejor)</a>{% endif %}
                 {% endif %}</li>
             <hr/>
             <h5>Comentarios de respuesta</h5>

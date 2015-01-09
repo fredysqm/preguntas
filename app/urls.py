@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from app.views import preguntas_lista_view, preguntas_crear_view, preguntas_ver_view, preguntas_responder_view, preguntas_eliminar_view, tags_ver_view, tags_populares_ver_view, tags_crear_view, usuarios_perfil_view, usuarios_reportar_view, comentarios_crear_view, buscar_view,notificaciones_por_usuario_view, comentarios_editar_view, comentarios_eliminar_view, preguntas_abiertas_view, preguntas_por_tag_view, preguntas_comentarios_view, preguntas_reportar_view, respuestas_editar_view, usuarios_ver_view, usuarios_perfil_editar_view, respuestas_eliminar_view, preguntas_editar_view
+from app.views import preguntas_lista_view, preguntas_crear_view, preguntas_ver_view, preguntas_responder_view, preguntas_eliminar_view, tags_ver_view, tags_populares_ver_view, tags_crear_view, usuarios_perfil_view, usuarios_reportar_view, comentarios_crear_view, buscar_view,notificaciones_por_usuario_view, comentarios_editar_view, comentarios_eliminar_view, preguntas_abiertas_view, preguntas_por_tag_view, preguntas_comentarios_view, preguntas_reportar_view, respuestas_editar_view, usuarios_ver_view, usuarios_perfil_editar_view, respuestas_eliminar_view, preguntas_editar_view, preguntas_favorito_view, preguntas_votar_arriba_view, preguntas_votar_abajo_view, respuestas_elegir_mejor_view
 
 # Faltan todos los eliminar. Estan fallando todos por alguna razon.
 
@@ -20,14 +20,14 @@ urlpatterns = patterns('',
     url(r'^abiertas/$', preguntas_abiertas_view.as_view(), name='preguntas_abiertas_url'),
     url(r'^tag/(?P<tag_id>[\d]+)/$', preguntas_por_tag_view.as_view(), name='preguntas_por_tag_url'),
     url(r'^comentarios/(?P<pk>[\d]+)/$', preguntas_comentarios_view.as_view(), name='preguntas_comentarios_url'),
-    url(r'^favorito/(\d+)/$', 'app.views.preguntas_favorito_view', name='preguntas_favorito_url'),
-    url(r'^votar_arriba/(\d+)/$', 'app.views.preguntas_votar_arriba_view', name='preguntas_votar_arriba_url'),
-    url(r'^votar_abajo/(\d+)/$', 'app.views.preguntas_votar_abajo_view', name='preguntas_votar_abajo_url'),
+    url(r'^favorito/(?P<pk>\d+)/$', preguntas_favorito_view.as_view(), name='preguntas_favorito_url'),
+    url(r'^votar_arriba/(?P<pk>\d+)/$', preguntas_votar_arriba_view.as_view(), name='preguntas_votar_arriba_url'),
+    url(r'^votar_abajo/(?P<pk>\d+)/$', preguntas_votar_abajo_view.as_view(), name='preguntas_votar_abajo_url'),
     url(r'^reportar/(?P<pk>[\d]+)/$', preguntas_reportar_view.as_view(), name='preguntas_reportar_url'),
 
     url(r'^respuestas/(?P<pk>[\d]+)/editar/$', respuestas_editar_view.as_view(), name='respuestas_editar_url'),
     url(r'^respuestas/(?P<pk>[\d]+)/eliminar/$', respuestas_eliminar_view.as_view(), name='respuestas_eliminar_url'),
-    url(r'^respuestas/(\d+)/mejor/$', 'app.views.respuestas_elegir_mejor_view', name='respuestas_elegir_mejor_url'),
+    url(r'^respuestas/(?P<pk>\d+)/mejor/$', respuestas_elegir_mejor_view.as_view(), name='respuestas_elegir_mejor_url'),
 
     url(r'^tags/ver/$', tags_ver_view.as_view(), name='tags_ver_url'),
     url(r'^tags/crear/$', tags_crear_view.as_view(), name='tags_crear_url'),
@@ -41,7 +41,7 @@ urlpatterns = patterns('',
 
     url(r'^usuarios/crear/$', 'app.views.usuario_crear_view', name='usuarios_crear_url'),
     url(r'^usuarios/(?P<pk>[\d+])/perfil/$', usuarios_perfil_view.as_view(), name='usuarios_perfil_url'),
-    url(r'^usuarios/reportar/(?P<pk>[\d+])/$', usuarios_reportar_view.as_view(), name='usuarios_reportar_url'),
+    url(r'^usuarios/reportar/(?P<pk>\d+)/$', usuarios_reportar_view.as_view(), name='usuarios_reportar_url'),
 
     url(r'^buscar/$', buscar_view.as_view(), name='buscar_url'),
 
