@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 import random
 
 from .forms import pregunta_form, respuesta_form, tag_form, user_form, user_editar_form, user_extra_form, pregunta_eliminar_form, respuesta_eliminar_form, comentario_form, comentario_eliminar_form, usuario_reporte_form, reporte_pregunta_form
-from .models import pregunta, contenido, tag, usuario_extra, comentario, voto, favorito, usuario_reporte, contenido_reporte
+from .models import pregunta, contenido, tag, usuario_extra, comentario, voto, favorito, usuario_reporte, contenido_reporte, mejor_respuesta
 
 from django.utils.decorators import method_decorator
 
@@ -225,27 +225,18 @@ class preguntas_abiertas_view(ListView):
         return context
 
 class preguntas_por_tag_view(ListView):
+    model = pregunta
+    template_name = 'preguntas/tag.html'
     
     def get_context_data(self, *args, **kwargs):
-        context = super(preguntas_por_tag_view, self).get_context_data(**kwargs)
+        context = super(preguntas_por_tag_view, self).get_context_data(*args, **kwargs)
         tag_id = self.kwargs['tag_id']
         chosen_tag = tag.objects.get(id=tag_id)
-        queryset = pregunta.objects.filter(tag__set__contains = chosen_tag.id)
-        template_name = 'preguntas/home.html'
-        object_list = queryset        
-        context['tagged'] = tagged_preguntas
+        queryset = pregunta.objects.filter(tags = chosen_tag.id)
+        object_list = queryset
+        context['tagged'] = object_list
         context['tag'] = chosen_tag
         return context
-"""
-def preguntas_por_tag_view(request, tag_id):
-    args = {}
-    tagged_preguntas = get_list_or_404(pregunta, tags=tag_id)
-    chosen_tag = tag.objects.get(id=tag_id)
-    args.update(csrf(request))
-    args['tagged'] = tagged_preguntas
-    args['tag'] = chosen_tag
-    return render(request,'preguntas/tag.html', args)
-        """
         
 class preguntas_comentarios_view(ListView):
     
@@ -303,6 +294,10 @@ class preguntas_votar_arriba_view(DetailView):
     model = pregunta
     template_name = 'preguntas/ver.html'
     
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(preguntas_votar_arriba_view, self).dispatch(*args, **kwargs)
+    
     def get_context_data(self, *args, **kwargs):
         context = super(preguntas_votar_arriba_view, self).get_context_data(*args, **kwargs)
         pregunta_id = self.kwargs['pk']
@@ -319,6 +314,10 @@ class preguntas_votar_arriba_view(DetailView):
 class preguntas_votar_abajo_view(DetailView):
     model = pregunta
     template_name = 'preguntas/ver.html'
+    
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(preguntas_votar_abajo_view, self).dispatch(*args, **kwargs)
     
     def get_context_data(self, *args, **kwargs):
         context = super(preguntas_votar_abajo_view, self).get_context_data(*args, **kwargs)
@@ -339,6 +338,10 @@ class preguntas_reportar_view(CreateView):
     form_class = reporte_pregunta_form
     fields = ['tipo', 'mensaje']
         
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(preguntas_reportar_view, self).dispatch(*args, **kwargs)
+    
     def get_context_data(self, *args, **kwargs):
         context = super(preguntas_reportar_view, self).get_context_data(*args, **kwargs)
         return context
@@ -411,9 +414,13 @@ def _respuestas_eliminar_view(request, respuesta_id):
     args['respuesta'] = _respuesta
     return render(request, 'respuestas/eliminar.html', args)
 
-#Falta corregir la parte de actualizar las otras respuestas
+#Falta corregir el success url
 class respuestas_elegir_mejor_view(DetailView):
     model = contenido
+    
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(preguntas_elegir_mejor_view, self).dispatch(*args, **kwargs)
     
     def get_context_data(self, *args, **kwargs):
         context = super(respuestas_elegir_mejor_view, self).get_context_data(*args, **kwargs)
@@ -421,11 +428,10 @@ class respuestas_elegir_mejor_view(DetailView):
         _respuesta = get_object_or_404(contenido, id=respuesta_id)
         _pregunta = pregunta.objects.get(id=_respuesta.pregunta_id)
         _respuestas = contenido.objects.filter(pregunta=_pregunta.id)
-        for res in _respuestas:
-            if str(res.id) == str(_respuesta.id):
-                contenido.objects.filter(id=respuesta_id).update(mejor=True)
-            elif res.mejor:
-                contenido.objects.filter(id=res.id).update(mejor=False)
+        if mejor_respuesta.objects.filter(pregunta=_pregunta.id).count() > 0:            
+            mejor_respuesta.objects.filter(pregunta=_pregunta.id)[0].update(respuesta=_respuesta)
+        else:
+            mejor_respuesta.objects.create(pregunta=_pregunta,respuesta=_respuesta)
         return context
     
     def get_success_url(self, *args, **kwargs):

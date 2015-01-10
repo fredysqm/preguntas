@@ -84,6 +84,10 @@ class usuario_reporte(models.Model):
     fecha_hora = models.DateTimeField(auto_now_add=True)
     estado = models.SmallIntegerField(max_length=1, default=0, choices=ESTADO)
 
+class mejor_respuesta(models.Model):
+    pregunta = models.ForeignKey(pregunta)
+    respuesta = models.ForeignKey(contenido)
+    
 class contenido_reporte(models.Model):
     user = models.ForeignKey(User)
     contenido = models.ForeignKey(contenido)
