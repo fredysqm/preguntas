@@ -12,7 +12,7 @@ from .models import pregunta, contenido, tag, comentario, usuario_extra, usuario
 class pregunta_form(forms.ModelForm):
     def __init__(self, *args, **kwargs):     
         
-        contenido = forms.CharField(required=True)
+        self.contenido = forms.CharField(required=True)
         
         super(pregunta_form, self).__init__(*args, **kwargs)
         
@@ -20,8 +20,7 @@ class pregunta_form(forms.ModelForm):
         self.helper.form_method = 'POST'
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-md-3'
-        self.helper.field_class = 'col-md-9'        
-        
+        self.helper.field_class = 'col-md-9'                
         
         self.helper.layout = Layout(
             Fieldset('<span class="glyphicon glyphicon-pencil"></span> Crear Pregunta',
@@ -30,9 +29,7 @@ class pregunta_form(forms.ModelForm):
                             <label for="id_contenido" class="control-label col-md-3 requiredField">
                             Contenido<span class="asteriskField">*</span></label>
                             <div class="controls col-md-9">
-                                <textarea class="textarea form-control" cols="40" id="id_contenido" name="contenido" rows="10">
-                                    {{ form.contenido }}
-                                </textarea>
+                                <textarea class="textarea form-control" cols="40" id="id_contenido" name="contenido" rows="10">{{ contenido.texto }}</textarea>
                             </div>
                         </div>"""),
                 HTML("""<div id="div_id_tags" class="form-group">
@@ -56,8 +53,7 @@ class pregunta_form(forms.ModelForm):
     class Meta:
         model = pregunta
         exclude = ('n_vistas', 'n_respuestas', 'n_votos', 'respondido', 'estado', 'slug')
-
-
+    
 class pregunta_eliminar_form(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(pregunta_eliminar_form, self).__init__(*args, **kwargs)

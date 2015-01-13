@@ -4,43 +4,12 @@
 {% block content %}
     <p>
         <ul class="nav nav-tabs">
-            <li><a href="{% url 'preguntas_url' %}">Editar Preguntas</a></li>
-            <li class="active"><a href="{% url 'preguntas_crear_url' %}">Crear pregunta</a></li>
+            <li class="active"><a href="{% url 'preguntas_url' %}">Editar Preguntas</a></li>
+            <li><a href="{% url 'preguntas_crear_url' %}">Crear pregunta</a></li>
         </ul>
     </p>
 
     <div class="well bs-component">
         {% crispy form %}
     </div>
-    <!--
-    <h2>Editar Pregunta</h2>
-    <p><a href="{% url 'preguntas_url' %}">Lista de preguntas</a></p>
-    <form action="{% url 'preguntas_editar_url' pregunta.id pregunta.slug %}" method="post">{% csrf_token %}
-        {{ form.non_field_errors }}
-        <div class="fieldWrapper">
-            {{ form.titulo.errors }}
-            <label class="label-fix" for="id_titulo">Titulo:</label>
-            {{ form.titulo }}
-        </div>
-        <div class="fieldWrapper">
-            {{ form.contenido.errors }}
-            <label class="label-fix" for="id_contenido">Contenido:</label>
-            {{ form.contenido }}
-        </div>
-        <div class="fieldWrapper">
-            {{ form.autor.errors }}
-            {{ form.autor.as_hidden }}
-        </div>
-        <div class="fieldWrapper">
-            {{ form.tags.errors }}
-            <label class="label-fix" for="id_tags">Tags:</label>
-            <select multiple="multiple" id="id_tags" name="tags">
-                {% for tag in all_tags %}
-                <option value="{{ tag.id }}" {% if tag in pregunta.tags.all %}selected{% endif %}>{{ tag.nombre }}</option>
-                {% endfor %}
-            </select>
-        </div>
-    <input type="submit" name="submit" value="Editar Pregunta"/>
-    </form>
-    -->
 {% endblock %}
