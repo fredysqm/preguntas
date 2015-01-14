@@ -200,31 +200,7 @@ class preguntas_por_tag_view(ListView):
         context['tagged'] = object_list
         context['tag'] = chosen_tag
         return context
-        
-class preguntas_comentarios_view(ListView):
-    
-    def get_context_data(self, *args, **kwargs):
-        context = super(preguntas_comentarios_view, self).get_context_data(**kwargs)
-        pregunta_id = self.kwargs['pk']
-        queryset = pregunta.objects.filter(id=pregunta_id)
-        template_name = 'preguntas/home.html'
-        respuestas = contenido.objects.filter(pregunta_id=pregunta_id)
-        pregunta_contenido = respuestas.first()
-        _comentarios = comentario.objects.filter(contenido=pregunta_contenido.id)
-        context['pregunta'] = queryset
-        context['comentarios'] = _comentarios
-        return context
-
-"""        
-def preguntas_comentarios_view(request, pregunta_id):
-    args = {}
-    _pregunta = get_object_or_404(pregunta, id=pregunta_id)
-    _comentarios = get_list_or_404(comentario, content_type=11, object_id=pregunta_id)
-    args.update(csrf(request))
-    args['pregunta'] = _pregunta
-    args['comentarios'] = _comentarios
-    return render(request,'preguntas/comentarios.html', args)
-"""
+     
 class preguntas_favorito_view(DetailView):
     model = pregunta
     template_name = 'preguntas/ver.html'
@@ -240,8 +216,6 @@ class preguntas_favorito_view(DetailView):
         self.success_url = reverse_lazy('ver', kwargs={'pregunta':self.kwargs['pk']})
         return self.success_url
 
-#Controlar que los votos no se repitan
-# En este y en el siguiente no se actualizan bien los resultados. Tal vez estos metodos son muy lentos.
 class preguntas_votar_arriba_view(DetailView):
     model = pregunta
     template_name = 'preguntas/ver.html'
@@ -457,6 +431,7 @@ class usuarios_perfil_view(DetailView):
 
 class usuarios_perfil_editar_view(UpdateView):
     model = User
+    success_url = reverse_lazy('usuarios_ver_url') 
     template_name = 'usuarios/editar_perfil.html'
     form_maestro = None
     form_detalle = None
@@ -494,31 +469,8 @@ class usuarios_perfil_editar_view(UpdateView):
         context = super(usuarios_perfil_editar_view, self).get_context_data(*args, **kwargs)
         context['form_maestro'] = self.form_maestro
         context['form_detalle'] = self.form_detalle
+        context['username'] = self.object.username
         return context
-
-#@login_required()
-def _usuarios_perfil_editar_view(request, user_id):
-    args = {}
-    requested_user = get_object_or_404(User, id=user_id)
-    requested_user_extra = usuario_extra.objects.get(usuario_extra=user_id)
-    
-    if request.POST:        
-        form_maestro = user_editar_form(request.POST, instance=requested_user)
-        form_detalle = user_extra_form(request.POST, instance=requested_user_extra)
-        if form_maestro.is_valid() and form_detalle.is_valid():
-            form_maestro.save()
-            form_detalle.save()
-            return HttpResponseRedirect(reverse('usuarios_perfil_url', args=[user_id]))
-    else:
-        form_maestro = user_editar_form(initial={'first_name' : requested_user.first_name,
-                                      'last_name'  : requested_user.last_name,
-                                      'email'      : requested_user.email,})        
-        form_detalle = user_extra_form(initial={'descripcion' : requested_user_extra.descripcion})
-            
-    args.update(csrf(request))
-    args['form_maestro'] = form_maestro
-    args['form_detalle'] = form_detalle
-    return render(request, 'usuarios/editar_perfil.html', args)
     
 class usuarios_reportar_view(CreateView):
     model = usuario_reporte
@@ -585,38 +537,6 @@ class comentarios_eliminar_view(DeleteView):
         context = super(comentarios_eliminar_view, self).get_context_data(*args, **kwargs)
         context['form'] = comentario_eliminar_form()
         return context
-    
-@login_required()
-def _comentarios_eliminar_view(request, comentario_id):
-    args = {}
-    _comentario = get_object_or_404(comentario, id=comentario_id)
-
-    if request.POST:
-        form = comentario_eliminar_form(request.POST, instance=_comentario)
-        if form.is_valid():
-            _comentario.delete()
-            return HttpResponseRedirect(reverse('preguntas_url'))
-    else:
-        form = comentario_eliminar_form(instance=_comentario)
-
-    args.update(csrf(request))
-    args['form'] = form
-    args['comentario'] = _comentario
-    return render(request, 'comentarios/eliminar.html', args)
-
-@login_required()
-def usuario_crear_view( request ):
-    args = {}
-    args.update(csrf(request))
-    if request.POST:
-        form = user_form( request.POST )
-        if form.is_valid():
-            return HttpResponseRedirect( '/' )
-    else:
-        form = user_form()
-
-    args['form'] = form
-    return render(request, 'usuarios/crear_usuario.html', args)
 
 # Busqueda
 class buscar_view(ListView):

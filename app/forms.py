@@ -128,7 +128,7 @@ class user_editar_form(forms.ModelForm):
         self.helper.field_class = 'col-md-9'
         
         self.helper.layout = Layout(
-            Fieldset("""<span class="glyphicon glyphicon-pencil"></span> Editar perfil""",
+            Fieldset("""<span class="glyphicon glyphicon-pencil"></span> Editar perfil - {{ username }}""",
                 'first_name',
                 'last_name',
                 'email',
