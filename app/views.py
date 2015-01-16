@@ -54,17 +54,21 @@ class preguntas_crear_view(CreateView):
         _contenido = contenido.objects.create(pregunta=self.object, texto=self.request.POST['contenido'], autor=self.request.user)
         return x
 
-# falta verificar si el usuario es autor
 class preguntas_editar_view(UpdateView):
     model = pregunta
     form_class = pregunta_form
     template_name = 'preguntas/editar.html'
     fields = ['texto']
-    success_url = '/'
+    success_url = '/'    
     
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(preguntas_editar_view, self).dispatch(*args, **kwargs)
+        pk = self.kwargs['pk']
+        _pregunta = pregunta.objects.get(id=pk)
+        if self.request.user.id == _pregunta.id:
+            return super(preguntas_editar_view, self).dispatch(*args, **kwargs)
+        else:
+            raise Http404        
     
     def get_context_data(self, **kwargs):        
         pregunta_id = self.kwargs['pk']
@@ -87,7 +91,6 @@ class preguntas_editar_view(UpdateView):
         new_tags = tag.objects.filter(id__in = self.request.POST['tags'])
         to_add = old_tags.exclude(id__in = new_tags)
         _pregunta.tags = to_add
-        import pdb; pdb.set_trace()
         return super(preguntas_editar_view, self).post(*args, **kwargs)
 
 class preguntas_ver_view(DetailView):
@@ -131,7 +134,12 @@ class preguntas_eliminar_view(DeleteView):
     
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(preguntas_eliminar_view, self).dispatch(*args, **kwargs)
+        pk = self.kwargs['pk']
+        _pregunta = pregunta.objects.get(id=pk)
+        if self.request.user.id == _pregunta.id:
+            return super(preguntas_eliminar_view, self).dispatch(*args, **kwargs)
+        else:
+            raise Http404 
     
     def get_context_data(self, **kwargs):
         context = super(preguntas_eliminar_view, self).get_context_data(**kwargs)
@@ -314,29 +322,6 @@ class respuestas_eliminar_view(DeleteView):
         context['form'] = respuesta_eliminar_form()
         return context    
 
-def _respuestas_eliminar_view(request, respuesta_id):
-    args = {}
-    _respuesta = get_object_or_404(respuesta, id=respuesta_id)
-
-    if request.POST:
-        form = respuesta_eliminar_form(request.POST, instance=_respuesta)
-        if form.is_valid():
-            _respuesta.delete()
-            pregunta_obj = pregunta.objects.filter(id=_respuesta.pregunta.id).values('n_respuestas')[0]
-            if pregunta_obj['n_respuestas'] == 1:
-                pregunta.objects.filter(id=_respuesta.pregunta.id).update(n_respuestas=(pregunta_obj['n_respuestas']-1),
-                                                               respondido=False)
-            else:
-                pregunta.objects.filter(id=_respuesta.pregunta.id).update(n_respuestas=(pregunta_obj['n_respuestas']-1))
-            return HttpResponseRedirect(reverse('preguntas_url'))
-    else:
-        form = respuesta_eliminar_form(instance=_respuesta)
-
-    args.update(csrf(request))
-    args['form'] = form
-    args['respuesta'] = _respuesta
-    return render(request, 'respuestas/eliminar.html', args)
-
 #Falta corregir el success url
 class respuestas_elegir_mejor_view(DetailView):
     model = contenido
@@ -360,18 +345,7 @@ class respuestas_elegir_mejor_view(DetailView):
     def get_success_url(self, *args, **kwargs):
         self.success_url = reverse_lazy('ver', kwargs={'pregunta':self.kwargs['pk']})
         return self.success_url
-"""
-def _respuestas_elegir_mejor_view(request, respuesta_id):
-    _respuesta = get_object_or_404(respuesta, id=respuesta_id)
-    _pregunta = pregunta.objects.get(id=_respuesta.pregunta_id)
-    _respuestas = respuesta.objects.filter(pregunta=_pregunta.id)
-    for res in _respuestas:
-        if str(res.id) == str(_respuesta.id):
-            respuesta.objects.filter(id=respuesta_id).update(mejor=True)
-        elif res.mejor:
-            respuesta.objects.filter(id=res.id).update(mejor=False)
-    return HttpResponseRedirect(reverse('preguntas_ver_url', args=[_respuesta.pregunta_id]))
-"""
+
 # TAGS
 class tags_ver_view(ListView):
     queryset = tag.objects.all()
