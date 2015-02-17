@@ -1,4 +1,4 @@
-{% load staticfiles %}{% load compressed %}<!DOCTYPE html>
+{% load staticfiles %}{% load pipeline %}<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
@@ -8,8 +8,7 @@
     <title>{% block title %}{% endblock %} - StackPreguntas</title>
 
     <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
-    <link rel="stylesheet" href="{% static 'css/base.css' %}"/>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"/>
+    {% stylesheet 'all' %}
     {% block css %}{% endblock %}
 
 </head>
@@ -67,7 +66,7 @@
     </footer>
 
     {% block modals %}{% endblock %}
-    {% compressed_js 'all' %}
+    {% javascript 'all' %}
     {% block js %}{% endblock %}
 </body>
 </html>
