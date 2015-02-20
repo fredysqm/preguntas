@@ -1,8 +1,7 @@
 from django.contrib import admin
-from .models import tag, pregunta, contenido, comentario, medalla
+#from .models import tag, pregunta, respuesta, comentario
 
-admin.site.register(tag)
-admin.site.register(pregunta)
-admin.site.register(contenido)
-admin.site.register(comentario)
-admin.site.register(medalla)
+#admin.site.register(tag)
+#admin.site.register(pregunta)
+#admin.site.register(respuesta)
+#admin.site.register(comentario)

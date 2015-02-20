@@ -87,7 +87,7 @@ class usuario_reporte(models.Model):
 class mejor_respuesta(models.Model):
     pregunta = models.ForeignKey(pregunta)
     respuesta = models.ForeignKey(contenido)
-    
+
 class contenido_reporte(models.Model):
     user = models.ForeignKey(User)
     contenido = models.ForeignKey(contenido)

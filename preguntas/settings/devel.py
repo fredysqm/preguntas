@@ -13,14 +13,10 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
-    'api',
     'crispy_forms',
     'pipeline',
     'mockups',
     'registration',
-    'notification',
-    'temptags',
-    #'rest_framework'
     'debug_toolbar.apps.DebugToolbarConfig',
 )
 

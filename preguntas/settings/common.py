@@ -6,17 +6,15 @@ ROOT_URLCONF = 'preguntas.urls'
 WSGI_APPLICATION = 'preguntas.wsgi.application'
 
 LANGUAGE_CODE = 'es-PE'
+TIME_ZONE = 'America/Lima'
 USE_I18N = True
 USE_L10N = True
-
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
-
-LOGIN_URL = '/admin/'
+USE_TZ = True
 
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "preguntas/static"),
+    os.path.join(BASE_DIR, "static"),
 )
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -24,10 +22,13 @@ STATICFILES_FINDERS = (
     'pipeline.finders.PipelineFinder',
 )
 
-
 TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, "preguntas/templates"),
+    os.path.join(BASE_DIR, "templates"),
 )
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+LOGIN_URL = '/admin/'
 
 PIPELINE_COMPILERS = (
     'pipeline.compilers.coffee.CoffeeScriptCompiler',
@@ -57,10 +58,4 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/all.js',
     },
-}
-
-REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework_jsonp.renderers.JSONPRenderer',
-    ),
 }

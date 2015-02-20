@@ -1,0 +1,69 @@
+{% load staticfiles %}{% load compressed %}<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>{% block title %}{% endblock %} - StackPreguntas</title>
+
+    <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
+    {% compressed_css 'all' %}
+    {% block css %}{% endblock %}
+
+</head>
+<body>
+    <div class="navbar navbar-default navbar-fixed-top" >
+        <div class="container">
+            <div class="navbar-header">
+                <a href="{% url 'preguntas_ultimas_url' %}" class="navbar-brand">Stack<strong>Preguntas</strong></a>
+                <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div class="navbar-collapse collapse" id="navbar-main">
+                <ul class="nav navbar-nav">
+                    {% block menu %}{% endblock %}
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if user.is_authenticated %}
+                    <li>¡Bienvenido!</li>
+                    <li><a href="#">{{ user.username }}</a></li>
+                    {% else %}
+                    <li><a href="#">Registrarse</a></li>
+                    <li><a href="#">Iniciar Sesión</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col col-md-8">
+                {% block content %}{% endblock %}
+            </div>
+            <div class="col col-md-4">
+                <h3><span class="glyphicon glyphicon-book"></span> Tab2</h3>
+                <p>
+                    texto texto texto texto texto texto texto texto texto texto
+                </p>
+                <p>
+                    texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto texto
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <hr />
+    </footer>
+
+    {% block modals %}{% endblock %}
+    {% compressed_js 'all' %}
+    {% block js %}{% endblock %}
+</body>
+</html>
