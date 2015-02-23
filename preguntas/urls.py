@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 
-from app.views.preguntas import preguntas_ultimas_view, preguntas_crear_view, preguntas_editar_view
+from app.views.preguntas import preguntas_ultimas_view, preguntas_crear_view, preguntas_editar_view, pregunta_ver_view
 
 
 admin.autodiscover()
@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     url(r'^$', preguntas_ultimas_view.as_view(), name='preguntas_ultimas_url'),
     url(r'^crear/$', login_required(preguntas_crear_view.as_view()), name='preguntas_crear_url'),
     url(r'^editar/(?P<pk>\d+)/$', login_required(preguntas_editar_view.as_view()), name='preguntas_editar_url'),
+    url(r'^ver/(?P<pk>\d+)/(?P<slug>[-_\w]+)/$', pregunta_ver_view.as_view(), name='pregunta_ver_url'),
 
 
 

@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
-{% block title %}Preguntas{% endblock %}
+{% block title %}Ultimas Preguntas{% endblock %}
 {% block menu %}
     <li class="active"><a href="{% url 'preguntas_ultimas_url' %}">Preguntas</a></li>
     <li><a href="#">Tags</a></li>
     <li><a href="#">Usuarios</a></li>
+    <li><a href="{% url 'preguntas_crear_url' %}">¡Nueva Pregunta!</a></li>
 {% endblock %}
 {% block content %}
 
@@ -13,9 +14,6 @@
             <li><a href="{% url 'preguntas_ultimas_url' %}">Sin Respuesta</a></li>
             <li><a href="{% url 'preguntas_ultimas_url' %}">Tendencias</a></li>
             <li><a href="{% url 'preguntas_ultimas_url' %}">Populares</a></li>
-            {%  if user.is_authenticated %}
-            <li><a href="{% url 'preguntas_crear_url' %}">Crear</a></li>
-            {% endif %}
         </ul>
     </p>
 
@@ -47,7 +45,7 @@
                 <div class="col col-sm-9">
                     <h4 class="titulo">
                         {% if user.id == pregunta.autor_id %}
-                            <a href="">{{ pregunta.titulo }}</a>
+                            <a href="{% url 'pregunta_ver_url' pregunta.pk pregunta.slug %}">{{ pregunta.titulo }}</a>
                         {% else %}
                             {{ pregunta.titulo }}
                         {% endif %}

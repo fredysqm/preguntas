@@ -1,4 +1,4 @@
-from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from django.core.urlresolvers import reverse_lazy
 
 from ..forms.preguntas import pregunta_crear_form, pregunta_editar_form
@@ -12,7 +12,7 @@ class preguntas_ultimas_view(ListView):
 
 class preguntas_crear_view(CreateView):
     form_class = pregunta_crear_form
-    success_url = reverse_lazy('preguntas_url')
+    success_url = reverse_lazy('preguntas_ultimas_url')
     template_name = 'preguntas/crear.html'
 
     def form_valid(self, form):
@@ -21,7 +21,12 @@ class preguntas_crear_view(CreateView):
 
 
 class preguntas_editar_view(UpdateView):
-    model=pregunta
+    model = pregunta
     form_class = pregunta_editar_form
-    success_url = reverse_lazy('preguntas_url')
+    success_url = reverse_lazy('preguntas_ultimas_url')
     template_name = 'preguntas/editar.html'
+
+
+class pregunta_ver_view(DetailView):
+    model = pregunta
+    template_name = 'preguntas/ver.html'

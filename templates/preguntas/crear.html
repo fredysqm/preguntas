@@ -1,16 +1,21 @@
 {% extends 'base.html' %}
 {% load crispy_forms_tags %}
-{% block title %}Preguntas{% endblock %}
+{% block title %}Nueva Pregunta{% endblock %}
+{% block menu %}
+    <li><a href="{% url 'preguntas_ultimas_url' %}">Preguntas</a></li>
+    <li><a href="#">Tags</a></li>
+    <li><a href="#">Usuarios</a></li>
+    <li class="active"><a href="{% url 'preguntas_crear_url' %}">¡Nueva Pregunta!</a></li>
+{% endblock %}
 {% block content %}
 
     <p>
         <ul class="nav nav-tabs">
-            <li><a href="{% url 'preguntas_url' %}">Preguntas</a></li>
-            <li class="active"><a href="{% url 'preguntas_crear_url' %}">Crear</a></li>
         </ul>
     </p>
 
     <div class="well bs-component">
         {% crispy form %}
     </div>
+
 {% endblock %}

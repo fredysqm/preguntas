@@ -21,13 +21,13 @@ class pregunta_crear_form(forms.ModelForm):
         self.helper.field_class = 'col-md-9'
 
         self.helper.layout = Layout(
-            Fieldset('<span class="glyphicon glyphicon-pencil"></span> Crear Pregunta',
+            Fieldset('<span class="glyphicon glyphicon-pencil"></span> Nueva Pregunta',
                 'titulo',
                 'contenido',
                 'tags',
             ),
             FormActions(
-                Submit('submit', u'Crear'),
+                Submit('submit', u'Guardar Pregunta'),
                 css_class='text-right'
             ),
         )
@@ -54,7 +54,7 @@ class pregunta_editar_form(forms.ModelForm):
                 'tags',
             ),
             FormActions(
-                Submit('submit', u'Crear'),
+                Submit('submit', u'Guardar Pregunta'),
                 css_class='text-right'
             ),
         )

@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
-{% block title %}Pregunta{% endblock %}
+{% block title %}{{ pregunta.titulo }}{% endblock %}
+{% block menu %}
+    <li class="active"><a href="{% url 'preguntas_ultimas_url' %}">Preguntas</a></li>
+    <li><a href="#">Tags</a></li>
+    <li><a href="#">Usuarios</a></li>
+    <li><a href="{% url 'preguntas_crear_url' %}">¡Nueva Pregunta!</a></li>
+{% endblock %}
 {% block content %}
     <div class="row">
         <!-- Pregunta -->
@@ -12,37 +18,6 @@
             <li class="pregunta-detalle">Votos {{ pregunta.n_votos }}</li>
             <li class="pregunta-detalle">{{ pregunta.n_vistas }} Vistas</li>
         </ul>
-        <a href="{% url 'comentarios_crear_url' %}">Añadir comentario a la pregunta</a>
         </div>
-    </div>
-    <div class="row">
-        <hr/>
-    </div>
-    <div class="row">
-        <!-- Respuesetas -->
-        <ul>
-        {% if respuestas.count > 0 %}
-            {% for respuesta in respuestas %}
-            <li><strong>{{ comentario.contenido }}</strong> -- Por <em>{{ comentario.autor }}</em></li>
-            {% endfor %}
-        {% else %}
-            <strong><p>¡Aún no hay respuestas!</p></strong>
-        {% endif %}
-        </ul>
-    </div>
-    <div class="row">
-        <hr/>
-    </div>
-    <div class="row">
-        <!-- Comentarios -->
-        <ul>
-        {% if comentarios.count > 0 %}
-            {% for comentario in comentarios %}
-            <li><strong>{{ comentario.contenido }}</strong> -- Por <em>{{ comentario.autor }}</em></li>
-            {% endfor %}
-        {% else %}
-            <strong><p>¡Aún no hay comentarios!</p></strong>
-        {% endif %}
-        </ul>
     </div>
 {% endblock %}
