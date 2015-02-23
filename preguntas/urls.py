@@ -46,6 +46,6 @@ urlpatterns = patterns('',
    # name='password_reset'),
 
 
-
+    (r'^accounts/', include('registration.backends.simple.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )

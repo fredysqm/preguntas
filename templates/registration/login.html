@@ -1,4 +1,4 @@
-{% extends "base/base1.html" %}
+{% extends "base.html" %}
 {% load i18n %}
 
 {% block content %}
@@ -18,7 +18,7 @@
 
 <p style="font-size: 20px;">{% trans "Forgot password" %}? <a href="{% url "auth_password_reset" %}">{% trans "Reset it" %}</a></p>
 <p style="font-size: 20px;">{% trans "Not member" %}? <a href="{% url "registration_register" %}">{% trans "Register" %}</a></p>
-    
+
     <p>or</p>
 
 </div>

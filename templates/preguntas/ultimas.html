@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load humanize %}
 {% block title %}Ultimas Preguntas{% endblock %}
 {% block menu %}
     <li class="active"><a href="{% url 'preguntas_ultimas_url' %}">Preguntas</a></li>
@@ -20,36 +21,29 @@
     {% for pregunta in object_list %}
         <article>
             <div class="row">
-                <div class="col col-sm-3 no-padding-right">
+                <div class="col col-xs-2 no-padding-right">
                     <div class="row">
-                        <div class="col col-xs-4 no-padding-right">
+                        <div class="col col-xs-12">
                             <p class="text-center">
-                                {{ pregunta.n_votos }}
+                                <big>{{ pregunta.n_votos }}</big>
                                 <br /><small>votos</small>
                             </p>
-                        </div>
-                        <div class="col col-xs-4 no-padding-right no-padding-left">
                             <p class="text-center">
-                                {{ pregunta.n_respuestas }}
-                                <br /><small>rspts</small>
+                                <big>{{ pregunta.n_respuestas }}</big>
+                                <br /><small>respuestas</small>
                             </p>
-                        </div>
-                        <div class="col col-xs-4 no-padding-left">
                             <p class="text-center">
                                 {{ pregunta.n_vistas }}
-                                <br /><small>vistas</small>
+                                <small>vistas</small>
                             </p>
                         </div>
                     </div>
                 </div>
-                <div class="col col-sm-9">
+                <div class="col col-xs-10">
                     <h4 class="titulo">
-                        {% if user.id == pregunta.autor_id %}
-                            <a href="{% url 'pregunta_ver_url' pregunta.pk pregunta.slug %}">{{ pregunta.titulo }}</a>
-                        {% else %}
-                            {{ pregunta.titulo }}
-                        {% endif %}
+                        <a href="{% url 'pregunta_ver_url' pregunta.pk pregunta.slug %}">{{ pregunta.titulo }}</a>
                     </h4>
+                    <p>{{ pregunta.contenido|truncatewords:50 }}</p>
                     <div class="row">
                         <div class="col col-sm-8">
                             {% for tag in pregunta.tags.all %}
@@ -58,7 +52,7 @@
                         </div>
                         <div class="col col-sm-4">
                             <p class="text-right">
-                                <small>Tiempo</small>
+                                <small>por {{ pregunta.autor }} hace {{ pregunta.fecha_hora|timesince }}</small>
                             </p>
                         </div>
                     </div>
