@@ -30,10 +30,17 @@
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if user.is_authenticated %}
-                    <li><a href="#">{{ user.username }}</a></li>
+                    <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">{{ user.username }} <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Perfil</a></li>
+                            <li class="divider"></li>
+                            <li><a href=".{% url "auth_logout" %}">Salir</a></li>
+                        </ul>
+                    </li>
                     {% else %}
-                    <li><a href="#">Registrarse</a></li>
-                    <li><a href="#">Iniciar Sesión</a></li>
+                    <li><a href="{% url "registration_register" %}">Registrarse</a></li>
+                    <li><a href="{% url "auth_login" %}">Iniciar Sesión</a></li>
                     {% endif %}
                 </ul>
             </div>

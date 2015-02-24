@@ -10,13 +10,15 @@
 {% block content %}
 
     <p>
-        <ul class="nav nav-tabs">
+        <ul class="nav nav-pills">
             <li class="active"><a href="{% url 'preguntas_ultimas_url' %}">Ultimas</a></li>
             <li><a href="{% url 'preguntas_ultimas_url' %}">Sin Respuesta</a></li>
             <li><a href="{% url 'preguntas_ultimas_url' %}">Tendencias</a></li>
             <li><a href="{% url 'preguntas_ultimas_url' %}">Populares</a></li>
         </ul>
     </p>
+
+    <hr class="no-margin" />
 
     {% for pregunta in object_list %}
         <article>
