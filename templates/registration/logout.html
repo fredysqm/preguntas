@@ -1,9 +1,24 @@
 {% extends "base.html" %}
-{% load i18n %}
 
+{% block title %}Cerrar sesión{% endblock %}
+{% block menu %}
+    <li><a href="{% url 'preguntas_ultimas_url' %}">Preguntas</a></li>
+    <li><a href="#">Tags</a></li>
+    <li><a href="#">Usuarios</a></li>
+    <li><a href="{% url 'preguntas_crear_url' %}">¡Nueva Pregunta!</a></li>
+{% endblock %}
 {% block content %}
-<div class="formBlock">
-<h3>Logged out</h3>
-</div>
+<p>
+    <ul class="nav nav-tabs">
+    </ul>
+</p>
 
+<div class="well bs-component">
+    <legend><span class="glyphicon glyphicon-lock"></span> ¡Sesion cerrada!</legend>
+    <p>
+        Has cerrado correctamente tu sesión.
+        <h5>Continuar <a href="{% url 'preguntas_ultimas_url' %}">visitando</a> el sitio</h5>
+        <h5>Volver a <a href="{% url 'auth_login' %}">iniciar sesión</a></h5>
+    </p>
+</div>
 {% endblock %}

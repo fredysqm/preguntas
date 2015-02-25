@@ -1,25 +1,38 @@
 {% extends "base.html" %}
+
+{% load crispy_forms_tags %}
 {% load i18n %}
 
+{% block title %}Iniciar sesión{% endblock %}
+{% block menu %}
+    <li><a href="{% url 'preguntas_ultimas_url' %}">Preguntas</a></li>
+    <li><a href="#">Tags</a></li>
+    <li><a href="#">Usuarios</a></li>
+    <li><a href="{% url 'preguntas_crear_url' %}">¡Nueva Pregunta!</a></li>
+{% endblock %}
 {% block content %}
-<div class="formBlock">
-<h3>Welcome Back</h3>
-<form method="post" action=".">{% csrf_token %}
+<p>
+    <ul class="nav nav-tabs">
+    </ul>
+</p>
 
-  <label>Username:</label><br />
-  {{ form.username }}<br /><br />
-
-  <label>Password:</label><br />
-  {{ form.password }}<br /><br />
-
-  <input type="submit" value="{% trans 'Log in' %}" class="updateButton" style="width: 125px; height: 30px; padding-top: 5px; padding-bottom: 5px; line-height: 20px; color: #fff;" />
-  <input type="hidden" name="next" value="{{ next }}" />
-</form>
-
-<p style="font-size: 20px;">{% trans "Forgot password" %}? <a href="{% url "auth_password_reset" %}">{% trans "Reset it" %}</a></p>
-<p style="font-size: 20px;">{% trans "Not member" %}? <a href="{% url "registration_register" %}">{% trans "Register" %}</a></p>
-
-    <p>or</p>
-
+<div class="well bs-component">
+    <form method="post" class="form-signin">{% csrf_token %}
+        <legend><span class="glyphicon glyphicon-lock"></span> ¡Bienvenido!</legend>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <fieldset>
+                    {{ form|crispy }}
+                </fieldset>
+                <div  class="text-right">
+                    <button type="submit" class="btn btn-primary">{% trans "Log in" %}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <p>
+        <h5>¿Has olvidado tu contraseña? <a href="{% url "auth_password_reset" %}">¡Cambiala!</a></h5>
+        <h5>¿No estas registrado? <a href="{% url "registration_register" %}">¡Es gratis!</a></h5>
+    </p>
 </div>
 {% endblock %}

@@ -1,51 +1,36 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title %}Register for an account{% endblock %}
-{% block body_class %}{{ block.super }} registration_form{% endblock %}
+{% load crispy_forms_tags %}
+{% load i18n %}
 
-
-{% block content_title %}
-  <h2>Register for an account</h2>
+{% block title %}Registrate{% endblock %}
+{% block menu %}
+    <li><a href="{% url 'preguntas_ultimas_url' %}">Preguntas</a></li>
+    <li><a href="#">Tags</a></li>
+    <li><a href="#">Usuarios</a></li>
+    <li><a href="{% url 'preguntas_crear_url' %}">¡Nueva Pregunta!</a></li>
 {% endblock %}
-
-
 {% block content %}
-<div class="formBlock">
-<h3>Registration</h3>
-  <form action="{% url 'registration_register' %}" method="post">{% csrf_token %}
+<p>
+    <ul class="nav nav-tabs">
+    </ul>
+</p>
 
-    <label>Username:</label><br />
-  {{ form.username }}<br /><br />
-
-  <label>Email:</label><br />
-  {{ form.email }}<br /><br />
-
-  <label>Password:</label><br />
-  {{ form.password1 }}<br /><br />
-
-  <label>Password (again):</label><br />
-  {{ form.password2 }}<br /><br />
-
-
-  <p class="submit"><button type="submit" class="updateButton">Register</button></p>
-  </form>
-
-    <p>or</p>
-
-
+<div class="well bs-component">
+    <form method="post" class="form-signin">{% csrf_token %}
+        <legend><span class="glyphicon glyphicon-list-alt"></span> Registrate</legend>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <fieldset>
+                    {{ form|crispy }}
+                </fieldset>
+                <div  class="text-right">
+                    <button type="submit" class="btn btn-primary">Registrate</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <h4>¿Por qué debo registrarme?</h4>
+    <p>Con el fin de presentar respuestas a las preguntas es necesario estar registrado. Las mejores críticas salen en la portada principal.</p>
 </div>
-
-<div class="formInstructions">
-<h3>Please Read</h3>
-<div class="formInstructionContainer">
-
-<h4>Why should I Register?</h4>
-
-<p>In order to submit movie reviews you need to be registered.
-Some reviews make it to a movie's front page.  This can lead to substantial exposure to your website or blog.
-Once registered you will be able to provide your social media contacts to gain further exposure.   </p>
-</div>
-</div>
-<div class="clr"></div>
 {% endblock %}
-

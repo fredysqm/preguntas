@@ -1,16 +1,25 @@
 {% extends "base.html" %}
 
-{% block title %}Registration complete{% endblock %}
-{% block body_class %}{{ block.super }} registration_complete{% endblock %}
-
-
-{% block content_title %}
-  <h2>Registration complete</h2>
+{% block title %}Activa tu cuenta{% endblock %}
+{% block menu %}
+    <li><a href="{% url 'preguntas_ultimas_url' %}">Preguntas</a></li>
+    <li><a href="#">Tags</a></li>
+    <li><a href="#">Usuarios</a></li>
+    <li><a href="{% url 'preguntas_crear_url' %}">¡Nueva Pregunta!</a></li>
 {% endblock %}
-
-
 {% block content %}
-  <h3>Activate your account</h3>
-  <p>We will be sending you an email with an activation link which you'll need to click to verify this account. If you choose not to activate your account it will eventually become disabled.</p>
-  <p>Check your email.</p>
+<p>
+    <ul class="nav nav-tabs">
+    </ul>
+</p>
+
+<div class="well bs-component">
+    <legend><span class="glyphicon glyphicon-lock"></span> Activa tu cuenta</legend>
+    <p>
+Vamos a enviarte un correo electrónico con un enlace de activación que deberás hacer clic para verificar esta cuenta. <br />Si decide no activar su cuenta con el tiempo podria ser desactivada.
+
+<br />Revisa tu correo electrónico.
+        <h5>Continuar <a href="{% url 'preguntas_ultimas_url' %}">visitando</a> el sitio</h5>
+    </p>
+</div>
 {% endblock %}
