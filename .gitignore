@@ -43,3 +43,5 @@ api/migrations/*
 app/migrations/*
 static/less/*.css
 static/stylus/*.css
+
+npm-debug.log
