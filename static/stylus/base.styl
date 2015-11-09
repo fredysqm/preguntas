@@ -1,5 +1,22 @@
+@import url("https://fonts.googleapis.com/css?family=Raleway:400,700")
+
+$naranja = #fa6900
+$naranjab = #e05e00
+$goldfish = #f38630
+$goldfishb = #da782b
+$clean = #a7dbd8
+$cleanb = #96c4c2
+$aoi = #69d2e7
+$aoib = #5ebccf
+$beach = #e0e4cc
+$beacht = #5a5b51
+$beachb = #c9ccb7
+$texto = #6f6f6f
+
 body
     padding-top 70px
+    font normal 12px/1.2em Raleway, sans-serif
+    color $texto
 
 article
     padding-top 0
@@ -15,7 +32,67 @@ article
 .no-padding-right
     padding-right 0 !important
 
-
 .no-margin
     margin-top 6px
     margin-bottom 6px
+    
+.navbar-stack
+    background $naranja
+    border-bottom 2px solid $naranjab
+    .navbar-brand
+        font-size 30px
+        font-weight bold
+        text-transform uppercase
+        
+    .navbar-nav
+        .active
+            background $goldfish
+        a
+            &:hover
+            &:focus
+                background-color $goldfish !important
+
+    li
+        font-size 16px
+    a
+        color #fff
+
+.nav-pills
+    li
+        a
+            background-color $clean
+            color #fff
+            font-size 14px
+            border-radius 0
+            &:hover
+            &:active
+                background-color $aoi !important
+            
+    .active
+        a
+            background-color $aoi !important
+
+
+.titulo
+    font-size 18px
+    a
+        color $aoib
+        
+.btn-tag
+    border-radius 0
+    background-color $beach
+    color $beacht
+    
+    &:hover
+    &:active
+        background-color $beachb
+        
+hr.hr
+    border-color $beach
+        
+.pregunta-titulo
+    color #000
+        
+.contenido
+    font-size 14px
+    line-height 1.4em    

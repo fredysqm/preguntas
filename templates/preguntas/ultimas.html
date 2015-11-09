@@ -18,30 +18,34 @@
         </ul>
     </p>
 
-    <hr class="no-margin" />
+    <hr class="no-margin hr" />
 
     {% for pregunta in object_list %}
-        <article>
+        <article class="pregunta">
             <div class="row">
-                <div class="col col-xs-2 no-padding-right">
+                <div class="col col-xs-3 no-padding-right">
                     <div class="row">
-                        <div class="col col-xs-12">
-                            <p class="text-center">
+                        <div class="col col-xs-4">
+                            <a class="btn btn-blank btn-xs" href="{% url 'pregunta_ver_url' pregunta.pk pregunta.slug %}">
                                 <big>{{ pregunta.n_votos }}</big>
                                 <br /><small>votos</small>
-                            </p>
-                            <p class="text-center">
+                            </a>
+                        </div>
+                        <div class="col col-xs-4">
+                            <a class="btn btn-blank btn-xs" href="{% url 'pregunta_ver_url' pregunta.pk pregunta.slug %}">
                                 <big>{{ pregunta.n_respuestas }}</big>
-                                <br /><small>respuestas</small>
-                            </p>
-                            <p class="text-center">
-                                {{ pregunta.n_vistas }}
-                                <small>vistas</small>
-                            </p>
+                                <br /><small>resp</small>
+                            </a>
+                        </div>
+                        <div class="col col-xs-4">
+                            <a class="btn btn-blank btn-xs" href="{% url 'pregunta_ver_url' pregunta.pk pregunta.slug %}">
+                                <big>{{ pregunta.n_vistas }}</big>
+                                <br /><small>vistas</small>
+                            </a>
                         </div>
                     </div>
                 </div>
-                <div class="col col-xs-10">
+                <div class="col col-xs-9">
                     <h4 class="titulo">
                         <a href="{% url 'pregunta_ver_url' pregunta.pk pregunta.slug %}">{{ pregunta.titulo }}</a>
                     </h4>
@@ -49,7 +53,7 @@
                     <div class="row">
                         <div class="col col-sm-8">
                             {% for tag in pregunta.tags.all %}
-                                <a class="btn btn-info btn-xs" href="">{{ tag.nombre }}</a>
+                                <a class="btn btn-tag btn-xs" href="">{{ tag.nombre }}</a>
                             {% endfor %}
                         </div>
                         <div class="col col-sm-4">
@@ -60,7 +64,7 @@
                     </div>
                 </div>
             </div>
-            <hr class="no-margin" />
+            <hr class="no-margin hr" />
         </article>
     {% endfor %}
 

@@ -7,17 +7,18 @@
     <li><a href="{% url 'preguntas_crear_url' %}">¡Nueva Pregunta!</a></li>
 {% endblock %}
 {% block content %}
-    <div class="row">
-        <!-- Pregunta -->
-        <div class="pregunta col-xs-8 col-sm-8 col-md-8 col-lg-8">
-        <h2><strong>{{ pregunta.titulo }}</strong></h2>
-        <p>{{ pregunta.contenido }}</p>
+    <article class="pregunta">
+        <h2 class="pregunta-titulo">{{ pregunta.titulo }}</h2>
+        <hr class="hr no-margin">
+        <div class="contenido">
+            {{ pregunta.contenido }}
+        </div>
+        
         <ul>
             <li class="pregunta-detalle">Por {{ pregunta.autor }}</li>
             <li class="pregunta-detalle">{{ pregunta.n_respuestas }} Respuestas</li>
             <li class="pregunta-detalle">Votos {{ pregunta.n_votos }}</li>
             <li class="pregunta-detalle">{{ pregunta.n_vistas }} Vistas</li>
         </ul>
-        </div>
-    </div>
+    </article>
 {% endblock %}
